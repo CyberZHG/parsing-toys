@@ -54,6 +54,9 @@ add_library(ParsingToys STATIC
         src/cfg/left_recursion.cpp
         src/cfg/first_and_follow.cpp
         src/cfg/closure.cpp
+        include/automaton.h
+        src/automaton.cpp
+        src/cfg/lr0.cpp
 )
 
 target_include_directories(ParsingToys
@@ -86,6 +89,7 @@ if(PARSING_TOYS_ENABLE_TESTS)
             tests/cfg/test_left_recursion.cpp
             tests/cfg/test_first_and_follow.cpp
             tests/cfg/test_closure.cpp
+            tests/cfg/test_lr0.cpp
     )
 
     target_link_libraries(runTests

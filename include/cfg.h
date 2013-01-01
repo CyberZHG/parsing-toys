@@ -6,7 +6,14 @@
 #include <iostream>
 #include <unordered_map>
 #include <unordered_set>
+#include <memory>
 using namespace std;
+
+using Symbol = string;
+using Production = vector<string>;
+using Productions = vector<Production>;
+
+class FiniteAutomaton;
 
 /**
  * Tokenized results.
@@ -18,30 +25,26 @@ struct ContextFreeGrammarToken {
         ALTERNATION,  // The '|' sign
     };
     Type type;
-    string symbol;
+    Symbol symbol;
     size_t line, column;
 
     bool operator==(const ContextFreeGrammarToken& other) const;
 };
 
 struct FirstAndFollowSet {
-    vector<string> ordering;
-    unordered_map<string, unordered_set<string>> first;
-    unordered_map<string, unordered_set<string>> follow;
+    vector<Symbol> ordering;
+    unordered_map<Symbol, unordered_set<Symbol>> first;
+    unordered_map<Symbol, unordered_set<Symbol>> follow;
 
     [[nodiscard]] size_t size() const;
-    [[nodiscard]] string symbolAt(size_t index) const;
-    [[nodiscard]] bool getNullable(const string &symbol) const;
-    [[nodiscard]] vector<string> getFirstSet(const string& symbol) const;
-    [[nodiscard]] vector<string> getFollowSet(const string& symbol) const;
+    [[nodiscard]] Symbol symbolAt(size_t index) const;
+    [[nodiscard]] bool getNullable(const Symbol &symbol) const;
+    [[nodiscard]] vector<Symbol> getFirstSet(const Symbol& symbol) const;
+    [[nodiscard]] vector<Symbol> getFollowSet(const Symbol& symbol) const;
 };
 
 class ContextFreeGrammar {
 public:
-    using Symbol = string;
-    using Production = vector<string>;
-    using Productions = vector<Production>;
-
     ContextFreeGrammar() = default;
 
     static const string EMPTY_SYMBOL;
@@ -114,14 +117,15 @@ public:
     /**
      * Generate a primed symbol.
      * @param symbol Existing non-terminal symbol.
+     * @param updateOrdering Whether to update the output order.
      * @return The primed symbol.
      */
-    string generatePrimedSymbol(const Symbol& symbol);
+    string generatePrimedSymbol(const Symbol& symbol, bool updateOrdering = true);
 
     void addProduction(const Symbol &head, const Production &production);
     void addProductions(const Symbol& head, const Productions& productions);
 
-    [[nodiscard]] bool expandable(const Production& production) const;
+    ContextFreeGrammar operator|(const ContextFreeGrammar& other) const;
 
     /**
      * Find and group the longest common prefixes.
@@ -156,6 +160,13 @@ public:
      */
     [[nodiscard]] ContextFreeGrammar computeClosure(const ContextFreeGrammar& kernel) const;
 
+    /**
+     * Compute an automaton for LR(0) parsing.
+     * LR(0) parses input using states built from items, with no lookahead.
+     *
+     * @return A deterministic finite automaton.
+     */
+    unique_ptr<FiniteAutomaton> computeLR0Automaton();
 private:
     string _errorMessage;
     vector<Symbol> _ordering;  // The output ordering

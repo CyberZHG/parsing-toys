@@ -219,7 +219,7 @@ void ContextFreeGrammar::deduplicate() {
     }
 }
 
-string ContextFreeGrammar::generatePrimedSymbol(const string& symbol) {
+string ContextFreeGrammar::generatePrimedSymbol(const string& symbol, const bool updateOrdering) {
     if (!_productions.contains(symbol)) {
         throw runtime_error(format("The original symbol '{}' does not exist.", symbol));
     }
@@ -279,10 +279,12 @@ string ContextFreeGrammar::generatePrimedSymbol(const string& symbol) {
             }
         }
     }
-    if (const auto it = ranges::find(_ordering, baseSymbol); it == _ordering.end()) {
-        _ordering.emplace_back(newSymbol);
-    } else {
-        _ordering.insert(it + 1, newSymbol);
+    if (updateOrdering) {
+        if (const auto it = ranges::find(_ordering, baseSymbol); it == _ordering.end()) {
+            _ordering.emplace_back(newSymbol);
+        } else {
+            _ordering.insert(it + 1, newSymbol);
+        }
     }
     return newSymbol;
 }
@@ -319,10 +321,15 @@ void ContextFreeGrammar::addProductions(const Symbol& head, const Productions& p
     }
 }
 
-bool ContextFreeGrammar::expandable(const Production& production) const {
-    return ranges::any_of(production, [&](const Symbol& symbol) {
-        return _productions.contains(symbol);
-    });
+ContextFreeGrammar ContextFreeGrammar::operator|(const ContextFreeGrammar& other) const {
+    ContextFreeGrammar result;
+    for (const auto& symbol : _ordering) {
+        result.addProductions(symbol, _productions.at(symbol));
+    }
+    for (const auto& symbol : other._ordering) {
+        result.addProductions(symbol, other._productions.at(symbol));
+    }
+    return result;
 }
 
 void PrintTo(const ContextFreeGrammarToken& token, ostream* os) {

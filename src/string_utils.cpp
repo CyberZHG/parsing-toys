@@ -35,3 +35,16 @@ bool operator==(const vector<string>& a, const vector<string>& b) {
     }
     return true;
 }
+
+string toSubscript(size_t number) {
+    static const vector<string> SUBSCRIPTS = {"₀", "₁", "₂", "₃", "₄", "₅", "₆", "₇", "₈", "₉"};
+    if (number == 0) {
+        return SUBSCRIPTS[0];
+    }
+    string result = "";
+    while (number > 0) {
+        result = SUBSCRIPTS[number % 10] + result;
+        number /= 10;
+    }
+    return result;
+}
