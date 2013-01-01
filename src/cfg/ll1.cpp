@@ -235,10 +235,7 @@ string MTable::toString(const string& separator) const {
     return result;
 }
 
-static unordered_set<Symbol> computeFirstOfProduction(
-    const Production& production,
-    const unordered_map<Symbol, unordered_set<Symbol>>& firstSets
-) {
+static unordered_set<Symbol> computeFirstOfProduction(const Production& production, const unordered_map<Symbol, unordered_set<Symbol>>& firstSets) {
     unordered_set<Symbol> result;
     bool allNullable = true;
     for (const auto& symbol : production) {
@@ -268,24 +265,18 @@ static unordered_set<Symbol> computeFirstOfProduction(
 }
 
 MTable ContextFreeGrammar::computeLL1Table() const {
-    MTable table;
     const auto firstFollow = computeFirstAndFollowSet();
-
-    auto terminals_ = terminals();
-    terminals_.push_back(EOF_SYMBOL);
-    for (const auto& t : terminals_) {
-        if (!table.terminalIndex.contains(t)) {
-            table.terminalIndex[t] = table.terminals.size();
-            table.terminals.push_back(t);
-        }
+    MTable table;
+    table.terminals = vector(_terminals.begin(), _terminals.end());
+    ranges::sort(table.terminals);
+    table.terminals.emplace_back(EOF_SYMBOL);
+    for (const auto& symbol : table.terminals) {
+        table.terminalIndex[symbol] = table.terminalIndex.size();
     }
-
-    for (const auto& nt : _ordering) {
-        if (!table.nonTerminalIndex.contains(nt)) {
-            table.nonTerminalIndex[nt] = table.nonTerminals.size();
-            table.nonTerminals.push_back(nt);
-            table.entries.emplace_back(table.terminals.size());
-        }
+    table.nonTerminals = vector(_ordering.begin(), _ordering.end());
+    for (const auto& symbol : table.nonTerminals) {
+        table.nonTerminalIndex[symbol] = table.nonTerminalIndex.size();
+        table.entries.emplace_back(table.terminals.size());
     }
 
     for (const auto& head : _ordering) {

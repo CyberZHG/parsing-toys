@@ -107,6 +107,7 @@ if(PARSING_TOYS_ENABLE_TESTS)
             tests/re/test_parse_regex.cpp
             tests/re/test_nfa.cpp
             tests/re/test_min_dfa.cpp
+            tests/cfg/test_ll1.cpp
     )
 
     target_link_libraries(runTests
