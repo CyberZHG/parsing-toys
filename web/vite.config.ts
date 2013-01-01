@@ -15,6 +15,8 @@ export default defineConfig({
                 first_and_follow: resolve(__dirname, 'tools', 'cfg_first_and_follow.html'),
                 lr0: resolve(__dirname, 'tools', 'cfg_lr0.html'),
                 slr1: resolve(__dirname, 'tools', 'cfg_slr1.html'),
+                lr1: resolve(__dirname, 'tools', 'cfg_lr1.html'),
+                lalr1: resolve(__dirname, 'tools', 'cfg_lalr1.html'),
             }
         }
     },

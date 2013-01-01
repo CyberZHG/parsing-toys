@@ -12,3 +12,5 @@ Toy tools for visualizing parsing algorithms.
 - [First & Follow Sets](https://cyberzhg.github.io/parsing-toys/tools/cfg_first_and_follow.html) - Compute the first & follow sets in a context-free grammar.
 - [LR(0) Parsing](https://cyberzhg.github.io/parsing-toys/tools/cfg_lr0.html) - Generate LR(0) automaton, ACTION/GOTO table, and simulate parsing.
 - [SLR(1) Parsing](https://cyberzhg.github.io/parsing-toys/tools/cfg_slr1.html) - Generate SLR(1) automaton, ACTION/GOTO table, and simulate parsing.
+- [LR(1) Parsing](https://cyberzhg.github.io/parsing-toys/tools/cfg_lr0.html) - Generate LR(1) automaton, ACTION/GOTO table, and simulate parsing.
+- [LALR(1) Parsing](https://cyberzhg.github.io/parsing-toys/tools/cfg_slr1.html) - Generate LALR(1) automaton, ACTION/GOTO table, and simulate parsing.

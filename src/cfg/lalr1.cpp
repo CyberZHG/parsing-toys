@@ -20,27 +20,28 @@ unique_ptr<FiniteAutomaton> ContextFreeGrammar::computeLALR1Automaton() {
     // First, build the full LR(1) automaton
     const auto lr1Automaton = computeLR1Automaton();
 
-    auto computeCoreKey = [&](const ContextFreeGrammar& kernel, const ContextFreeGrammar& nonKernel) -> string {
-        const string kernelStr = kernel.toString();
-        const string nonKernelStr = nonKernel.toString();
-
-        auto removeLookaheads = [](const string& s) -> string {
-            string result;
-            size_t i = 0;
-            while (i < s.length()) {
-                if (s.substr(i, LOOKAHEAD_SEPARATOR.size()) == LOOKAHEAD_SEPARATOR) {
-                    while (i < s.length() && s[i] != '\n') {
-                        ++i;
+    auto removeLookaheads = [&](const ContextFreeGrammar& grammar) {
+        ContextFreeGrammar newGrammar;
+        for (const auto& [head, productions] : grammar._productions) {
+            for (const auto& production : productions) {
+                int separatorIndex = -1;
+                for (size_t i = 0; i < production.size(); ++i) {
+                    if (production[i] == LOOKAHEAD_SEPARATOR) {
+                        separatorIndex = static_cast<int>(i);
+                        break;
                     }
-                } else {
-                    result += s[i];
-                    ++i;
                 }
+                newGrammar.addProduction(head, {production.begin(), production.begin() + separatorIndex});
             }
-            return result;
-        };
+        }
+        newGrammar.deduplicate();
+        return newGrammar;
+    };
 
-        return removeLookaheads(kernelStr) + "###" + removeLookaheads(nonKernelStr);
+    auto computeCoreKey = [&](const ContextFreeGrammar& kernel, const ContextFreeGrammar& nonKernel) -> string {
+        const string kernelStr = removeLookaheads(kernel).toSortedString();
+        const string nonKernelStr = removeLookaheads(nonKernel).toSortedString();
+        return kernelStr + "###\n" + nonKernelStr;
     };
 
     unordered_map<string, size_t> coreKeyToMergedIndex;
