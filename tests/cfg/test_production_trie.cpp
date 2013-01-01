@@ -34,9 +34,9 @@ TEST(TestProductionTrie, LongestCommonPrefixCommon1) {
     ASSERT_EQ(2, prefix.size());
     EXPECT_EQ("a", prefix[0]);
     EXPECT_EQ("b", prefix[1]);
-    ASSERT_EQ(2, node->indices.size());
-    EXPECT_EQ(0, node->indices[0]);
-    EXPECT_EQ(1, node->indices[1]);
+    ASSERT_EQ(2, node->originalIndices.size());
+    EXPECT_TRUE(node->originalIndices.contains(0));
+    EXPECT_TRUE(node->originalIndices.contains(1));
     const auto productions = ProductionTrie::computeProductionsUnderPrefix(node);
     ASSERT_EQ(2, productions.size());
     EXPECT_EQ(vector<string>{"c"}, productions[0]);
@@ -53,9 +53,9 @@ TEST(TestProductionTrie, LongestCommonPrefixCommon2) {
     EXPECT_EQ("a", prefix[0]);
     EXPECT_EQ("b", prefix[1]);
     EXPECT_EQ("c", prefix[2]);
-    ASSERT_EQ(2, node->indices.size());
-    EXPECT_EQ(0, node->indices[0]);
-    EXPECT_EQ(1, node->indices[1]);
+    ASSERT_EQ(2, node->originalIndices.size());
+    EXPECT_TRUE(node->originalIndices.contains(0));
+    EXPECT_TRUE(node->originalIndices.contains(1));
     const auto productions = ProductionTrie::computeProductionsUnderPrefix(node);
     ASSERT_EQ(2, productions.size());
     EXPECT_EQ(vector<string>{"d"}, productions[0]);
@@ -73,9 +73,9 @@ TEST(TestProductionTrie, LongestCommonPrefixSameCount1) {
     EXPECT_EQ("a", prefix[0]);
     EXPECT_EQ("b", prefix[1]);
     EXPECT_EQ("c", prefix[2]);
-    ASSERT_EQ(2, node->indices.size());
-    EXPECT_EQ(0, node->indices[0]);
-    EXPECT_EQ(1, node->indices[1]);
+    ASSERT_EQ(2, node->originalIndices.size());
+    EXPECT_TRUE(node->originalIndices.contains(0));
+    EXPECT_TRUE(node->originalIndices.contains(1));
     const auto productions = ProductionTrie::computeProductionsUnderPrefix(node);
     ASSERT_EQ(2, productions.size());
     EXPECT_EQ(vector<string>{"d"}, productions[0]);
@@ -93,11 +93,59 @@ TEST(TestProductionTrie, LongestCommonPrefixSameCount2) {
     EXPECT_EQ("a", prefix[0]);
     EXPECT_EQ("b", prefix[1]);
     EXPECT_EQ("c", prefix[2]);
-    ASSERT_EQ(2, node->indices.size());
-    EXPECT_EQ(2, node->indices[0]);
-    EXPECT_EQ(3, node->indices[1]);
+    ASSERT_EQ(2, node->originalIndices.size());
+    EXPECT_TRUE(node->originalIndices.contains(2));
+    EXPECT_TRUE(node->originalIndices.contains(3));
     const auto productions = ProductionTrie::computeProductionsUnderPrefix(node);
     ASSERT_EQ(2, productions.size());
     EXPECT_EQ(vector<string>{"d"}, productions[0]);
     EXPECT_EQ(vector<string>{"ε"}, productions[1]);
+}
+
+TEST(TestProductionTrie, LongestCommonPrefixExpansionIndices1) {
+    const ProductionTrie trie;
+    trie.insert(vector<string>{"a", "b", "S"}, 0, 0);
+    trie.insert(vector<string>{"a", "b", "c", "d"}, 1, 1);
+    const auto [prefix, node] = trie.findLongestCommonPrefix();
+    const unordered_map<int, int> parents({{1, 0}});
+    const auto productions = ProductionTrie::computeProductionsUnderPrefix(node, &parents);
+    ASSERT_EQ(1, productions.size());
+    EXPECT_EQ(vector<string>{"S"}, productions[0]);
+}
+
+TEST(TestProductionTrie, LongestCommonPrefixExpansionIndices2) {
+    const ProductionTrie trie;
+    trie.insert(vector<string>{"a", "b", "S"}, 0, 0);
+    trie.insert(vector<string>{"a", "b", "c", "d"}, 1, 1);
+    trie.insert(vector<string>{"a", "b", "e"}, 1, 2);
+    const auto [prefix, node] = trie.findLongestCommonPrefix();
+    const unordered_map<int, int> parents({{1, 0}, {2, 1}});
+    const auto productions = ProductionTrie::computeProductionsUnderPrefix(node, &parents);
+    ASSERT_EQ(1, productions.size());
+    EXPECT_EQ(vector<string>{"S"}, productions[0]);
+}
+
+TEST(TestProductionTrie, LongestCommonPrefixExpansionIndices3) {
+    const ProductionTrie trie;
+    trie.insert(vector<string>{"a", "d", "S"}, 0, 0);
+    trie.insert(vector<string>{"a", "b", "c", "d"}, 1, 1);
+    trie.insert(vector<string>{"a", "b", "e"}, 1, 2);
+    const auto [prefix, node] = trie.findLongestCommonPrefix();
+    const unordered_map<int, int> parents({{1, 0}, {2, 1}});
+    const auto productions = ProductionTrie::computeProductionsUnderPrefix(node, &parents);
+    ASSERT_EQ(1, productions.size());
+    EXPECT_EQ(vector<string>({"c", "d"}), productions[0]);
+}
+
+TEST(TestProductionTrie, LongestCommonPrefixExpansionIndices4) {
+    const ProductionTrie trie;
+    trie.insert(vector<string>{"a", "d", "S"}, 0, 0);
+    trie.insert(vector<string>{"a", "b", "c", "d"}, 1, 1);
+    trie.insert(vector<string>{"a", "b", "e"}, 1, 2);
+    const auto [prefix, node] = trie.findLongestCommonPrefix();
+    const unordered_map<int, int> parents({{1, 0}, {2, 0}});
+    const auto productions = ProductionTrie::computeProductionsUnderPrefix(node, &parents);
+    ASSERT_EQ(2, productions.size());
+    EXPECT_EQ(vector<string>({"c", "d"}), productions[0]);
+    EXPECT_EQ(vector<string>({"e"}), productions[1]);
 }

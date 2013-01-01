@@ -4,14 +4,15 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <unordered_set>
 #include <unordered_map>
 using namespace std;
 
 struct ProductionTrieNode {
     int count = 0;
-    bool productionEnd = false;
     ProductionTrieNode *parent = nullptr;
-    vector<int> indices;  // Keep track of the indices in the original productions
+    unordered_set<int> originalIndices;  // Keep track of the indices in the original productions
+    unordered_set<int> expansionIndices;
     unordered_map<string, shared_ptr<ProductionTrieNode>> children;
 };
 
@@ -20,12 +21,15 @@ public:
     ProductionTrie();
     ~ProductionTrie() = default;
 
+    static constexpr int NO_EXPANSION = -1;
+
     /**
      * Insert a production to the trie.
      * @param production
-     * @param index The index before expansion.
+     * @param originalIndex The index before expansion.
+     * @param expansionIndex The index after expansion.
      */
-    void insert(const vector<string>& production, int index) const;
+    void insert(const vector<string>& production, int originalIndex, int expansionIndex = NO_EXPANSION) const;
 
     /**
      * Find the longest common prefix in the current trie.
@@ -39,9 +43,10 @@ public:
     /**
      * Find all child productions under the current node and sort them in lexicographical order.
      * @param node A trie node.
+     * @param parents The parent relation of expansion indices.
      * @return
      */
-    static vector<vector<string>> computeProductionsUnderPrefix(const shared_ptr<ProductionTrieNode>& node) ;
+    static vector<vector<string>> computeProductionsUnderPrefix(const shared_ptr<ProductionTrieNode>& node, const unordered_map<int ,int>* parents = nullptr);
 
 private:
     shared_ptr<ProductionTrieNode> _head;

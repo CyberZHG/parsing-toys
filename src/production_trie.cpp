@@ -9,10 +9,10 @@ ProductionTrie::ProductionTrie() {
     _head = make_shared<ProductionTrieNode>();
 }
 
-void ProductionTrie::insert(const vector<string>& production, const int index) const {
+void ProductionTrie::insert(const vector<string>& production, const int originalIndex, const int expansionIndex) const {
     auto current = _head;
     ++current->count;
-    current->indices.emplace_back(index);
+    current->originalIndices.insert(originalIndex);
     for (const auto& symbol: production) {
         if (!current->children.contains(symbol)) {
             current->children[symbol] = make_shared<ProductionTrieNode>();
@@ -20,10 +20,10 @@ void ProductionTrie::insert(const vector<string>& production, const int index) c
         const auto parent = current.get();
         current = current->children[symbol];
         ++current->count;
-        current->indices.emplace_back(index);
+        current->originalIndices.insert(originalIndex);
         current->parent = parent;
     }
-    current->productionEnd = true;
+    current->expansionIndices.insert(expansionIndex);
 }
 
 pair<vector<string>, shared_ptr<ProductionTrieNode>> ProductionTrie::findLongestCommonPrefix() const {
@@ -48,15 +48,23 @@ pair<vector<string>, shared_ptr<ProductionTrieNode>> ProductionTrie::findLongest
     return {longestPrefix, bestNode};
 }
 
-vector<vector<string>> ProductionTrie::computeProductionsUnderPrefix(const shared_ptr<ProductionTrieNode>& node) {
+vector<vector<string>> ProductionTrie::computeProductionsUnderPrefix(const shared_ptr<ProductionTrieNode>& node, const unordered_map<int ,int>* parents) {
     vector<vector<string>> productions;
+    unordered_set<int> allExpansionIndices;
+    vector<unordered_set<int>> expansionIndices;
     vector<string> production;
     const function<void(const shared_ptr<ProductionTrieNode>&)> search = [&](const shared_ptr<ProductionTrieNode>& _node) -> void {
-        if (_node->productionEnd) {
+        if (!_node->expansionIndices.empty()) {
             if (production.empty()) {
                 productions.emplace_back(vector{ContextFreeGrammar::EMPTY_SYMBOL});
             } else {
                 productions.emplace_back(production);
+            }
+            if (parents != nullptr) {
+                expansionIndices.emplace_back(_node->expansionIndices);
+                for (const auto index : _node->expansionIndices) {
+                    allExpansionIndices.insert(index);
+                }
             }
         }
         for (const auto& [symbol, child]: _node->children) {
@@ -66,6 +74,31 @@ vector<vector<string>> ProductionTrie::computeProductionsUnderPrefix(const share
         }
     };
     search(node);
+    if (parents != nullptr) {
+        // Remove productions whose parent is also in the list.
+        size_t m = 0;
+        for (size_t i = 0; i < productions.size(); ++i) {
+            bool valid = true;
+            for (const auto index : expansionIndices[i]) {
+                auto it = parents->find(index);
+                while (it != parents->end()) {
+                    const auto parent = it->second;
+                    if (!expansionIndices[i].contains(parent) && allExpansionIndices.contains(parent)) {
+                        valid = false;
+                        break;
+                    }
+                    it = parents->find(parent);
+                }
+            }
+            if (valid) {
+                if (m != i) {
+                    productions[m] = productions[i];
+                }
+                ++m;
+            }
+        }
+        productions.resize(m);
+    }
     ranges::sort(productions);
     return productions;
 }
