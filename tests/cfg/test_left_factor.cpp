@@ -128,3 +128,51 @@ bfactor -> not bfactor
 )";
     EXPECT_EQ(expected, grammar.toString());
 }
+
+TEST(TestContextFreeGrammarLeftFactoring, SpecialCase10) {
+    ContextFreeGrammar grammar;
+    EXPECT_TRUE(grammar.parse("A -> id | B | a B -> id b"));
+    grammar.leftFactoring();
+    const auto expected = R"( A -> a
+    | id A'
+A' -> b
+    | ε
+ B -> id b
+)";
+    EXPECT_EQ(expected, grammar.toString());
+}
+
+TEST(TestContextFreeGrammarLeftFactoring, SpecialCase11) {
+    ContextFreeGrammar grammar;
+    EXPECT_TRUE(grammar.parse("S -> a b | A A -> a b"));
+    grammar.leftFactoring();
+    const auto expected = R"(S -> a b
+A -> a b
+)";
+    EXPECT_EQ(expected, grammar.toString());
+}
+
+TEST(TestContextFreeGrammarLeftFactoring, SpecialCase12) {
+    ContextFreeGrammar grammar;
+    EXPECT_TRUE(grammar.parse("S -> a b c | A c A -> a b"));
+    grammar.leftFactoring();
+    const auto expected = R"(S -> a b c
+A -> a b
+)";
+    EXPECT_EQ(expected, grammar.toString());
+}
+
+TEST(TestContextFreeGrammarLeftFactoring, SpecialCase13) {
+    ContextFreeGrammar grammar;
+    EXPECT_TRUE(grammar.parse("A->id|B|a B->C C->D D->id b"));
+    grammar.leftFactoring();
+    const auto expected = R"( A -> a
+    | id A'
+A' -> b
+    | ε
+ B -> C
+ C -> D
+ D -> id b
+)";
+    EXPECT_EQ(expected, grammar.toString());
+}

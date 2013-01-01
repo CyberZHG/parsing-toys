@@ -81,7 +81,7 @@ vector<vector<string>> ProductionTrie::computeProductionsUnderPrefix(const share
             bool valid = true;
             for (const auto index : expansionIndices[i]) {
                 auto it = parents->find(index);
-                while (it != parents->end()) {
+                while (it != parents->end() && it->second != NO_EXPANSION) {
                     const auto parent = it->second;
                     if (!expansionIndices[i].contains(parent) && allExpansionIndices.contains(parent)) {
                         valid = false;
