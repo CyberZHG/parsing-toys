@@ -20,7 +20,7 @@ struct FiniteAutomatonNode {
 };
 
 struct FiniteAutomatonEdge {
-    int u, v;
+    size_t u, v;
     std::string label;
 };
 
@@ -34,7 +34,7 @@ public:
     [[nodiscard]] std::string newNodeLabel(const std::string& prefix = "I") const;
     std::size_t addNode(const FiniteAutomatonNode& node);
     std::size_t addEdge(const FiniteAutomatonEdge& edge);
-    std::size_t addEdge(int u, int v, const std::string& label);
+    std::size_t addEdge(std::size_t u, std::size_t v, const std::string& label);
 
     /**
      * For unit tests only.

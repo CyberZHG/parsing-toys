@@ -39,7 +39,7 @@ size_t FiniteAutomaton::addEdge(const FiniteAutomatonEdge& edge) {
     return index;
 }
 
-size_t FiniteAutomaton::addEdge(const int u, const int v, const string& label) {
+size_t FiniteAutomaton::addEdge(const size_t u, const size_t v, const string& label) {
     FiniteAutomatonEdge edge;
     edge.u = u;
     edge.v = v;

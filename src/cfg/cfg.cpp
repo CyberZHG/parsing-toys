@@ -232,12 +232,17 @@ string ContextFreeGrammar::generatePrimedSymbol(const string& symbol, const bool
     const auto n = static_cast<int>(symbol.size());
     auto i = n - 1;
     bool hasPrime = false;
+    // Scan backwards to find if symbol already has a prime suffix.
+    // e.g., "A'_2" has prime at index 1
     for (; i >= 0; --i) {
         if (symbol[i] == '\'') {
             hasPrime = true;
             break;
         }
     }
+    // Check if symbol matches pattern: <base>'_<number>
+    // e.g., "A'_2" -> base="A", number=2
+    // If not matching (e.g., "A'B" or "A'_x"), treat as no prime.
     int number = 0;
     if (hasPrime && i + 1 < n) {
         if (symbol[i + 1] != '_') {
@@ -259,8 +264,11 @@ string ContextFreeGrammar::generatePrimedSymbol(const string& symbol, const bool
             }
         }
     }
+    // Generate new symbol name.
+    // Priority: A -> A' -> A'_1 -> A'_2 -> ...
     string newSymbol;
     if (!hasPrime) {
+        // Try simple prime first: "A" -> "A'"
         if (const auto candidate = symbol + "'"; !(_productions.contains(candidate) || _terminals.contains(candidate))) {
             newSymbol = candidate;
         } else {
@@ -268,6 +276,7 @@ string ContextFreeGrammar::generatePrimedSymbol(const string& symbol, const bool
         }
     }
     if (newSymbol.empty()) {
+        // Try numbered primes: "A" -> "A'_1", "A'_1" -> "A'_2", etc.
         while (true) {
             if (number == numeric_limits<int>::max()) {
                 throw runtime_error("Can not find a new symbol name");
@@ -281,6 +290,7 @@ string ContextFreeGrammar::generatePrimedSymbol(const string& symbol, const bool
             }
         }
     }
+    // Insert new symbol into ordering (after baseSymbol if found).
     if (updateOrdering) {
         if (const auto it = ranges::find(_ordering, baseSymbol); it == _ordering.end()) {
             _ordering.emplace_back(newSymbol);
