@@ -81,6 +81,7 @@ if(PARSING_TOYS_ENABLE_TESTS)
             tests/test_string_utils.cpp
             tests/cfg/test_primed_symbol.cpp
             tests/cfg/test_left_factor.cpp
+            tests/cfg/test_left_recursion.cpp
     )
 
     target_link_libraries(runTests

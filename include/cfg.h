@@ -76,6 +76,9 @@ public:
      */
     [[nodiscard]] vector<Symbol> nonTerminals() const;
 
+    [[nodiscard]] bool isTerminal(const Symbol& symbol) const;
+    [[nodiscard]] bool isNonTerminal(const Symbol& symbol) const;
+
     /**
      * Compute a key for a production to deduplicate.
      * @param production

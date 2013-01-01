@@ -168,6 +168,14 @@ vector<string> ContextFreeGrammar::nonTerminals() const {
     return {heads.begin(), heads.end()};
 }
 
+bool ContextFreeGrammar::isTerminal(const Symbol& symbol) const {
+    return _terminals.contains(symbol);
+}
+
+bool ContextFreeGrammar::isNonTerminal(const Symbol& symbol) const {
+    return _productions.contains(symbol);
+}
+
 string ContextFreeGrammar::computeProductionKey(const vector<string>& production) {
     return stringJoin(production, " ");
 }
@@ -261,10 +269,17 @@ void ContextFreeGrammar::addProductions(const Symbol& head, const Productions& p
     if (const auto it = ranges::find(_ordering, head); it == _ordering.end()) {
         _ordering.emplace_back(head);
     }
+    if (const auto it = _terminals.find(head); it != _terminals.end()) {
+        _terminals.erase(it);
+    }
     for (const auto& production: productions) {
         _productions[head].emplace_back(production);
+        for (const auto& symbol : production) {
+            if (!_productions.contains(symbol)) {
+                _terminals.insert(symbol);
+            }
+        }
     }
-    initTerminals();
 }
 
 bool ContextFreeGrammar::expandable(const Production& production) const {
