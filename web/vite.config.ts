@@ -9,7 +9,7 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 main: resolve(__dirname, 'index.html'),
-                about: resolve(__dirname, 'tools', 'cfg_reformat.html'),
+                cfg_reformat: resolve(__dirname, 'tools', 'cfg_reformat.html'),
             }
         }
     },
