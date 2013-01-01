@@ -27,8 +27,8 @@ bfactor -> not bfactor
     "example5": "A -> B\nB -> C\nC -> D\nD -> A"
 }
 
-const reformatButton = document.querySelector<HTMLElement>('#button-cfg-left-recursion')!
-reformatButton.addEventListener('click', () => {
+const leftRecursiveButton = document.querySelector<HTMLElement>('#button-cfg-left-recursion')!
+leftRecursiveButton.addEventListener('click', () => {
     const errorMessage = document.querySelector<HTMLTextAreaElement>('#cfg-left-recursion-error-message')!
     const cfg = new ContextFreeGrammar()
     const code = getCFGEditorValue()
@@ -49,7 +49,7 @@ reformatButton.addEventListener('click', () => {
 
 function onExamplesChange(key: string) : void {
     setCFGEditorValue(EXAMPLES[key])
-    reformatButton.click()
+    leftRecursiveButton.click()
 }
 
 setupExamplesMenu(EXAMPLE_OPTIONS, onExamplesChange)
@@ -58,4 +58,4 @@ setupCFGResult()
 setupLocationHash()
 
 setCFGEditorValue(getLocationHashValue())
-reformatButton.click()
+leftRecursiveButton.click()

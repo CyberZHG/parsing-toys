@@ -7,6 +7,17 @@ export interface VectorString {
     delete(): void
 }
 
+export class FirstAndFollowSet {
+    constructor()
+    size(): number
+    symbolAt(index: number): string
+    getNullable(symbol: string): boolean
+    _getFirstSet(symbol: string): VectorString
+    getFirstSet(symbol: string): string[]
+    _getFollowSet(symbol: string): VectorString
+    getFollowSet(symbol: string): string[]
+}
+
 export class ContextFreeGrammar {
     constructor()
     parse(code: string): boolean
@@ -18,4 +29,5 @@ export class ContextFreeGrammar {
     nonTerminals(): string[]
     leftFactoring(): void
     leftRecursionElimination(): boolean
+    computeFirstAndFollowSet(): FirstAndFollowSet
 }

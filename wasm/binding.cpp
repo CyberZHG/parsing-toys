@@ -16,5 +16,14 @@ EMSCRIPTEN_BINDINGS(ParsingToysWASM) {
         .function("_nonTerminals", &ContextFreeGrammar::nonTerminals)
         .function("leftFactoring", &ContextFreeGrammar::leftFactoring)
         .function("leftRecursionElimination", &ContextFreeGrammar::leftRecursionElimination)
+        .function("computeFirstAndFollowSet", &ContextFreeGrammar::computeFirstAndFollowSet)
+    ;
+    class_<FirstAndFollowSet>("FirstAndFollowSet")
+        .constructor<>()
+        .function("size", &FirstAndFollowSet::size)
+        .function("symbolAt", &FirstAndFollowSet::symbolAt)
+        .function("getNullable", &FirstAndFollowSet::getNullable)
+        .function("_getFirstSet", &FirstAndFollowSet::getFirstSet)
+        .function("_getFollowSet", &FirstAndFollowSet::getFollowSet)
     ;
 }

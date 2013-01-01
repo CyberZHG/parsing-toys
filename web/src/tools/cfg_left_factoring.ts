@@ -18,8 +18,8 @@ const EXAMPLES: Record<string, string> = {
     "example4": "A -> id | B | a\nB -> C\nC -> D\nD -> id b",
 }
 
-const reformatButton = document.querySelector<HTMLElement>('#button-cfg-left-factoring')!
-reformatButton.addEventListener('click', () => {
+const leftFactoringButton = document.querySelector<HTMLElement>('#button-cfg-left-factoring')!
+leftFactoringButton.addEventListener('click', () => {
     const errorMessage = document.querySelector<HTMLTextAreaElement>('#cfg-left-factoring-error-message')!
     const cfg = new ContextFreeGrammar()
     const code = getCFGEditorValue()
@@ -36,7 +36,7 @@ reformatButton.addEventListener('click', () => {
 
 function onExamplesChange(key: string) : void {
     setCFGEditorValue(EXAMPLES[key])
-    reformatButton.click()
+    leftFactoringButton.click()
 }
 
 setupExamplesMenu(EXAMPLE_OPTIONS, onExamplesChange)
@@ -45,4 +45,4 @@ setupCFGResult()
 setupLocationHash()
 
 setCFGEditorValue(getLocationHashValue())
-reformatButton.click()
+leftFactoringButton.click()

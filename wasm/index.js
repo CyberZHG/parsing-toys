@@ -1,24 +1,33 @@
-import ParsingToysWASMModule from './build/ParsingToysWASM.js'
+import ParsingToysWASMModule from './build/ParsingToysWASM.js';
 
-const ParsingToysWASM = await ParsingToysWASMModule()
-const ContextFreeGrammar = ParsingToysWASM.ContextFreeGrammar
-ContextFreeGrammar.prototype.terminals = function () {
-    const terminals = this._terminals();
-    let terminalList = [];
-    for (let i = 0; i < terminals.size(); ++i) {
-        terminalList.push(terminals.get(i));
+const ParsingToysWASM = await ParsingToysWASMModule();
+const ContextFreeGrammar = ParsingToysWASM.ContextFreeGrammar;
+const FirstAndFollowSet = ParsingToysWASM.FirstAndFollowSet;
+
+function _vectorStringToArray(vec) {
+    let arr = [];
+    for (let i = 0; i < vec.size(); ++i) {
+        arr.push(vec.get(i));
     }
-    return terminalList;
+    return arr;
+}
+
+ContextFreeGrammar.prototype.terminals = function () {
+    return _vectorStringToArray(this._terminals());
 }
 ContextFreeGrammar.prototype.nonTerminals = function () {
-    const nonTerminals = this._nonTerminals();
-    let nonTerminalList = [];
-    for (let i = 0; i < nonTerminals.size(); ++i) {
-        nonTerminalList.push(nonTerminals.get(i));
-    }
-    return nonTerminalList;
+    return _vectorStringToArray(this._nonTerminals());
+}
+
+FirstAndFollowSet.prototype.getFirstSet = function (symbol) {
+    return _vectorStringToArray(this._getFirstSet(symbol))
+}
+
+FirstAndFollowSet.prototype.getFollowSet = function (symbol) {
+    return _vectorStringToArray(this._getFollowSet(symbol))
 }
 
 export {
-    ContextFreeGrammar
+    ContextFreeGrammar,
+    FirstAndFollowSet,
 }
