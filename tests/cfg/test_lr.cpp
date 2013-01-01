@@ -1,6 +1,8 @@
 #include "cfg.h"
 #include "automaton.h"
 #include <gtest/gtest.h>
+#include <format>
+#include <fstream>
 using namespace std;
 
 TEST(TestLRParsing, SimpleGrammar) {
@@ -10,7 +12,7 @@ S → A A
 A → a
 )");
     const auto automaton = grammar.computeLR0Automaton();
-    const auto table = grammar.computeLR0ActionGotoTable(automaton);
+    auto table = grammar.computeLR0ActionGotoTable(automaton);
     EXPECT_FALSE(table.hasConflict());
 
     const auto steps = table.parse("a a");
@@ -24,6 +26,20 @@ A → a
 | 0 1 | S | ¥ | accept |
 )";
     EXPECT_EQ(expected, steps.toString());
+    const auto expectedParseTree = R"(S -> A A
+  A -> a
+    a
+  A -> a
+    a
+)";
+    EXPECT_EQ(expectedParseTree, table.parseTree->toString());
+
+    const ::testing::TestInfo* info = ::testing::UnitTest::GetInstance()->current_test_info();
+    auto svg = table.parseTree->toSVG();
+    auto filePath = format("{}_{}.svg", info->test_suite_name(), info->name());
+    ofstream file(filePath);
+    file << svg;
+    file.close();
 }
 
 TEST(TestLRParsing, ShiftReduceConflict) {
@@ -33,7 +49,7 @@ S → a S
 S → a
 )");
     const auto automaton = grammar.computeLR0Automaton();
-    const auto table = grammar.computeLR0ActionGotoTable(automaton);
+    auto table = grammar.computeLR0ActionGotoTable(automaton);
     EXPECT_TRUE(table.hasConflict());
     EXPECT_TRUE(table.hasConflict(2, "a"));
 
@@ -55,7 +71,7 @@ A → a
 B → a
 )");
     const auto automaton = grammar.computeLR0Automaton();
-    const auto table = grammar.computeLR0ActionGotoTable(automaton);
+    auto table = grammar.computeLR0ActionGotoTable(automaton);
     EXPECT_TRUE(table.hasConflict());
 
     const auto steps = table.parse("a");
@@ -73,7 +89,7 @@ TEST(TestLRParsing, InvalidSymbol) {
 S → a
 )");
     const auto automaton = grammar.computeLR0Automaton();
-    const auto table = grammar.computeLR0ActionGotoTable(automaton);
+    auto table = grammar.computeLR0ActionGotoTable(automaton);
 
     const auto steps = table.parse("b");
     const auto expected = R"(| Stack | Symbols | Inputs | Action |
@@ -90,7 +106,7 @@ S → A
 A → ε
 )");
     const auto automaton = grammar.computeLR0Automaton();
-    const auto table = grammar.computeLR0ActionGotoTable(automaton);
+    auto table = grammar.computeLR0ActionGotoTable(automaton);
 
     const auto steps = table.parse("");
     const auto expected = R"(| Stack | Symbols | Inputs | Action |
@@ -100,6 +116,17 @@ A → ε
 | 0 1 | S | ¥ | accept |
 )";
     EXPECT_EQ(expected, steps.toString());
+    const auto expectedParseTree = R"(S -> A
+  A -> ε
+)";
+    EXPECT_EQ(expectedParseTree, table.parseTree->toString());
+
+    const ::testing::TestInfo* info = ::testing::UnitTest::GetInstance()->current_test_info();
+    auto svg = table.parseTree->toSVG();
+    auto filePath = format("{}_{}.svg", info->test_suite_name(), info->name());
+    ofstream file(filePath);
+    file << svg;
+    file.close();
 }
 
 TEST(TestLRParsing, ChainReduction) {
@@ -110,7 +137,7 @@ A → B
 B → c
 )");
     const auto automaton = grammar.computeLR0Automaton();
-    const auto table = grammar.computeLR0ActionGotoTable(automaton);
+    auto table = grammar.computeLR0ActionGotoTable(automaton);
     EXPECT_FALSE(table.hasConflict());
 
     const auto steps = table.parse("c");
@@ -123,13 +150,26 @@ B → c
 | 0 1 | S | ¥ | accept |
 )";
     EXPECT_EQ(expected, steps.toString());
+    const auto expectedParseTree = R"(S -> A
+  A -> B
+    B -> c
+      c
+)";
+    EXPECT_EQ(expectedParseTree, table.parseTree->toString());
+
+    const ::testing::TestInfo* info = ::testing::UnitTest::GetInstance()->current_test_info();
+    auto svg = table.parseTree->toSVG();
+    auto filePath = format("{}_{}.svg", info->test_suite_name(), info->name());
+    ofstream file(filePath);
+    file << svg;
+    file.close();
 }
 
 TEST(TestLRParsing, SingleTerminal) {
     ContextFreeGrammar grammar;
     grammar.parse("S → a");
     const auto automaton = grammar.computeLR0Automaton();
-    const auto table = grammar.computeLR0ActionGotoTable(automaton);
+    auto table = grammar.computeLR0ActionGotoTable(automaton);
     EXPECT_FALSE(table.hasConflict());
 
     const auto steps = table.parse("a");
@@ -140,13 +180,24 @@ TEST(TestLRParsing, SingleTerminal) {
 | 0 1 | S | ¥ | accept |
 )";
     EXPECT_EQ(expected, steps.toString());
+    const auto expectedParseTree = R"(S -> a
+  a
+)";
+    EXPECT_EQ(expectedParseTree, table.parseTree->toString());
+
+    const ::testing::TestInfo* info = ::testing::UnitTest::GetInstance()->current_test_info();
+    auto svg = table.parseTree->toSVG();
+    auto filePath = format("{}_{}.svg", info->test_suite_name(), info->name());
+    ofstream file(filePath);
+    file << svg;
+    file.close();
 }
 
 TEST(TestLRParsing, MultipleTerminals) {
     ContextFreeGrammar grammar;
     grammar.parse("S → a b c");
     const auto automaton = grammar.computeLR0Automaton();
-    const auto table = grammar.computeLR0ActionGotoTable(automaton);
+    auto table = grammar.computeLR0ActionGotoTable(automaton);
     EXPECT_FALSE(table.hasConflict());
 
     const auto steps = table.parse("a b c");
@@ -159,6 +210,19 @@ TEST(TestLRParsing, MultipleTerminals) {
 | 0 1 | S | ¥ | accept |
 )";
     EXPECT_EQ(expected, steps.toString());
+    const auto expectedParseTree = R"(S -> a b c
+  a
+  b
+  c
+)";
+    EXPECT_EQ(expectedParseTree, table.parseTree->toString());
+
+    const ::testing::TestInfo* info = ::testing::UnitTest::GetInstance()->current_test_info();
+    auto svg = table.parseTree->toSVG();
+    auto filePath = format("{}_{}.svg", info->test_suite_name(), info->name());
+    ofstream file(filePath);
+    file << svg;
+    file.close();
 }
 
 TEST(TestLRParsing, MissingNumPopSymbols) {

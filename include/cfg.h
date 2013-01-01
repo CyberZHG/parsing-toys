@@ -55,11 +55,24 @@ struct LRParsingSteps {
     [[nodiscard]] std::string toString() const;
 };
 
+struct ParseTreeNode {
+    bool terminal;
+    std::string label;
+    std::vector<std::shared_ptr<ParseTreeNode>> children;
+
+    [[nodiscard]] size_t size() const;
+    [[nodiscard]] std::string toSVG() const;
+
+    /** For unit tests only. */
+    [[nodiscard]] std::string toString(int indent = 0) const;
+};
+
 struct ActionGotoTable {
     std::vector<std::unordered_map<Symbol, std::vector<std::string>>> actions;
     std::vector<std::unordered_map<Symbol, std::size_t>> nextStates;
     std::vector<std::unordered_map<Symbol, Symbol>> reduceHeads;
     std::vector<std::unordered_map<Symbol, Production>> reduceProductions;
+    std::shared_ptr<ParseTreeNode> parseTree = nullptr;
 
     ActionGotoTable() = default;
     explicit ActionGotoTable(const std::size_t n) : actions(n), nextStates(n), reduceHeads(n), reduceProductions(n) {}
@@ -72,7 +85,7 @@ struct ActionGotoTable {
     [[nodiscard]] bool hasConflict(size_t index, const Symbol& symbol) const;
     [[nodiscard]] std::string toString(size_t index, const Symbol& symbol, const std::string& separator = " / ") const;
 
-    [[nodiscard]] LRParsingSteps parse(const std::string& s) const;
+    [[nodiscard]] LRParsingSteps parse(const std::string& s);
 
     /** For unit tests only. */
     [[nodiscard]] std::string toString(const ContextFreeGrammar& grammar, const std::string& separator = " / ") const;

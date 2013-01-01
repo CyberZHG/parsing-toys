@@ -1,10 +1,13 @@
 #include "cfg.h"
 #include "string_utils.h"
+#include "graph_layout.h"
 #include <ranges>
 #include <format>
 #include <algorithm>
+#include <functional>
 
 using namespace std;
+using namespace graph_layout;
 
 void LRParsingSteps::addStep(const vector<size_t>& _stack, const vector<Symbol>& _symbols, const vector<Symbol>& _remainingInputs, const string& action) {
     stack.emplace_back(_stack);
@@ -31,6 +34,52 @@ string LRParsingSteps::toString() const {
             result += format("{} ", symbol);
         }
         result += "| " + actions[i] + " |\n";
+    }
+    return result;
+}
+
+size_t ParseTreeNode::size() const {
+    size_t result = 1;
+    for (const auto& child : children) {
+        result += child->size();
+    }
+    return result;
+}
+
+string ParseTreeNode::toSVG() const {
+    DirectedGraphHierarchicalLayout layout;
+    layout.attributes().setVertexDefaultMonospace();
+    layout.attributes().setVertexDefaultShape(AttributeShape::ELLIPSE);
+    layout.attributes().setEdgeDefaultArrowTail(AttributeArrowShape::NORMAL);
+    layout.attributes().setEdgeDefaultArrowHead(AttributeArrowShape::NONE);
+    layout.attributes().setRankDir(AttributeRankDir::TOP_TO_BOTTOM);
+    const auto n = size();
+    const auto& graph = layout.createGraph(n);
+    int globalIndex = 0;
+    vector<string> vertexLabels(n);
+    function<int(const ParseTreeNode*)> buildGraph = [&](const ParseTreeNode* node) {
+        const int u = globalIndex++;
+        vertexLabels[u] = node->label;
+        if (node->terminal) {
+            layout.attributes().setVertexShape(u, AttributeShape::NONE);
+        }
+        for (const auto& child : node->children) {
+            const int v = buildGraph(child.get());
+            graph->addEdge(u, v);
+        }
+        return u;
+    };
+    buildGraph(this);
+    layout.setVertexLabels(vertexLabels);
+    layout.layoutGraph();
+    return layout.render();
+}
+
+string ParseTreeNode::toString(const int indent) const {
+    string result(indent, ' ');
+    result += label + "\n";
+    for (const auto& child : children) {
+        result += child->toString(indent + 2);
     }
     return result;
 }
@@ -90,12 +139,13 @@ string ActionGotoTable::toString(const size_t index, const Symbol& symbol, const
  * @param s Input string (space-separated tokens, e.g., "id + id * id")
  * @return Parsing steps.
  */
-LRParsingSteps ActionGotoTable::parse(const string& s) const {
+LRParsingSteps ActionGotoTable::parse(const string& s) {
     LRParsingSteps steps;
     vector<size_t> stack = {0};   // State stack, initialized with state 0
     vector<string> symbols;       // Symbol stack (terminals and non-terminals)
     vector<string> remaining = stringSplit(s, ' ', true);
     remaining.emplace_back(ContextFreeGrammar::EOF_SYMBOL);
+    vector<shared_ptr<ParseTreeNode>> treeNodes = {nullptr};
 
     // Remove empty symbols from input
     size_t n = 0;
@@ -108,7 +158,7 @@ LRParsingSteps ActionGotoTable::parse(const string& s) const {
 
     while (!remaining.empty()) {
         const auto state = stack.back();
-        const auto& nextSymbol = remaining.front();
+        const auto nextSymbol = remaining.front();
 
         // Check for conflicts (multiple actions for same state/symbol)
         if (hasConflict(state, nextSymbol)) {
@@ -124,6 +174,7 @@ LRParsingSteps ActionGotoTable::parse(const string& s) const {
         }
         steps.addStep(stack, symbols, remaining, it->second[0]);
         if (it->second[0] == "accept") {
+            parseTree = treeNodes.back();
             break;
         }
 
@@ -133,39 +184,51 @@ LRParsingSteps ActionGotoTable::parse(const string& s) const {
             stack.push_back(shiftIt->second);
             symbols.push_back(nextSymbol);
             remaining.erase(remaining.begin(), remaining.begin() + 1);
+            treeNodes.emplace_back(make_shared<ParseTreeNode>());
+            treeNodes.back()->label = nextSymbol;
+            treeNodes.back()->terminal = true;
         } else {
             // Reduce action: A -> α (pop |α| items, then GOTO)
-            const auto reduceIt = reduceProductions[state].find(nextSymbol);
-            if (reduceIt == reduceProductions[state].end()) {
+            const auto productionIt = reduceProductions[state].find(nextSymbol);
+            if (productionIt == reduceProductions[state].end()) {
                 steps.addStep(stack, symbols, remaining, "invalid action/goto table");
                 break;
             }
 
             // Pop |α| states and symbols from both stacks
-            auto numPopStates = reduceIt->second.size();
-            if (reduceIt->second.size() == 1 && reduceIt->second[0] == ContextFreeGrammar::EMPTY_SYMBOL) {
+            auto numPopStates = productionIt->second.size();
+            if (productionIt->second.size() == 1 && productionIt->second[0] == ContextFreeGrammar::EMPTY_SYMBOL) {
                 numPopStates = 0;
             }
+            stack.resize(stack.size() - numPopStates);
+            symbols.resize(symbols.size() - numPopStates);
+            const auto treeNode = make_shared<ParseTreeNode>();
+            treeNode->terminal = false;
             for (size_t i = 0; i < numPopStates; i++) {
-                stack.pop_back();
-                symbols.pop_back();
+                 treeNode->children.emplace_back(treeNodes[treeNodes.size() - numPopStates + i]);
             }
+            treeNodes.resize(treeNodes.size() - numPopStates);
+            treeNodes.emplace_back(treeNode);
 
             // Find the reduced non-terminal A
-            const auto reducedIt = reduceHeads[state].find(nextSymbol);
-            if (reducedIt == reduceHeads[state].end()) {
+            const auto headIt = reduceHeads[state].find(nextSymbol);
+            if (headIt == reduceHeads[state].end()) {
                 steps.addStep(stack, symbols, remaining, "invalid action/goto table");
                 break;
             }
+            treeNode->label = headIt->second + " ->";
+            for (const auto& symbol : productionIt->second) {
+                treeNode->label += " " + symbol;
+            }
 
             // GOTO[stack.top(), A]: push new state and the non-terminal
-            const auto gotoIt = nextStates[stack.back()].find(reducedIt->second);
+            const auto gotoIt = nextStates[stack.back()].find(headIt->second);
             if (gotoIt == nextStates[stack.back()].end()) {
                 steps.addStep(stack, symbols, remaining, "invalid action/goto table");
                 break;
             }
             stack.push_back(gotoIt->second);
-            symbols.push_back(reducedIt->second);
+            symbols.push_back(headIt->second);
         }
     }
     return steps;

@@ -144,13 +144,13 @@ F -> ( E ) ·
 )", automaton->edgesToString());
 
     const ::testing::TestInfo* info = ::testing::UnitTest::GetInstance()->current_test_info();
-    const auto svg = automaton->toSVG();
-    const auto filePath = format("{}_{}.svg", info->test_suite_name(), info->name());
+    auto svg = automaton->toSVG();
+    auto filePath = format("{}_{}.svg", info->test_suite_name(), info->name());
     ofstream file(filePath);
     file << svg;
     file.close();
 
-    const auto table = grammar.computeLR0ActionGotoTable(automaton);
+    auto table = grammar.computeLR0ActionGotoTable(automaton);
     const auto expectedTable = R"(| State | ( | ) | * | + | id | ¥ | E | T | F |
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 | 0 | shift 4 |  |  |  | shift 5 |  | 1 | 2 | 3 |
@@ -167,9 +167,6 @@ F -> ( E ) ·
 | 11 | reduce F -> ( E ) | reduce F -> ( E ) | reduce F -> ( E ) | reduce F -> ( E ) | reduce F -> ( E ) | reduce F -> ( E ) |  |  |  |
 )";
     EXPECT_EQ(expectedTable, table.toString(grammar));
-
-    const auto steps = table.parse("id * id + id");
-    cout << steps.toString() << endl;
 }
 
 TEST(TestContextFreeGrammarLR0Automaton, SpecialCase2) {
