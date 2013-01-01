@@ -146,3 +146,16 @@ TEST(TestContextFreeGrammarLeftRecursionElimination, SpecialCase11) {
     EXPECT_TRUE(grammar.parse("A -> B B -> A"));
     EXPECT_FALSE(grammar.leftRecursionElimination());
 }
+
+TEST(TestContextFreeGrammarLeftRecursionElimination, SpecialCase12) {
+    ContextFreeGrammar grammar;
+    EXPECT_TRUE(grammar.parse("A -> B | ε B -> A b"));
+    EXPECT_TRUE(grammar.leftRecursionElimination());
+    const auto expected = R"( A -> B
+    | ε
+ B -> b B'
+B' -> b B'
+    | ε
+)";
+    EXPECT_EQ(expected, grammar.toString());
+}

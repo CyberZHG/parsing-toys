@@ -66,6 +66,7 @@ bool ContextFreeGrammar::leftRecursionElimination() {
             production[production.size() - 1] = primedSymbol;
         }
         recursiveProductions.emplace_back(vector{EMPTY_SYMBOL});
+        _terminals.insert(EMPTY_SYMBOL);
         _productions[head] = nonRecursiveProductions;
         _productions[primedSymbol] = recursiveProductions;
     }

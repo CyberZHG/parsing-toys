@@ -11,6 +11,7 @@ export default defineConfig({
                 main: resolve(__dirname, 'index.html'),
                 cfg_reformat: resolve(__dirname, 'tools', 'cfg_reformat.html'),
                 cfg_left_factoring: resolve(__dirname, 'tools', 'cfg_left_factoring.html'),
+                cfg_left_recursion: resolve(__dirname, 'tools', 'cfg_left_recursion.html'),
             }
         }
     },

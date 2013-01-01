@@ -17,4 +17,5 @@ export class ContextFreeGrammar {
     _nonTerminals(): VectorString
     nonTerminals(): string[]
     leftFactoring(): void
+    leftRecursionElimination(): boolean
 }
