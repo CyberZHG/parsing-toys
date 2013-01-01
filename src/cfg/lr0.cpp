@@ -105,10 +105,24 @@ unique_ptr<FiniteAutomaton> ContextFreeGrammar::computeLR0Automaton() {
     return automaton;
 }
 
+/**
+ * Build LR(0) ACTION/GOTO table from the LR(0) automaton.
+ *
+ * The table has two parts:
+ * - ACTION[state, terminal]: shift/reduce/accept actions
+ * - GOTO[state, non-terminal]: next state after reduction
+ *
+ * LR(0) uses no lookahead, so reduce actions apply to ALL terminals.
+ * This often causes conflicts (shift-reduce or reduce-reduce).
+ */
 ActionGotoTable ContextFreeGrammar::computeLR0ActionGotoTable(const unique_ptr<FiniteAutomaton>& automaton) const {
     ActionGotoTable actionGotoTable;
     actionGotoTable.actions.resize(automaton->size());
     actionGotoTable.numPopSymbols.resize(automaton->size());
+
+    // Fill shift actions and GOTO entries from automaton edges.
+    // Edge (u, v, X): if X is terminal -> ACTION[u,X] = shift v
+    //                 if X is non-terminal -> GOTO[u,X] = v
     for (const auto& [u, v, label] : automaton->edges()) {
         if (isTerminal(label)) {
             actionGotoTable.actions[u][label].emplace_back(format("shift {}", v));
@@ -116,10 +130,14 @@ ActionGotoTable ContextFreeGrammar::computeLR0ActionGotoTable(const unique_ptr<F
             actionGotoTable.actions[u][label].emplace_back(format("{}", v));
         }
     }
+
+    // Fill reduce actions and accept from automaton states.
     for (size_t u = 0; u < automaton->size(); ++u) {
         if (const auto& node = automaton->nodeAt(u); node.accept) {
             actionGotoTable.actions[u][EOF_SYMBOL].emplace_back("accept");
         } else {
+            // Find completed items (A -> α ·) and add reduce actions.
+            // LR(0) has no lookahead: reduce on ALL terminals and EOF.
             const auto findReduce = [&](const ContextFreeGrammar& grammar) {
                 for (const auto& head : grammar._ordering) {
                     const auto& productions = grammar._productions.at(head);
@@ -129,6 +147,7 @@ ActionGotoTable ContextFreeGrammar::computeLR0ActionGotoTable(const unique_ptr<F
                             for (size_t i = 0; i + 1 < production.size(); ++i) {
                                 action += " " + production[i];
                             }
+                            // Add reduce to all terminals (LR(0) has no lookahead)
                             for (const auto& terminal : _terminals) {
                                 actionGotoTable.actions[u][terminal].emplace_back(action);
                                 actionGotoTable.numPopSymbols[u][terminal].emplace_back(production.size());
