@@ -95,7 +95,7 @@ A → ε
     const auto steps = table.parse("");
     const auto expected = R"(| Stack | Symbols | Inputs | Action |
 |:-:|:-:|:-:|:-:|
-| 0 | | ¥ | reduce A -> |
+| 0 | | ¥ | reduce A -> ε |
 | 0 2 | A | ¥ | reduce S -> A |
 | 0 1 | S | ¥ | accept |
 )";
@@ -177,10 +177,10 @@ TEST(TestLRParsing, MissingNumPopSymbols) {
 TEST(TestLRParsing, MissingReducedSymbols) {
     ActionGotoTable table(2);
     table.actions[0]["a"].emplace_back("shift 1");
-    table.nextState[0]["a"] = 1;
+    table.nextStates[0]["a"] = 1;
 
     table.actions[1]["¥"].emplace_back("reduce S -> a");
-    table.numPopSymbols[1]["¥"] = 1;
+    table.reduceProductions[1]["¥"] = {"a"};
 
     const auto steps = table.parse("a");
     const auto expected = R"(| Stack | Symbols | Inputs | Action |
@@ -195,11 +195,11 @@ TEST(TestLRParsing, MissingReducedSymbols) {
 TEST(TestLRParsing, MissingGotoEntry) {
     ActionGotoTable table(2);
     table.actions[0]["a"].emplace_back("shift 1");
-    table.nextState[0]["a"] = 1;
+    table.nextStates[0]["a"] = 1;
 
     table.actions[1]["¥"].emplace_back("reduce S -> a");
-    table.numPopSymbols[1]["¥"] = 1;
-    table.reducedSymbols[1]["¥"] = "S";
+    table.reduceProductions[1]["¥"] = {"a"};
+    table.reduceHeads[1]["¥"] = "S";
 
     const auto steps = table.parse("a");
     const auto expected = R"(| Stack | Symbols | Inputs | Action |

@@ -35,6 +35,30 @@ string LRParsingSteps::toString() const {
     return result;
 }
 
+void ActionGotoTable::addShift(const size_t index, const Symbol& symbol, const size_t nextState) {
+    actions[index][symbol].emplace_back(format("shift {}", nextState));
+    nextStates[index][symbol] = nextState;
+}
+
+void ActionGotoTable::addGoto(const size_t index, const Symbol& symbol, const size_t nextState) {
+    actions[index][symbol].emplace_back(format("{}", nextState));
+    nextStates[index][symbol] = nextState;
+}
+
+void ActionGotoTable::addReduce(const size_t index, const Symbol& symbol, const Symbol& head, Production production) {
+    production.pop_back();
+    if (production.empty()) {
+        production.emplace_back(ContextFreeGrammar::EMPTY_SYMBOL);
+    }
+    string action = "reduce " + head + " ->";
+    for (const auto& s : production) {
+        action += " " + s;
+    }
+    actions[index][symbol].emplace_back(action);
+    reduceHeads[index][symbol] = head;
+    reduceProductions[index][symbol] = production;
+}
+
 bool ActionGotoTable::hasConflict() const {
     for (const auto& subActions : actions) {
         for (const auto& action : subActions | views::values) {
@@ -104,35 +128,39 @@ LRParsingSteps ActionGotoTable::parse(const string& s) const {
         }
 
         // Shift action: nextState exists for terminals
-        if (const auto shiftIt = nextState[state].find(nextSymbol); shiftIt != nextState[state].end()) {
+        if (const auto shiftIt = nextStates[state].find(nextSymbol); shiftIt != nextStates[state].end()) {
             // Push new state and symbol, consume input
             stack.push_back(shiftIt->second);
             symbols.push_back(nextSymbol);
             remaining.erase(remaining.begin(), remaining.begin() + 1);
         } else {
             // Reduce action: A -> α (pop |α| items, then GOTO)
-            const auto reduceIt = numPopSymbols[state].find(nextSymbol);
-            if (reduceIt == numPopSymbols[state].end()) {
+            const auto reduceIt = reduceProductions[state].find(nextSymbol);
+            if (reduceIt == reduceProductions[state].end()) {
                 steps.addStep(stack, symbols, remaining, "invalid action/goto table");
                 break;
             }
 
             // Pop |α| states and symbols from both stacks
-            for (size_t i = 0; i < reduceIt->second; i++) {
+            auto numPopStates = reduceIt->second.size();
+            if (reduceIt->second.size() == 1 && reduceIt->second[0] == ContextFreeGrammar::EMPTY_SYMBOL) {
+                numPopStates = 0;
+            }
+            for (size_t i = 0; i < numPopStates; i++) {
                 stack.pop_back();
                 symbols.pop_back();
             }
 
             // Find the reduced non-terminal A
-            const auto reducedIt = reducedSymbols[state].find(nextSymbol);
-            if (reducedIt == reducedSymbols[state].end()) {
+            const auto reducedIt = reduceHeads[state].find(nextSymbol);
+            if (reducedIt == reduceHeads[state].end()) {
                 steps.addStep(stack, symbols, remaining, "invalid action/goto table");
                 break;
             }
 
             // GOTO[stack.top(), A]: push new state and the non-terminal
-            const auto gotoIt = nextState[stack.back()].find(reducedIt->second);
-            if (gotoIt == nextState[stack.back()].end()) {
+            const auto gotoIt = nextStates[stack.back()].find(reducedIt->second);
+            if (gotoIt == nextStates[stack.back()].end()) {
                 steps.addStep(stack, symbols, remaining, "invalid action/goto table");
                 break;
             }

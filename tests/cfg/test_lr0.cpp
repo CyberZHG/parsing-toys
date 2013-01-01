@@ -442,7 +442,7 @@ A → ε
     const auto table = grammar.computeLR0ActionGotoTable(automaton);
     const auto expectedTable = R"(| State | ¥ | S | A |
 |:-:|:-:|:-:|:-:|
-| 0 | reduce A -> | 1 | 2 |
+| 0 | reduce A -> ε | 1 | 2 |
 | 1 | accept |  |  |
 | 2 | reduce S -> A |  |  |
 )";

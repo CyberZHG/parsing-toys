@@ -57,12 +57,16 @@ struct LRParsingSteps {
 
 struct ActionGotoTable {
     std::vector<std::unordered_map<Symbol, std::vector<std::string>>> actions;
-    std::vector<std::unordered_map<Symbol, std::size_t>> nextState;
-    std::vector<std::unordered_map<Symbol, std::size_t>> numPopSymbols;
-    std::vector<std::unordered_map<Symbol, Symbol>> reducedSymbols;
+    std::vector<std::unordered_map<Symbol, std::size_t>> nextStates;
+    std::vector<std::unordered_map<Symbol, Symbol>> reduceHeads;
+    std::vector<std::unordered_map<Symbol, Production>> reduceProductions;
 
     ActionGotoTable() = default;
-    explicit ActionGotoTable(const std::size_t n) : actions(n), nextState(n), numPopSymbols(n), reducedSymbols(n) {}
+    explicit ActionGotoTable(const std::size_t n) : actions(n), nextStates(n), reduceHeads(n), reduceProductions(n) {}
+
+    void addShift(size_t index, const Symbol& symbol, size_t nextState);
+    void addGoto(size_t index, const Symbol& symbol, size_t nextState);
+    void addReduce(size_t index, const Symbol& symbol, const Symbol& head, Production production);
 
     [[nodiscard]] bool hasConflict() const;
     [[nodiscard]] bool hasConflict(size_t index, const Symbol& symbol) const;

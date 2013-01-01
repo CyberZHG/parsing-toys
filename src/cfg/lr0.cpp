@@ -123,11 +123,9 @@ ActionGotoTable ContextFreeGrammar::computeLR0ActionGotoTable(const unique_ptr<F
     //                 if X is non-terminal -> GOTO[u,X] = v
     for (const auto& [u, v, label] : automaton->edges()) {
         if (isTerminal(label)) {
-            actionGotoTable.actions[u][label].emplace_back(format("shift {}", v));
-            actionGotoTable.nextState[u][label] = v;
+            actionGotoTable.addShift(u, label, v);
         } else {
-            actionGotoTable.actions[u][label].emplace_back(format("{}", v));
-            actionGotoTable.nextState[u][label] = v;
+            actionGotoTable.addGoto(u, label, v);
         }
     }
 
@@ -143,19 +141,11 @@ ActionGotoTable ContextFreeGrammar::computeLR0ActionGotoTable(const unique_ptr<F
                     const auto& productions = grammar._productions.at(head);
                     for (const auto& production : productions) {
                         if (production.back() == DOT_SYMBOL) {
-                            string action = "reduce " + head + " ->";
-                            for (size_t i = 0; i + 1 < production.size(); ++i) {
-                                action += " " + production[i];
-                            }
                             // Add reduce to all terminals (LR(0) has no lookahead)
                             for (const auto& terminal : _terminals) {
-                                actionGotoTable.actions[u][terminal].emplace_back(action);
-                                actionGotoTable.numPopSymbols[u][terminal] = production.size() - 1;
-                                actionGotoTable.reducedSymbols[u][terminal] = head;
+                                actionGotoTable.addReduce(u, terminal, head, production);
                             }
-                            actionGotoTable.actions[u][EOF_SYMBOL].emplace_back(action);
-                            actionGotoTable.numPopSymbols[u][EOF_SYMBOL] = production.size() - 1;
-                            actionGotoTable.reducedSymbols[u][EOF_SYMBOL] = head;
+                            actionGotoTable.addReduce(u, EOF_SYMBOL, head, production);
                         }
                     }
                 }
