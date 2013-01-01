@@ -159,3 +159,9 @@ B' -> b B'
 )";
     EXPECT_EQ(expected, grammar.toString());
 }
+
+TEST(TestContextFreeGrammarLeftRecursionElimination, SpecialCase13) {
+    ContextFreeGrammar grammar;
+    EXPECT_TRUE(grammar.parse("A -> B B -> C C->D D->A"));
+    EXPECT_FALSE(grammar.leftRecursionElimination());
+}

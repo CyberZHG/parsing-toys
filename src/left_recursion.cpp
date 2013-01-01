@@ -1,5 +1,6 @@
 #include "cfg.h"
 #include <format>
+#include <functional>
 
 bool ContextFreeGrammar::leftRecursionElimination() {
     bool eliminable = true;
@@ -9,7 +10,19 @@ bool ContextFreeGrammar::leftRecursionElimination() {
         // Find indirect recursions.
         Productions recursiveProductions, nonRecursiveProductions;
         unordered_set<string> productionKeys;
-        for (const auto& production : productions) {
+        const auto addToRecursiveSet = [&](const Production& production) {
+            if (const auto key = computeProductionKey(production); !productionKeys.contains(key)) {
+                productionKeys.insert(key);
+                recursiveProductions.emplace_back(production);
+            }
+        };
+        const auto addToNonRecursiveSet = [&](const Production& production) {
+            if (auto key = computeProductionKey(production); !productionKeys.contains(key)) {
+                productionKeys.insert(key);
+                nonRecursiveProductions.emplace_back(production);
+            }
+        };
+        const function<void(const Production&)> expand = [&](const Production& production) -> void {
             if (!production.empty()) {
                 if (eliminated.contains(production[0])) {
                     for (auto newProduction : _productions[production[0]]) {
@@ -17,13 +30,10 @@ bool ContextFreeGrammar::leftRecursionElimination() {
                             newProduction.resize(0);
                         }
                         newProduction.insert(newProduction.end(), production.begin() + 1, production.end());
-                        if (const auto key = computeProductionKey(newProduction); !productionKeys.contains(key)) {
-                            productionKeys.insert(key);
-                            if (!newProduction.empty() && newProduction[0] == head) {
-                                recursiveProductions.emplace_back(newProduction);
-                            } else {
-                                nonRecursiveProductions.emplace_back(newProduction);
-                            }
+                        if (!newProduction.empty() && newProduction[0] == head) {
+                            addToRecursiveSet(newProduction);
+                        } else {
+                            expand(newProduction);
                         }
                     }
                 } else if (production[0] == head) {
@@ -33,17 +43,15 @@ bool ContextFreeGrammar::leftRecursionElimination() {
                     }
                 } else {
                     if (production.size() == 1 && production[0] == EMPTY_SYMBOL) {
-                        if (!productionKeys.contains("")) {
-                            productionKeys.insert("");
-                            nonRecursiveProductions.emplace_back();
-                        }
+                        addToNonRecursiveSet(Production());
                     } else {
-                        if (const auto key = computeProductionKey(production); !productionKeys.contains(key)) {
-                            nonRecursiveProductions.emplace_back(production);
-                        }
+                       addToNonRecursiveSet(production);
                     }
                 }
             }
+        };
+        for (const auto& production : productions) {
+            expand(production);
         }
         eliminated.insert(head);
         if (recursiveProductions.empty()) {
@@ -52,7 +60,7 @@ bool ContextFreeGrammar::leftRecursionElimination() {
         // Try to eliminate left recursions.
         if (!recursiveProductions.empty() && nonRecursiveProductions.empty()) {
             eliminable = false;
-            _errorMessage = format("Left recursion cannot be eliminated for {}.", head);
+            _errorMessage = format("Left recursion cannot be eliminated for \"{}\".", head);
             break;
         }
         const auto primedSymbol = generatePrimedSymbol(head);
