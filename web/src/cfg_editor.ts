@@ -13,7 +13,7 @@ function highlightCFG(code: string) : string {
         .replace(/'/g, '&#39;')
         .replace(/-&gt;/g, '<span class="text-blue-500">-&gt;</span>')
         .replace(/\|/g, '<span class="text-yellow-600">|</span>')
-        .replace(/ε/g, '<span class="text-green-700">|</span>')
+        .replace(/ε/g, '<span class="text-green-700">ε</span>')
 }
 
 function updateLineNumbers() {
