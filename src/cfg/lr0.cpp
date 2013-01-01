@@ -1,6 +1,10 @@
 #include "cfg.h"
 #include "automaton.h"
 #include <unordered_set>
+#include <format>
+#include <ranges>
+
+#include "string_utils.h"
 
 using namespace std;
 
@@ -99,4 +103,44 @@ unique_ptr<FiniteAutomaton> ContextFreeGrammar::computeLR0Automaton() {
         }
     }
     return automaton;
+}
+
+ActionGotoTable ContextFreeGrammar::computeLR0ActionGotoTable(const unique_ptr<FiniteAutomaton>& automaton) const {
+    ActionGotoTable actionGotoTable;
+    actionGotoTable.actions.resize(automaton->size());
+    actionGotoTable.numPopSymbols.resize(automaton->size());
+    for (const auto& [u, v, label] : automaton->edges()) {
+        if (isTerminal(label)) {
+            actionGotoTable.actions[u][label].emplace_back(format("shift {}", v));
+        } else {
+            actionGotoTable.actions[u][label].emplace_back(format("{}", v));
+        }
+    }
+    for (size_t u = 0; u < automaton->size(); ++u) {
+        if (const auto& node = automaton->nodeAt(u); node.accept) {
+            actionGotoTable.actions[u][EOF_SYMBOL].emplace_back("accept");
+        } else {
+            const auto findReduce = [&](const ContextFreeGrammar& grammar) {
+                for (const auto& [head, productions]: grammar._productions) {
+                    for (const auto& production : productions) {
+                        if (production.back() == DOT_SYMBOL) {
+                            string action = "reduce " + head + " ->";
+                            for (size_t i = 0; i + 1 < production.size(); ++i) {
+                                action += " " + production[i];
+                            }
+                            for (const auto& terminal : _terminals) {
+                                actionGotoTable.actions[u][terminal].emplace_back(action);
+                                actionGotoTable.numPopSymbols[u][terminal].emplace_back(production.size());
+                            }
+                            actionGotoTable.actions[u][EOF_SYMBOL].emplace_back(action);
+                            actionGotoTable.numPopSymbols[u][EOF_SYMBOL].emplace_back(production.size());
+                        }
+                    }
+                }
+            };
+            findReduce(node.kernel);
+            findReduce(node.nonKernel);
+        }
+    }
+    return actionGotoTable;
 }

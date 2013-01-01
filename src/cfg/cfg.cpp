@@ -9,6 +9,7 @@ using namespace std;
 
 const string ContextFreeGrammar::EMPTY_SYMBOL = "ε";
 const string ContextFreeGrammar::DOT_SYMBOL = "·";
+const string ContextFreeGrammar::EOF_SYMBOL = "¥";
 
 bool ContextFreeGrammarToken::operator==(const ContextFreeGrammarToken& other) const {
     return type == other.type && symbol == other.symbol && line == other.line && column == other.column;
@@ -171,7 +172,7 @@ void ContextFreeGrammar::initTerminals() {
     for (const auto& productions : _productions | views::values) {
         for (const auto& production: productions) {
             for (const auto& symbol: production) {
-                if (!_productions.contains(symbol)) {
+                if (!_productions.contains(symbol) && symbol != EMPTY_SYMBOL) {
                     _terminals.insert(symbol);
                 }
             }
@@ -186,6 +187,10 @@ vector<string> ContextFreeGrammar::terminals() const {
 vector<string> ContextFreeGrammar::nonTerminals() const {
     const auto heads = _productions | views::keys;
     return {heads.begin(), heads.end()};
+}
+
+const vector<Symbol>& ContextFreeGrammar::orderedNonTerminals() const {
+    return _ordering;
 }
 
 bool ContextFreeGrammar::isTerminal(const Symbol& symbol) const {
@@ -310,7 +315,7 @@ void ContextFreeGrammar::addProduction(const Symbol& head, const Production& pro
     }
     _productions[head].emplace_back(production);
     for (const auto& symbol : production) {
-        if (!_productions.contains(symbol)) {
+        if (!_productions.contains(symbol) && symbol != EMPTY_SYMBOL) {
             _terminals.insert(symbol);
         }
     }

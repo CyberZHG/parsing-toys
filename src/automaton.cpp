@@ -12,6 +12,10 @@ string FiniteAutomatonNode::toString() const {
     return result;
 }
 
+const vector<FiniteAutomatonEdge>& FiniteAutomaton::edges() const {
+    return _edges;
+}
+
 size_t FiniteAutomaton::size() const {
     return _nodes.size();
 }
@@ -83,7 +87,7 @@ std::string FiniteAutomaton::toSVG() const {
         nodeLabels[i] += "}";
         if (accept) {
             const auto edgeId = graph->addEdge(static_cast<int>(i), static_cast<int>(n));
-        layout.attributes().setEdgeTailLabel(edgeId, "$");
+            layout.attributes().setEdgeTailLabel(edgeId, ContextFreeGrammar::EOF_SYMBOL);
         }
     }
     nodeLabels[n] = "accept";

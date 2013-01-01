@@ -55,6 +55,7 @@ export function updateCFGResult(code: string, terminals: string[], nonTerminals:
     let highlightedCode = htmlEscape(code)
         .replace(/-&gt;/g, '<span class="text-blue-500">-&gt;</span>')
         .replace(/\|/g, '<span class="text-yellow-600">|</span>')
+        .replace(/ε/g, '<span class="text-green-700">ε</span>')
     if (terminals.length > 0) {
         for (let i = 0; i < terminals.length; ++i) {
             terminals[i] = regexEscape(htmlEscape(terminals[i]))

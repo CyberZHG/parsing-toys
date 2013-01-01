@@ -13,6 +13,7 @@ using Production = std::vector<std::string>;
 using Productions = std::vector<Production>;
 
 class FiniteAutomaton;
+class ContextFreeGrammar;
 
 /**
  * Tokenized results.
@@ -42,12 +43,25 @@ struct FirstAndFollowSet {
     [[nodiscard]] std::vector<Symbol> getFollowSet(const Symbol& symbol) const;
 };
 
+struct ActionGotoTable {
+    std::vector<std::unordered_map<Symbol, std::vector<std::string>>> actions;
+    std::vector<std::unordered_map<Symbol, std::vector<std::size_t>>> numPopSymbols;
+
+    [[nodiscard]] bool hasConflict() const;
+    [[nodiscard]] bool hasConflict(size_t index, const Symbol& symbol) const;
+    [[nodiscard]] std::string toString(size_t index, const Symbol& symbol, const std::string& separator = " / ") const;
+
+    /** For unit tests only. */
+    [[nodiscard]] std::string toString(const ContextFreeGrammar& grammar, const std::string& separator = " / ") const;
+};
+
 class ContextFreeGrammar {
 public:
     ContextFreeGrammar() = default;
 
     static const std::string EMPTY_SYMBOL;
     static const std::string DOT_SYMBOL;
+    static const std::string EOF_SYMBOL;
 
     /**
      * Tokenization.
@@ -90,6 +104,7 @@ public:
      * @return All the non-terminals.
      */
     [[nodiscard]] std::vector<Symbol> nonTerminals() const;
+    [[nodiscard]] const std::vector<Symbol>& orderedNonTerminals() const;
 
     [[nodiscard]] bool isTerminal(const Symbol& symbol) const;
     [[nodiscard]] bool isNonTerminal(const Symbol& symbol) const;
@@ -166,6 +181,14 @@ public:
      * @return A deterministic finite automaton.
      */
     std::unique_ptr<FiniteAutomaton> computeLR0Automaton();
+
+    /**
+     * Compute the ACTION/GOTO table for LR(0) parsing.
+     *
+     * @param automaton
+     * @return
+     */
+    [[nodiscard]] ActionGotoTable computeLR0ActionGotoTable(const std::unique_ptr<FiniteAutomaton>& automaton) const;
 private:
     std::string _errorMessage;
     std::vector<Symbol> _ordering;  // The output ordering

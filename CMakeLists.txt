@@ -57,6 +57,7 @@ add_library(ParsingToys STATIC
         include/automaton.h
         src/automaton.cpp
         src/cfg/lr0.cpp
+        src/cfg/shift_reduce.cpp
 )
 
 target_include_directories(ParsingToys

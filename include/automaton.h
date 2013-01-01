@@ -29,6 +29,8 @@ public:
     FiniteAutomaton() = default;
     ~FiniteAutomaton() = default;
 
+    [[nodiscard]] const std::vector<FiniteAutomatonEdge>& edges() const;
+
     [[nodiscard]] std::size_t size() const;
     FiniteAutomatonNode& nodeAt(std::size_t i);
     [[nodiscard]] std::string newNodeLabel(const std::string& prefix = "I") const;

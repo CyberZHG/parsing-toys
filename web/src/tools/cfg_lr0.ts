@@ -23,12 +23,18 @@ lr0Button.addEventListener('click', () => {
     const cfg = new ContextFreeGrammar()
     const code = getCFGEditorValue()
     if (cfg.parse(code)) {
-        if (cfg.nonTerminals().length > 0) {
-            const automaton = cfg.computeLR0Automaton();
-            const parser = new DOMParser()
-            const svgDoc = parser.parseFromString(automaton.toSVG(), 'image/svg+xml')
-            automatonSVG.innerHTML = svgDoc.documentElement.innerHTML
-            automatonSVG.setAttribute("viewBox", svgDoc.documentElement.getAttribute("viewBox")!)
+        if (cfg.terminals().includes("¥")) {
+            errorMessage.textContent = "The ¥ symbol is used as the end-of-input marker; please do not use it in the grammar."
+            errorMessage.parentElement!.hidden = false
+        } else {
+            if (cfg.nonTerminals().length > 0) {
+                const automaton = cfg.computeLR0Automaton();
+                const parser = new DOMParser()
+                const svgDoc = parser.parseFromString(automaton.toSVG(), 'image/svg+xml')
+                automatonSVG.innerHTML = svgDoc.documentElement.innerHTML
+                automatonSVG.setAttribute("viewBox", svgDoc.documentElement.getAttribute("viewBox")!)
+            }
+            errorMessage.parentElement!.hidden = true
         }
     } else {
         errorMessage.textContent = cfg.errorMessage()
@@ -41,6 +47,16 @@ function onExamplesChange(key: string) : void {
     setCFGEditorValue(EXAMPLES[key])
     lr0Button.click()
 }
+
+document.querySelector<HTMLElement>('#cfg-editor-intro')!.innerHTML = `
+  Context free grammar input:
+  <div class="text-gray-500 font-light text-sm">
+    <ul>
+      <li>The first symbol encountered in the grammar definition is treated as the start symbol</li>
+      <li>The <code>¥</code> symbol is used as the end-of-input marker; please do not use it in the grammar.</li>
+    </ul>
+  </div>
+`
 
 setupExamplesMenu(EXAMPLE_OPTIONS, onExamplesChange)
 setupCFGEditor()

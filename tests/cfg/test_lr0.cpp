@@ -149,6 +149,24 @@ F -> ( E ) ·
     ofstream file(filePath);
     file << svg;
     file.close();
+
+    const auto table = grammar.computeLR0ActionGotoTable(automaton);
+    const auto expectedTable = R"(| State | ( | ) | * | + | id | ¥ | E | T | F |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| 0 | shift 4 |  |  |  | shift 5 |  | 1 | 2 | 3 |
+| 1 |  |  |  | shift 6 |  | accept |  |  |  |
+| 2 | reduce E -> T | reduce E -> T | shift 7 / reduce E -> T | reduce E -> T | reduce E -> T | reduce E -> T |  |  |  |
+| 3 | reduce T -> F | reduce T -> F | reduce T -> F | reduce T -> F | reduce T -> F | reduce T -> F |  |  |  |
+| 4 | shift 4 |  |  |  | shift 5 |  | 8 | 2 | 3 |
+| 5 | reduce F -> id | reduce F -> id | reduce F -> id | reduce F -> id | reduce F -> id | reduce F -> id |  |  |  |
+| 6 | shift 4 |  |  |  | shift 5 |  |  | 9 | 3 |
+| 7 | shift 4 |  |  |  | shift 5 |  |  |  | 10 |
+| 8 |  | shift 11 |  | shift 6 |  |  |  |  |  |
+| 9 | reduce E -> E + T | reduce E -> E + T | shift 7 / reduce E -> E + T | reduce E -> E + T | reduce E -> E + T | reduce E -> E + T |  |  |  |
+| 10 | reduce T -> T * F | reduce T -> T * F | reduce T -> T * F | reduce T -> T * F | reduce T -> T * F | reduce T -> T * F |  |  |  |
+| 11 | reduce F -> ( E ) | reduce F -> ( E ) | reduce F -> ( E ) | reduce F -> ( E ) | reduce F -> ( E ) | reduce F -> ( E ) |  |  |  |
+)";
+    EXPECT_EQ(expectedTable, table.toString(grammar));
 }
 
 TEST(TestContextFreeGrammarLR0Automaton, SpecialCase2) {
@@ -372,4 +390,118 @@ B -> c ·
     ofstream file(filePath);
     file << svg;
     file.close();
+}
+
+TEST(TestContextFreeGrammarLR0Automaton, SpecialCase6) {
+    ContextFreeGrammar grammar;
+    grammar.parse(R"(
+S → a S
+S → a
+)");
+    const auto automaton = grammar.computeLR0Automaton();
+    EXPECT_EQ(4, automaton->size());
+    const ::testing::TestInfo* info = ::testing::UnitTest::GetInstance()->current_test_info();
+    const auto svg = automaton->toSVG();
+    const auto filePath = format("{}_{}.svg", info->test_suite_name(), info->name());
+    ofstream file(filePath);
+    file << svg;
+    file.close();
+
+    const auto table = grammar.computeLR0ActionGotoTable(automaton);
+    const auto expectedTable = R"(| State | a | ¥ | S |
+|:-:|:-:|:-:|:-:|
+| 0 | shift 2 |  | 1 |
+| 1 |  | accept |  |
+| 2 | shift 2 / reduce S -> a | reduce S -> a | 3 |
+| 3 | reduce S -> a S | reduce S -> a S |  |
+)";
+    EXPECT_EQ(expectedTable, table.toString(grammar));
+    EXPECT_TRUE(table.hasConflict());
+    EXPECT_TRUE(table.hasConflict(2, "a"));
+    EXPECT_FALSE(table.hasConflict(2, "¥"));
+}
+
+TEST(TestContextFreeGrammarLR0Automaton, SpecialCase7) {
+    ContextFreeGrammar grammar;
+    grammar.parse(R"(
+S → A
+A → ε
+)");
+    const auto automaton = grammar.computeLR0Automaton();
+    EXPECT_EQ(3, automaton->size());
+    const ::testing::TestInfo* info = ::testing::UnitTest::GetInstance()->current_test_info();
+    const auto svg = automaton->toSVG();
+    const auto filePath = format("{}_{}.svg", info->test_suite_name(), info->name());
+    ofstream file(filePath);
+    file << svg;
+    file.close();
+
+    const auto table = grammar.computeLR0ActionGotoTable(automaton);
+    const auto expectedTable = R"(| State | ¥ | S | A |
+|:-:|:-:|:-:|:-:|
+| 0 | reduce A -> | 1 | 2 |
+| 1 | accept |  |  |
+| 2 | reduce S -> A |  |  |
+)";
+    EXPECT_EQ(expectedTable, table.toString(grammar));
+    EXPECT_FALSE(table.hasConflict());
+}
+
+TEST(TestContextFreeGrammarLR0Automaton, SpecialCase8) {
+    ContextFreeGrammar grammar;
+    grammar.parse(R"(
+S → A
+S → B
+A → a
+B → a
+)");
+    const auto automaton = grammar.computeLR0Automaton();
+    EXPECT_EQ(5, automaton->size());
+    const ::testing::TestInfo* info = ::testing::UnitTest::GetInstance()->current_test_info();
+    const auto svg = automaton->toSVG();
+    const auto filePath = format("{}_{}.svg", info->test_suite_name(), info->name());
+    ofstream file(filePath);
+    file << svg;
+    file.close();
+
+    const auto table = grammar.computeLR0ActionGotoTable(automaton);
+    const auto expectedTable = R"(| State | a | ¥ | S | A | B |
+|:-:|:-:|:-:|:-:|:-:|:-:|
+| 0 | shift 4 |  | 1 | 2 | 3 |
+| 1 |  | accept |  |  |  |
+| 2 | reduce S -> A | reduce S -> A |  |  |  |
+| 3 | reduce S -> B | reduce S -> B |  |  |  |
+| 4 | reduce A -> a / reduce B -> a | reduce A -> a / reduce B -> a |  |  |  |
+)";
+    EXPECT_EQ(expectedTable, table.toString(grammar));
+    EXPECT_TRUE(table.hasConflict());
+}
+
+TEST(TestContextFreeGrammarLR0Automaton, SpecialCase9) {
+    ContextFreeGrammar grammar;
+    grammar.parse(R"(
+S → A A
+A → a
+)");
+    const auto automaton = grammar.computeLR0Automaton();
+    EXPECT_EQ(5, automaton->size());
+    const ::testing::TestInfo* info = ::testing::UnitTest::GetInstance()->current_test_info();
+    const auto svg = automaton->toSVG();
+    const auto filePath = format("{}_{}.svg", info->test_suite_name(), info->name());
+    ofstream file(filePath);
+    file << svg;
+    file.close();
+
+    const auto table = grammar.computeLR0ActionGotoTable(automaton);
+    const auto expectedTable = R"(| State | a | ¥ | S | A |
+|:-:|:-:|:-:|:-:|:-:|
+| 0 | shift 3 |  | 1 | 2 |
+| 1 |  | accept |  |  |
+| 2 | shift 3 |  |  | 4 |
+| 3 | reduce A -> a | reduce A -> a |  |  |
+| 4 | reduce S -> A A | reduce S -> A A |  |  |
+)";
+    EXPECT_EQ(expectedTable, table.toString(grammar));
+    EXPECT_FALSE(table.hasConflict());
+    EXPECT_FALSE(table.hasConflict(2, "¥"));
 }
