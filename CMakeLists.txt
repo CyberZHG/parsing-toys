@@ -51,6 +51,7 @@ add_library(ParsingToys STATIC
         include/production_trie.h
         src/production_trie.cpp
         src/left_factor.cpp
+        src/left_recursion.cpp
 )
 
 target_include_directories(ParsingToys

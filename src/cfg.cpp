@@ -229,7 +229,7 @@ string ContextFreeGrammar::generatePrimedSymbol(const string& symbol) {
     }
     string newSymbol;
     if (!hasPrime) {
-        if (const auto candidate = symbol + "'"; !_productions.contains(candidate)) {
+        if (const auto candidate = symbol + "'"; !(_productions.contains(candidate) || _terminals.contains(candidate))) {
             newSymbol = candidate;
         } else {
             baseSymbol = candidate;
@@ -242,15 +242,18 @@ string ContextFreeGrammar::generatePrimedSymbol(const string& symbol) {
             }
             ++number;
             newSymbol = symbol.substr(0, i) + "'_" + to_string(number);
-            if (_productions.contains(newSymbol)) {
+            if (_productions.contains(newSymbol) || _terminals.contains(newSymbol)) {
                 baseSymbol = newSymbol;
             } else {
                 break;
             }
         }
     }
-    const auto it = ranges::find(_ordering, baseSymbol);
-    _ordering.insert(it + 1, newSymbol);
+    if (const auto it = ranges::find(_ordering, baseSymbol); it == _ordering.end()) {
+        _ordering.emplace_back(newSymbol);
+    } else {
+        _ordering.insert(it + 1, newSymbol);
+    }
     return newSymbol;
 }
 
@@ -260,10 +263,8 @@ void ContextFreeGrammar::addProductions(const Symbol& head, const Productions& p
     }
     for (const auto& production: productions) {
         _productions[head].emplace_back(production);
-        if (production.size() == 1 && production[0] == EMPTY_SYMBOL) {
-            _terminals.insert(EMPTY_SYMBOL);
-        }
     }
+    initTerminals();
 }
 
 bool ContextFreeGrammar::expandable(const Production& production) const {

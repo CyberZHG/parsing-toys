@@ -93,3 +93,17 @@ TEST(TestPrimedSymbol, PrimedNoPrime4) {
     grammar.addProductions(grammar.generatePrimedSymbol("A'_1d"), {{"b"}});
     EXPECT_EQ(" A'_1d -> a\nA'_1d' -> b\n", grammar.toString());
 }
+
+TEST(TestPrimedSymbol, PrimedInTerminals1) {
+    ContextFreeGrammar grammar;
+    grammar.addProductions("A", {{"A'"}});
+    grammar.addProductions(grammar.generatePrimedSymbol("A"), {{"b"}});
+    EXPECT_EQ("   A -> A'\nA'_1 -> b\n", grammar.toString());
+}
+
+TEST(TestPrimedSymbol, PrimedInTerminals2) {
+    ContextFreeGrammar grammar;
+    grammar.addProductions("A", {{"A'", "A'_1"}});
+    grammar.addProductions(grammar.generatePrimedSymbol("A"), {{"b"}});
+    EXPECT_EQ("   A -> A' A'_1\nA'_2 -> b\n", grammar.toString());
+}

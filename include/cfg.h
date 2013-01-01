@@ -104,6 +104,18 @@ public:
      */
     void leftFactoring();
 
+    /**
+     * Try to eliminate left recursions based on the current ordering.
+     *
+     * When all right-hand sides of a non-terminal’s productions start with that non-terminal,
+     * the left recursion cannot be eliminated.
+     *
+     * @attention This function does not provide atomicity.
+     *
+     * @return False if the left recursion cannot be eliminated.
+     */
+    bool leftRecursionElimination();
+
 private:
     string _errorMessage;
     vector<Symbol> _ordering;  // The output ordering
