@@ -176,3 +176,16 @@ A' -> b
 )";
     EXPECT_EQ(expected, grammar.toString());
 }
+
+TEST(TestContextFreeGrammarLeftFactoring, SpecialCase14) {
+    ContextFreeGrammar grammar;
+    EXPECT_TRUE(grammar.parse(R"(S -> A c | A d
+A -> a b)"));
+    grammar.leftFactoring();
+    const auto expected = R"( S -> A S'
+S' -> c
+    | d
+ A -> a b
+)";
+    EXPECT_EQ(expected, grammar.toString());
+}
