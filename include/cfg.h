@@ -226,6 +226,23 @@ public:
      */
     [[nodiscard]] ActionGotoTable computeLR0ActionGotoTable(const std::unique_ptr<FiniteAutomaton>& automaton) const;
 
+    /**
+     * Compute an automaton for SLR(1) parsing.
+     * SLR(1) extends LR(0) by adding 1-symbol lookahead using FOLLOW sets.
+     * The automaton should be the same as LR(0).
+     *
+     * @return A deterministic finite automaton.
+     */
+    std::unique_ptr<FiniteAutomaton> computeSLR1Automaton();
+
+    /**
+     * Compute the ACTION/GOTO table for SLR(1) parsing.
+     *
+     * @param automaton
+     * @return
+     */
+    [[nodiscard]] ActionGotoTable computeSLR1ActionGotoTable(const std::unique_ptr<FiniteAutomaton>& automaton) const;
+
 private:
     std::string _errorMessage;
     std::vector<Symbol> _ordering;  // The output ordering

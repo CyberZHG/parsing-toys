@@ -20,7 +20,7 @@ TEST(TestContextFreeGrammarFirstAndFollow, SingleProductionSingleSymbol) {
     EXPECT_EQ("S", result.symbolAt(0));
     EXPECT_EQ(false, result.getNullable("S"));
     EXPECT_EQ(vector<string>({"a"}), result.getFirstSet("S"));
-    EXPECT_EQ(vector<string>({"$"}), result.getFollowSet("S"));
+    EXPECT_EQ(vector<string>({ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("S"));
 }
 
 TEST(TestContextFreeGrammarFirstAndFollow, SingleProductionEmptySymbol) {
@@ -30,7 +30,7 @@ TEST(TestContextFreeGrammarFirstAndFollow, SingleProductionEmptySymbol) {
     EXPECT_EQ(1, result.size());
     EXPECT_EQ(true, result.getNullable("S"));
     EXPECT_EQ(vector<string>({"ε"}), result.getFirstSet("S"));
-    EXPECT_EQ(vector<string>({"$"}), result.getFollowSet("S"));
+    EXPECT_EQ(vector<string>({ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("S"));
 }
 
 TEST(TestContextFreeGrammarFirstAndFollow, SingleProductionSingleSymbolOrEmpty) {
@@ -40,7 +40,7 @@ TEST(TestContextFreeGrammarFirstAndFollow, SingleProductionSingleSymbolOrEmpty) 
     EXPECT_EQ(1, result.size());
     EXPECT_EQ(true, result.getNullable("S"));
     EXPECT_EQ(vector<string>({"a", "ε"}), result.getFirstSet("S"));
-    EXPECT_EQ(vector<string>({"$"}), result.getFollowSet("S"));
+    EXPECT_EQ(vector<string>({ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("S"));
 }
 
 TEST(TestContextFreeGrammarFirstAndFollow, SelfLoop) {
@@ -50,7 +50,7 @@ TEST(TestContextFreeGrammarFirstAndFollow, SelfLoop) {
     EXPECT_EQ(1, result.size());
     EXPECT_EQ(false, result.getNullable("S"));
     EXPECT_EQ(vector<string>(), result.getFirstSet("S"));
-    EXPECT_EQ(vector<string>({"$"}), result.getFollowSet("S"));
+    EXPECT_EQ(vector<string>({ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("S"));
 }
 
 TEST(TestContextFreeGrammarFirstAndFollow, Loop) {
@@ -62,9 +62,9 @@ TEST(TestContextFreeGrammarFirstAndFollow, Loop) {
     EXPECT_EQ(vector<string>(), result.getFirstSet("S"));
     EXPECT_EQ(vector<string>(), result.getFirstSet("A"));
     EXPECT_EQ(vector<string>(), result.getFirstSet("B"));
-    EXPECT_EQ(vector<string>({"$"}), result.getFollowSet("S"));
-    EXPECT_EQ(vector<string>({"$"}), result.getFollowSet("A"));
-    EXPECT_EQ(vector<string>({"$"}), result.getFollowSet("B"));
+    EXPECT_EQ(vector<string>({ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("S"));
+    EXPECT_EQ(vector<string>({ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("A"));
+    EXPECT_EQ(vector<string>({ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("B"));
 }
 
 TEST(TestContextFreeGrammarFirstAndFollow, SpecialCase1) {
@@ -73,9 +73,9 @@ TEST(TestContextFreeGrammarFirstAndFollow, SpecialCase1) {
     const auto result = grammar.computeFirstAndFollowSet();
     EXPECT_EQ(2, result.size());
     EXPECT_EQ(vector<string>({"a"}), result.getFirstSet("S"));
-    EXPECT_EQ(vector<string>({"$", "b"}), result.getFollowSet("S"));
+    EXPECT_EQ(vector<string>({"b", ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("S"));
     EXPECT_EQ(vector<string>({"a"}), result.getFirstSet("A"));
-    EXPECT_EQ(vector<string>({"$", "b"}), result.getFollowSet("A"));
+    EXPECT_EQ(vector<string>({"b", ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("A"));
 }
 
 TEST(TestContextFreeGrammarFirstAndFollow, SpecialCase2) {
@@ -92,11 +92,11 @@ TEST(TestContextFreeGrammarFirstAndFollow, SpecialCase2) {
     EXPECT_EQ(vector<string>({"c"}), result.getFirstSet("B"));
     EXPECT_EQ(vector<string>({"d"}), result.getFirstSet("C"));
     EXPECT_EQ(vector<string>({"e"}), result.getFirstSet("D"));
-    EXPECT_EQ(vector<string>({"$"}), result.getFollowSet("S"));
+    EXPECT_EQ(vector<string>({ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("S"));
     EXPECT_EQ(vector<string>({"c"}), result.getFollowSet("A"));
     EXPECT_EQ(vector<string>({"d"}), result.getFollowSet("B"));
     EXPECT_EQ(vector<string>({"e"}), result.getFollowSet("C"));
-    EXPECT_EQ(vector<string>({"$"}), result.getFollowSet("D"));
+    EXPECT_EQ(vector<string>({ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("D"));
 }
 
 TEST(TestContextFreeGrammarFirstAndFollow, SpecialCase3) {
@@ -113,11 +113,11 @@ TEST(TestContextFreeGrammarFirstAndFollow, SpecialCase3) {
     EXPECT_EQ(vector<string>({"(", "id"}), result.getFirstSet("F"));
     EXPECT_EQ(vector<string>({"+", "ε"}), result.getFirstSet("E'"));
     EXPECT_EQ(vector<string>({"*", "ε"}), result.getFirstSet("T'"));
-    EXPECT_EQ(vector<string>({"$", ")"}), result.getFollowSet("E"));
-    EXPECT_EQ(vector<string>({"$", ")", "+"}), result.getFollowSet("T"));
-    EXPECT_EQ(vector<string>({"$", ")", "*", "+"}), result.getFollowSet("F"));
-    EXPECT_EQ(vector<string>({"$", ")"}), result.getFollowSet("E'"));
-    EXPECT_EQ(vector<string>({"$", ")", "+"}), result.getFollowSet("T'"));
+    EXPECT_EQ(vector<string>({")", ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("E"));
+    EXPECT_EQ(vector<string>({")", "+", ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("T"));
+    EXPECT_EQ(vector<string>({")", "*", "+", ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("F"));
+    EXPECT_EQ(vector<string>({")", ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("E'"));
+    EXPECT_EQ(vector<string>({")", "+", ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("T'"));
 }
 
 TEST(TestContextFreeGrammarFirstAndFollow, SpecialCase4) {
@@ -128,8 +128,8 @@ TEST(TestContextFreeGrammarFirstAndFollow, SpecialCase4) {
     EXPECT_EQ(2, result.size());
     EXPECT_EQ(vector<string>({"a"}), result.getFirstSet("E"));
     EXPECT_EQ(vector<string>({"a"}), result.getFirstSet("T"));
-    EXPECT_EQ(vector<string>({"$", "+"}), result.getFollowSet("E"));
-    EXPECT_EQ(vector<string>({"$", "+"}), result.getFollowSet("T"));
+    EXPECT_EQ(vector<string>({"+", ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("E"));
+    EXPECT_EQ(vector<string>({"+", ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("T"));
 }
 
 TEST(TestContextFreeGrammarFirstAndFollow, SpecialCase5) {
@@ -142,9 +142,9 @@ TEST(TestContextFreeGrammarFirstAndFollow, SpecialCase5) {
     EXPECT_EQ(vector<string>({"a"}), result.getFirstSet("S"));
     EXPECT_EQ(vector<string>({"a"}), result.getFirstSet("A"));
     EXPECT_EQ(vector<string>({"ε"}), result.getFirstSet("B"));
-    EXPECT_EQ(vector<string>({"$"}), result.getFollowSet("S"));
-    EXPECT_EQ(vector<string>({"$"}), result.getFollowSet("A"));
-    EXPECT_EQ(vector<string>({"$"}), result.getFollowSet("B"));
+    EXPECT_EQ(vector<string>({ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("S"));
+    EXPECT_EQ(vector<string>({ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("A"));
+    EXPECT_EQ(vector<string>({ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("B"));
 }
 
 TEST(TestContextFreeGrammarFirstAndFollow, SpecialCase6) {
@@ -153,7 +153,7 @@ TEST(TestContextFreeGrammarFirstAndFollow, SpecialCase6) {
     const auto result = grammar.computeFirstAndFollowSet();
     EXPECT_EQ(1, result.size());
     EXPECT_EQ(vector<string>({"a", "ε"}), result.getFirstSet("A"));
-    EXPECT_EQ(vector<string>({"$", "a"}), result.getFollowSet("A"));
+    EXPECT_EQ(vector<string>({"a", ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("A"));
 }
 
 TEST(TestContextFreeGrammarFirstAndFollow, SpecialCase7) {
@@ -168,10 +168,10 @@ TEST(TestContextFreeGrammarFirstAndFollow, SpecialCase7) {
     EXPECT_EQ(vector<string>({"a", "ε"}), result.getFirstSet("A"));
     EXPECT_EQ(vector<string>({"b", "ε"}), result.getFirstSet("B"));
     EXPECT_EQ(vector<string>({"c"}), result.getFirstSet("C"));
-    EXPECT_EQ(vector<string>({"$"}), result.getFollowSet("S"));
+    EXPECT_EQ(vector<string>({ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("S"));
     EXPECT_EQ(vector<string>({"b", "c"}), result.getFollowSet("A"));
     EXPECT_EQ(vector<string>({"c"}), result.getFollowSet("B"));
-    EXPECT_EQ(vector<string>({"$"}), result.getFollowSet("C"));
+    EXPECT_EQ(vector<string>({ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("C"));
 }
 
 TEST(TestContextFreeGrammarFirstAndFollow, SpecialCase8) {
@@ -184,9 +184,9 @@ TEST(TestContextFreeGrammarFirstAndFollow, SpecialCase8) {
     EXPECT_EQ(vector<string>({"a"}), result.getFirstSet("S"));
     EXPECT_EQ(vector<string>({"a"}), result.getFirstSet("A"));
     EXPECT_EQ(vector<string>({"ε"}), result.getFirstSet("B"));
-    EXPECT_EQ(vector<string>({"$"}), result.getFollowSet("S"));
-    EXPECT_EQ(vector<string>({"$"}), result.getFollowSet("A"));
-    EXPECT_EQ(vector<string>({"$"}), result.getFollowSet("B"));
+    EXPECT_EQ(vector<string>({ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("S"));
+    EXPECT_EQ(vector<string>({ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("A"));
+    EXPECT_EQ(vector<string>({ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("B"));
 }
 
 TEST(TestContextFreeGrammarFirstAndFollow, SpecialCase9) {
@@ -197,7 +197,7 @@ TEST(TestContextFreeGrammarFirstAndFollow, SpecialCase9) {
     EXPECT_EQ(2, result.size());
     EXPECT_EQ(vector<string>({"a", "b"}), result.getFirstSet("S"));
     EXPECT_EQ(vector<string>({"a", "ε"}), result.getFirstSet("A"));
-    EXPECT_EQ(vector<string>({"$"}), result.getFollowSet("S"));
+    EXPECT_EQ(vector<string>({ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("S"));
     EXPECT_EQ(vector<string>({"b"}), result.getFollowSet("A"));
 }
 
@@ -209,8 +209,8 @@ TEST(TestContextFreeGrammarFirstAndFollow, SpecialCase10) {
     EXPECT_EQ(2, result.size());
     EXPECT_EQ(vector<string>({"a", "ε"}), result.getFirstSet("S"));
     EXPECT_EQ(vector<string>({"a", "ε"}), result.getFirstSet("A"));
-    EXPECT_EQ(vector<string>({"$"}), result.getFollowSet("S"));
-    EXPECT_EQ(vector<string>({"$", "a"}), result.getFollowSet("A"));
+    EXPECT_EQ(vector<string>({ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("S"));
+    EXPECT_EQ(vector<string>({"a", ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("A"));
 }
 
 TEST(TestContextFreeGrammarFirstAndFollow, SpecialCase11) {
@@ -225,10 +225,10 @@ TEST(TestContextFreeGrammarFirstAndFollow, SpecialCase11) {
     EXPECT_EQ(vector<string>({"a", "ε"}), result.getFirstSet("A"));
     EXPECT_EQ(vector<string>({"b", "ε"}), result.getFirstSet("B"));
     EXPECT_EQ(vector<string>({"c", "ε"}), result.getFirstSet("C"));
-    EXPECT_EQ(vector<string>({"$"}), result.getFollowSet("S"));
-    EXPECT_EQ(vector<string>({"$", "b", "c"}), result.getFollowSet("A"));
-    EXPECT_EQ(vector<string>({"$", "c"}), result.getFollowSet("B"));
-    EXPECT_EQ(vector<string>({"$"}), result.getFollowSet("C"));
+    EXPECT_EQ(vector<string>({ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("S"));
+    EXPECT_EQ(vector<string>({"b", "c", ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("A"));
+    EXPECT_EQ(vector<string>({"c", ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("B"));
+    EXPECT_EQ(vector<string>({ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("C"));
 }
 
 TEST(TestContextFreeGrammarFirstAndFollow, SpecialCase12) {
@@ -243,7 +243,7 @@ TEST(TestContextFreeGrammarFirstAndFollow, SpecialCase12) {
     EXPECT_EQ(vector<string>({"b", "c"}), result.getFirstSet("A"));
     EXPECT_EQ(vector<string>({"b", "ε"}), result.getFirstSet("B"));
     EXPECT_EQ(vector<string>({"b", "c"}), result.getFirstSet("C"));
-    EXPECT_EQ(vector<string>({"$"}), result.getFollowSet("S"));
+    EXPECT_EQ(vector<string>({ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("S"));
     EXPECT_EQ(vector<string>({"d"}), result.getFollowSet("A"));
     EXPECT_EQ(vector<string>({"b", "c"}), result.getFollowSet("B"));
     EXPECT_EQ(vector<string>({"d"}), result.getFollowSet("C"));
@@ -259,7 +259,7 @@ TEST(TestContextFreeGrammarFirstAndFollow, SpecialCase13) {
     EXPECT_EQ(vector<string>({"a", "b", "ε"}), result.getFirstSet("S"));
     EXPECT_EQ(vector<string>({"a", "ε"}), result.getFirstSet("A"));
     EXPECT_EQ(vector<string>({"b", "ε"}), result.getFirstSet("B"));
-    EXPECT_EQ(vector<string>({"$"}), result.getFollowSet("S"));
-    EXPECT_EQ(vector<string>({"$", "a", "b"}), result.getFollowSet("A"));
-    EXPECT_EQ(vector<string>({"$", "a"}), result.getFollowSet("B"));
+    EXPECT_EQ(vector<string>({ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("S"));
+    EXPECT_EQ(vector<string>({"a", "b", ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("A"));
+    EXPECT_EQ(vector<string>({"a", ContextFreeGrammar::EOF_SYMBOL}), result.getFollowSet("B"));
 }

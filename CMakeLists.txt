@@ -58,6 +58,7 @@ add_library(ParsingToys STATIC
         src/automaton.cpp
         src/cfg/lr0.cpp
         src/cfg/lr.cpp
+        src/cfg/slr1.cpp
 )
 
 target_include_directories(ParsingToys
@@ -92,6 +93,7 @@ if(PARSING_TOYS_ENABLE_TESTS)
             tests/cfg/test_closure.cpp
             tests/cfg/test_lr0.cpp
             tests/cfg/test_lr.cpp
+            tests/cfg/test_slr1.cpp
     )
 
     target_link_libraries(runTests

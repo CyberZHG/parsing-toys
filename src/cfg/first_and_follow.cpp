@@ -101,7 +101,7 @@ FirstAndFollowSet ContextFreeGrammar::computeFirstAndFollowSet() const {
     for (const auto& symbol : _ordering) {
         result.follow[symbol];
     }
-    result.follow[_ordering[0]].insert("$");  // Rule 1
+    result.follow[_ordering[0]].insert(EOF_SYMBOL);  // Rule 1
     while (hasUpdate) {
         hasUpdate = false;
         auto addToFollow = [&](const Symbol& head, const Symbol& symbol) {

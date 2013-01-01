@@ -63,7 +63,6 @@ lr0Button.addEventListener('click', () => {
                 automatonSVG.innerHTML = svgDoc.documentElement.innerHTML
                 automatonSVG.setAttribute("viewBox", svgDoc.documentElement.getAttribute("viewBox")!)
 
-                // Parse input string if provided
                 const input = inputString.value.trim()
                 if (input) {
                     const table = cfg.computeLR0ActionGotoTable(automaton)
