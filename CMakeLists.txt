@@ -59,6 +59,8 @@ add_library(ParsingToys STATIC
         src/cfg/lr0.cpp
         src/cfg/lr.cpp
         src/cfg/slr1.cpp
+        src/cfg/lr1.cpp
+        src/cfg/lalr.cpp
 )
 
 target_include_directories(ParsingToys

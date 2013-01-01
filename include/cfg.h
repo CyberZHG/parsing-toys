@@ -98,6 +98,7 @@ public:
     static const std::string EMPTY_SYMBOL;
     static const std::string DOT_SYMBOL;
     static const std::string EOF_SYMBOL;
+    static const std::string LOOKAHEAD_SEPARATOR;
 
     /**
      * Tokenization.
@@ -242,6 +243,40 @@ public:
      * @return
      */
     [[nodiscard]] ActionGotoTable computeSLR1ActionGotoTable(const std::unique_ptr<FiniteAutomaton>& automaton) const;
+
+    /**
+     * Compute an automaton for LR(1) parsing.
+     * LR(1) uses 1-symbol lookahead stored with each item.
+     * Items are [A -> α · β, a] where 'a' is the lookahead terminal.
+     *
+     * @return A deterministic finite automaton.
+     */
+    std::unique_ptr<FiniteAutomaton> computeLR1Automaton();
+
+    /**
+     * Compute the ACTION/GOTO table for LR(1) parsing.
+     *
+     * @param automaton
+     * @return
+     */
+    [[nodiscard]] ActionGotoTable computeLR1ActionGotoTable(const std::unique_ptr<FiniteAutomaton>& automaton) const;
+
+    /**
+     * Compute an automaton for LALR(1) parsing.
+     * LALR(1) merges LR(1) states with identical cores (ignoring lookaheads).
+     * This produces fewer states than LR(1) but may introduce reduce-reduce conflicts.
+     *
+     * @return A deterministic finite automaton.
+     */
+    std::unique_ptr<FiniteAutomaton> computeLALRAutomaton();
+
+    /**
+     * Compute the ACTION/GOTO table for LALR(1) parsing.
+     *
+     * @param automaton
+     * @return
+     */
+    [[nodiscard]] ActionGotoTable computeLALRActionGotoTable(const std::unique_ptr<FiniteAutomaton>& automaton) const;
 
 private:
     std::string _errorMessage;

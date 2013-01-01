@@ -10,6 +10,7 @@ using namespace std;
 const string ContextFreeGrammar::EMPTY_SYMBOL = "ε";
 const string ContextFreeGrammar::DOT_SYMBOL = "·";
 const string ContextFreeGrammar::EOF_SYMBOL = "¥";
+const string ContextFreeGrammar::LOOKAHEAD_SEPARATOR = "，";
 
 bool ContextFreeGrammarToken::operator==(const ContextFreeGrammarToken& other) const {
     return type == other.type && symbol == other.symbol && line == other.line && column == other.column;

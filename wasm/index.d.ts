@@ -76,4 +76,8 @@ export class ContextFreeGrammar {
     computeLR0ActionGotoTable(automaton: FiniteAutomaton): ActionGotoTable
     computeSLR1Automaton(): FiniteAutomaton
     computeSLR1ActionGotoTable(automaton: FiniteAutomaton): ActionGotoTable
+    computeLR1Automaton(): FiniteAutomaton
+    computeLR1ActionGotoTable(automaton: FiniteAutomaton): ActionGotoTable
+    computeLALRAutomaton(): FiniteAutomaton
+    computeLALRActionGotoTable(automaton: FiniteAutomaton): ActionGotoTable
 }
