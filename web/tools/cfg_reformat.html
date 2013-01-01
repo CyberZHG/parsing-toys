@@ -10,7 +10,7 @@
 <body>
 {{> navbar }}
 <main class="max-w-7xl mx-auto px-4 py-10 min-h-screen flex flex-col">
-  {{> cfg_input }}
+  {{> cfg_editor }}
   <div class="flex flex-col py-4 w-full gap-2 max-w-3xl mx-auto">
     <div class="flex mt-2">
       <button id="button-cfg-reformat" class="w-full py-2 bg-blue-700 hover:bg-blue-800 rounded font-semibold text-white text-sm">Reformat</button>
@@ -25,6 +25,7 @@
     </div>
   </div>
   {{> cfg_result }}
+  {{> location_hash }}
 </main>
 {{> footer }}
 <script type="module" src="/src/tools/cfg_reformat.ts"></script>

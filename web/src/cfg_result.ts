@@ -9,6 +9,13 @@ export function setupCFGResult(elementNamePrefix: string = 'cfg-result') {
 
     buttonCopyCode.addEventListener('click', async () => {
         await navigator.clipboard.writeText(highlighted.textContent)
+        const originalText = buttonCopyCode.textContent
+        buttonCopyCode.innerHTML = "Copied!"
+        buttonCopyCode.disabled = true
+        setTimeout(() => {
+            buttonCopyCode.textContent = originalText;
+            buttonCopyCode.disabled = false
+        }, 2000);
     })
 }
 

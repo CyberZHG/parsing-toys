@@ -79,6 +79,18 @@ TEST(TestContextFreeGrammarParse, EmptyProduction4) {
     EXPECT_EQ("Line 1 Column 6: Found empty production for 'S'.", grammar.errorMessage());
 }
 
+TEST(TestContextFreeGrammarParse, ExistingHead1) {
+    ContextFreeGrammar grammar;
+    EXPECT_TRUE(grammar.parse("S->a S->b"));
+    EXPECT_EQ("S -> a\n   | b\n", grammar.toString());
+}
+
+TEST(TestContextFreeGrammarParse, ExistingHead2) {
+    ContextFreeGrammar grammar;
+    EXPECT_TRUE(grammar.parse("S->a A->c S->b"));
+    EXPECT_EQ("S -> a\n   | b\nA -> c\n", grammar.toString());
+}
+
 TEST(TestContextFreeGrammarParse, SpecialCase1) {
     ContextFreeGrammar grammar;
     EXPECT_TRUE(grammar.parse("S -> S S + | S S * | a"));
