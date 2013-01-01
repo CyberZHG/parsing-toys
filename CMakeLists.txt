@@ -70,6 +70,7 @@ if(PARSING_TOYS_ENABLE_TESTS)
     add_executable(runTests
             tests/test_main.cpp
             tests/cfg/test_tokenize.cpp
+            tests/cfg/test_parse.cpp
     )
 
     target_link_libraries(runTests

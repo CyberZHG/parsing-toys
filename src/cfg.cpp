@@ -1,6 +1,8 @@
 #include "cfg.h"
+#include <format>
+#include <ranges>
 
-const string ContextFreeGrammar::EMPTY_SYMBOL = "ϵ";
+const string ContextFreeGrammar::EMPTY_SYMBOL = "ε";
 
 bool ContextFreeGrammarToken::operator==(const ContextFreeGrammarToken& other) const {
     return type == other.type && symbol == other.symbol && line == other.line && column == other.column;
@@ -23,17 +25,21 @@ vector<ContextFreeGrammarToken> ContextFreeGrammar::tokenize(const string& s) {
             ++column;
             ++i;
         } else if (i + 1 < n && s[i] == '-' && s[i + 1] == '>') {
-            tokens.emplace_back(ContextFreeGrammarToken{ContextFreeGrammarToken::Type::PRODUCE_SIGN, "->", line, column});
+            tokens.emplace_back(ContextFreeGrammarToken{ContextFreeGrammarToken::Type::PRODUCTION, "->", line, column});
             i += 2;
             column += 2;
         } else if (s[i] == '|') {
-            tokens.emplace_back(ContextFreeGrammarToken{ContextFreeGrammarToken::Type::OR_SIGN, "|", line, column});
+            tokens.emplace_back(ContextFreeGrammarToken{ContextFreeGrammarToken::Type::ALTERNATION, "|", line, column});
             ++i;
             ++column;
         } else {
             for (size_t j = i + 1; j <= n; ++j) {
                 if (j == n || isspace(s[j]) || s[j] == '|' || (j + 1 < n && s[j] == '-' && s[j + 1] == '>')) {
-                    tokens.emplace_back(ContextFreeGrammarToken{ContextFreeGrammarToken::Type::SYMBOL, s.substr(i, j - i), line, column});
+                    if (const auto symbol = s.substr(i, j - i); symbol == "ε" || symbol == "ϵ") {
+                        tokens.emplace_back(ContextFreeGrammarToken{ContextFreeGrammarToken::Type::SYMBOL, EMPTY_SYMBOL, line, column});
+                    } else {
+                        tokens.emplace_back(ContextFreeGrammarToken{ContextFreeGrammarToken::Type::SYMBOL, symbol, line, column});
+                    }
                     column += j - i;
                     i = j;
                     break;
@@ -42,6 +48,78 @@ vector<ContextFreeGrammarToken> ContextFreeGrammar::tokenize(const string& s) {
         }
     }
     return tokens;
+}
+
+bool ContextFreeGrammar::parse(const string& s) {
+    const auto tokens = tokenize(s);
+    const auto n = tokens.size();
+    if (n == 0) {
+        return true;
+    }
+    string head;
+    auto hasEmptyProduction = [&](const size_t line, const size_t column) -> bool {
+        if (head.empty()) {
+            return false;
+        }
+        const bool hasEmpty = _productions[head].back().empty();
+        if (hasEmpty) {
+           _errorMessage = "Line " + to_string(line) + " Column " + to_string(column) + ": Found empty production for '" + head + "'.";
+        }
+        return hasEmpty;
+    };
+    for (size_t i = 0; i < n; ++i) {
+        if (tokens[i].type == ContextFreeGrammarToken::Type::PRODUCTION) {
+            _errorMessage = format("Line {} Column {}: Can not find the head of the production.", tokens[i].line, tokens[i].column);
+            return false;
+        }
+        if (i + 1 < n && tokens[i].type == ContextFreeGrammarToken::Type::SYMBOL && tokens[i + 1].type == ContextFreeGrammarToken::Type::PRODUCTION) {
+            if (hasEmptyProduction(tokens[i].line, tokens[i].column)) {
+                return false;
+            }
+            head = tokens[i].symbol;
+            _productions[head].emplace_back();
+            ++i;
+        } else if (tokens[i].type == ContextFreeGrammarToken::Type::ALTERNATION) {
+            if (hasEmptyProduction(tokens[i].line, tokens[i].column)) {
+                return false;
+            }
+            _productions[head].emplace_back();
+        } else {
+            _productions[head].back().emplace_back(tokens[i].symbol);
+        }
+    }
+    if (hasEmptyProduction(tokens.back().line, tokens.back().column + tokens.back().symbol.size())) {
+        return false;
+    }
+    return true;
+}
+
+const string& ContextFreeGrammar::errorMessage() const {
+    return _errorMessage;
+}
+
+string ContextFreeGrammar::toString() const {
+    size_t maxHeadLength = 0;
+    for (const auto& head: _productions | views::keys) {
+        maxHeadLength = std::max(maxHeadLength, head.length());
+    }
+    string grammar;
+    const string indent(maxHeadLength, ' ');
+    for (const auto& [head, productions]: _productions) {
+        for (size_t i = 0; i < productions.size(); ++i) {
+            if (i == 0) {
+                grammar += string(maxHeadLength - head.length(), ' ');
+                grammar += head + " ->";
+            } else {
+                grammar += indent + "  |";
+            }
+            for (const auto& symbol: productions[i]) {
+                grammar += " " + symbol;
+            }
+            grammar += "\n";
+        }
+    }
+    return grammar;
 }
 
 void PrintTo(const ContextFreeGrammarToken& token, ostream* os) {

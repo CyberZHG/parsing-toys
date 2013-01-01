@@ -11,8 +11,8 @@ using namespace std;
 struct ContextFreeGrammarToken {
     enum class Type {
         SYMBOL,
-        PRODUCE_SIGN,
-        OR_SIGN,
+        PRODUCTION,
+        ALTERNATION,
     };
     Type type;
     string symbol;
@@ -30,10 +30,14 @@ public:
     ContextFreeGrammar() = default;
 
     static vector<ContextFreeGrammarToken> tokenize(const string& s);
+    bool parse(const string& s);
+    [[nodiscard]] const string& errorMessage() const;
+    [[nodiscard]] string toString() const;
 
 private:
     static const string EMPTY_SYMBOL;
 
+    string _errorMessage;
     vector<Symbol> _ordering;
     unordered_map<Symbol, Productions> _productions;
     unordered_set<Symbol> _terminals;
