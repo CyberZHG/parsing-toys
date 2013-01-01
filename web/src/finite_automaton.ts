@@ -1,3 +1,52 @@
+export function setupSVGDownloadButtons(svg: SVGSVGElement): void {
+    const downloadSVGButton = document.querySelector<HTMLButtonElement>("#automaton-download-svg")!
+    const downloadPNGButton = document.querySelector<HTMLButtonElement>("#automaton-download-png")!
+
+    downloadSVGButton.addEventListener("click", () => {
+        const svgData = new XMLSerializer().serializeToString(svg)
+        const blob = new Blob([svgData], { type: "image/svg+xml" })
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement("a")
+        a.href = url
+        a.download = "automaton.svg"
+        a.click()
+        URL.revokeObjectURL(url)
+    })
+
+    downloadPNGButton.addEventListener("click", () => {
+        const scale = 2  // Higher resolution for sharper PNG
+        const vb = svg.getAttribute("viewBox")
+        if (!vb) return
+
+        const [, , width, height] = vb.split(/\s+/).map(Number)
+
+        const svgData = new XMLSerializer().serializeToString(svg)
+        const svgBlob = new Blob([svgData], { type: "image/svg+xml" })
+        const url = URL.createObjectURL(svgBlob)
+
+        const img = new Image()
+        img.onload = () => {
+            const canvas = document.createElement("canvas")
+            canvas.width = width * scale
+            canvas.height = height * scale
+            const ctx = canvas.getContext("2d")!
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+            canvas.toBlob((blob) => {
+                if (blob) {
+                    const pngUrl = URL.createObjectURL(blob)
+                    const a = document.createElement("a")
+                    a.href = pngUrl
+                    a.download = "automaton.png"
+                    a.click()
+                    URL.revokeObjectURL(pngUrl)
+                }
+            }, "image/png")
+            URL.revokeObjectURL(url)
+        }
+        img.src = url
+    })
+}
+
 export function setupSVGPanZoom(svg: SVGSVGElement): void {
     let isDragging = false
     let startX = 0

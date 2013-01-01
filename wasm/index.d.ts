@@ -7,6 +7,12 @@ export interface VectorString {
     delete(): void
 }
 
+export interface VectorSizeT {
+    size(): number
+    get(index: number): number
+    delete(): void
+}
+
 export class FirstAndFollowSet {
     constructor()
     size(): number
@@ -24,6 +30,24 @@ export class FiniteAutomaton {
     toSVG(): string
 }
 
+export class LRParsingSteps {
+    constructor()
+    size(): number
+    _getStack(index: number): VectorSizeT
+    getStack(index: number): number[]
+    _getSymbols(index: number): VectorString
+    getSymbols(index: number): string[]
+    _getRemainingInputs(index: number): VectorString
+    getRemainingInputs(index: number): string[]
+    getAction(index: number): string
+}
+
+export class ActionGotoTable {
+    constructor()
+    hasConflict(): boolean
+    parse(input: string): LRParsingSteps
+}
+
 export class ContextFreeGrammar {
     constructor()
     parse(code: string): boolean
@@ -37,4 +61,5 @@ export class ContextFreeGrammar {
     leftRecursionElimination(): boolean
     computeFirstAndFollowSet(): FirstAndFollowSet
     computeLR0Automaton(): FiniteAutomaton
+    computeLR0ActionGotoTable(automaton: FiniteAutomaton): ActionGotoTable
 }

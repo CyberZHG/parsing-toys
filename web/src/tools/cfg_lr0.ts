@@ -2,7 +2,8 @@ import { setupExamplesMenu } from "../choose_examples.ts";
 import { setupCFGEditor, getCFGEditorValue, setCFGEditorValue } from '../cfg_editor.ts';
 import { ContextFreeGrammar } from '../wasm/index.js'
 import { setupLocationHash, getLocationHashValue, setLocationHashValue } from '../location_hash.ts'
-import { setupSVGPanZoom } from '../finite_automaton.ts'
+import { setupSVGPanZoom, setupSVGDownloadButtons } from '../finite_automaton.ts'
+import { renderParsingSteps } from '../lr_steps.ts'
 
 const EXAMPLE_OPTIONS: Record<string, string> = {
     "example1": "Example 1: S -> S S + | S S * | a",
@@ -18,6 +19,9 @@ F -> ( E ) | id`,
 
 const lr0Button = document.querySelector<HTMLElement>('#button-cfg-lr0')!
 const automatonSVG = document.querySelector<SVGSVGElement>("#automaton-svg")!
+const inputString = document.querySelector<HTMLInputElement>('#input-string')!
+const lrStepsContainer = document.querySelector<HTMLElement>('#lr-steps-container')!
+
 lr0Button.addEventListener('click', () => {
     const errorMessage = document.querySelector<HTMLTextAreaElement>('#cfg-lr0-error-message')!
     const cfg = new ContextFreeGrammar()
@@ -26,6 +30,7 @@ lr0Button.addEventListener('click', () => {
         if (cfg.terminals().includes("¥")) {
             errorMessage.textContent = "The ¥ symbol is used as the end-of-input marker; please do not use it in the grammar."
             errorMessage.parentElement!.hidden = false
+            lrStepsContainer.hidden = true
         } else {
             if (cfg.nonTerminals().length > 0) {
                 const automaton = cfg.computeLR0Automaton();
@@ -33,12 +38,24 @@ lr0Button.addEventListener('click', () => {
                 const svgDoc = parser.parseFromString(automaton.toSVG(), 'image/svg+xml')
                 automatonSVG.innerHTML = svgDoc.documentElement.innerHTML
                 automatonSVG.setAttribute("viewBox", svgDoc.documentElement.getAttribute("viewBox")!)
+
+                // Parse input string if provided
+                const input = inputString.value.trim()
+                if (input) {
+                    const table = cfg.computeLR0ActionGotoTable(automaton)
+                    const steps = table.parse(input)
+                    renderParsingSteps(steps)
+                    lrStepsContainer.hidden = false
+                } else {
+                    lrStepsContainer.hidden = true
+                }
             }
             errorMessage.parentElement!.hidden = true
         }
     } else {
         errorMessage.textContent = cfg.errorMessage()
         errorMessage.parentElement!.hidden = false
+        lrStepsContainer.hidden = true
     }
     setLocationHashValue(code)
 })
@@ -62,6 +79,7 @@ setupExamplesMenu(EXAMPLE_OPTIONS, onExamplesChange)
 setupCFGEditor()
 setupLocationHash()
 setupSVGPanZoom(automatonSVG)
+setupSVGDownloadButtons(automatonSVG)
 
 setCFGEditorValue(getLocationHashValue())
 lr0Button.click()
