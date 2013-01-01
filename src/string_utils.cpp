@@ -88,3 +88,64 @@ size_t utf8Length(const string& s) {
     }
     return length;
 }
+
+string utf8CharAt(const string& s, const size_t index) {
+    size_t charIndex = 0;
+    size_t byteIndex = 0;
+    while (byteIndex < s.size()) {
+        if (charIndex == index) {
+            size_t charLen = 1;
+            if (const unsigned char c = s[byteIndex]; (c & 0b11110000) == 0b11110000) {
+                charLen = 4;
+            } else if ((c & 0b11100000) == 0b11100000) {
+                charLen = 3;
+            } else if ((c & 0b11000000) == 0b11000000) {
+                charLen = 2;
+            }
+            return s.substr(byteIndex, charLen);
+        }
+        if (const unsigned char c = s[byteIndex]; (c & 0b11110000) == 0b11110000) {
+            byteIndex += 4;
+        } else if ((c & 0b11100000) == 0b11100000) {
+            byteIndex += 3;
+        } else if ((c & 0b11000000) == 0b11000000) {
+            byteIndex += 2;
+        } else {
+            byteIndex++;
+        }
+        charIndex++;
+    }
+    return "";
+}
+
+string utf8Substring(const string& s, const size_t start, const size_t length) {
+    size_t charIndex = 0;
+    size_t byteIndex = 0;
+    size_t startByte = 0;
+    bool foundStart = false;
+
+    while (byteIndex < s.size()) {
+        if (charIndex == start) {
+            startByte = byteIndex;
+            foundStart = true;
+        }
+        if (foundStart && charIndex == start + length) {
+            return s.substr(startByte, byteIndex - startByte);
+        }
+        if (const unsigned char c = s[byteIndex]; (c & 0b11110000) == 0b11110000) {
+            byteIndex += 4;
+        } else if ((c & 0b11100000) == 0b11100000) {
+            byteIndex += 3;
+        } else if ((c & 0b11000000) == 0b11000000) {
+            byteIndex += 2;
+        } else {
+            byteIndex++;
+        }
+        charIndex++;
+    }
+
+    if (foundStart) {
+        return s.substr(startByte);
+    }
+    return "";
+}

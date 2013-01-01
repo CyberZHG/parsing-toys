@@ -62,6 +62,10 @@ add_library(ParsingToys STATIC
         src/cfg/lr1.cpp
         src/cfg/lalr1.cpp
         src/cfg/ll1.cpp
+        include/re.h
+        src/re/nfa.cpp
+        src/re/dfa.cpp
+        src/re/min_dfa.cpp
 )
 
 target_include_directories(ParsingToys
@@ -99,6 +103,9 @@ if(PARSING_TOYS_ENABLE_TESTS)
             tests/cfg/test_slr1.cpp
             tests/cfg/test_lr1.cpp
             tests/cfg/test_lalr1.cpp
+            tests/re/test_parse_regex.cpp
+            tests/re/test_nfa.cpp
+            tests/re/test_min_dfa.cpp
     )
 
     target_link_libraries(runTests

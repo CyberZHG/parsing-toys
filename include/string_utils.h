@@ -11,5 +11,7 @@ bool operator<(const std::vector<std::string>& a, const std::vector<std::string>
 bool operator==(const std::vector<std::string>& a, const std::vector<std::string>& b);
 std::string toSubscript(std::size_t number);
 std::size_t utf8Length(const std::string& s);
+std::string utf8CharAt(const std::string& s, std::size_t index);
+std::string utf8Substring(const std::string& s, std::size_t start, std::size_t length);
 
 #endif //PARSING_TOYS_STRING_UTILS_H
