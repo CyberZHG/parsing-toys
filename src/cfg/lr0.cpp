@@ -121,7 +121,8 @@ ActionGotoTable ContextFreeGrammar::computeLR0ActionGotoTable(const unique_ptr<F
             actionGotoTable.actions[u][EOF_SYMBOL].emplace_back("accept");
         } else {
             const auto findReduce = [&](const ContextFreeGrammar& grammar) {
-                for (const auto& [head, productions]: grammar._productions) {
+                for (const auto& head : grammar._ordering) {
+                    const auto& productions = grammar._productions.at(head);
                     for (const auto& production : productions) {
                         if (production.back() == DOT_SYMBOL) {
                             string action = "reduce " + head + " ->";
