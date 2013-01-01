@@ -10,21 +10,31 @@
   <body>
     {{> navbar }}
     <main class="max-w-7xl mx-auto px-4 py-10 min-h-screen flex flex-col">
-      <!--header class="mb-10">
-        <h1 class="text-3xl font-bold">Context Free Grammar</h1>
-        <p class="mt-2 text-gray-600">
-          Description
-        </p>
-      </header-->
+      <header class="mb-10">
+        <h1 class="text-3xl font-bold">Context-Free Grammar</h1>
+        <!--p class="mt-2 text-gray-600">
+          Context-Free Grammars
+        </p-->
+      </header>
       <section class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         <a href="/parsing-toys/tools/cfg_reformat.html" class="group block rounded-xl border bg-white p-6 hover:shadow-lg transition">
           <div class="flex items-center gap-3">
             <h2 class="text-lg font-semibold group-hover:text-blue-600">
-              Context Free Grammar Reformat
+              Context-Free Grammar Reformat
             </h2>
           </div>
           <p class="mt-2 text-sm text-gray-600">
-            Parse and reformat context free grammars.
+            Parse and reformat context-free grammars.
+          </p>
+        </a>
+        <a href="/parsing-toys/tools/cfg_left_factoring.html" class="group block rounded-xl border bg-white p-6 hover:shadow-lg transition">
+          <div class="flex items-center gap-3">
+            <h2 class="text-lg font-semibold group-hover:text-blue-600">
+              Left Factoring
+            </h2>
+          </div>
+          <p class="mt-2 text-sm text-gray-600">
+            Find and group the longest common prefixes in a context-free grammar.
           </p>
         </a>
       </section>

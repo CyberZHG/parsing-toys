@@ -16,4 +16,5 @@ export class ContextFreeGrammar {
     terminals(): string[]
     _nonTerminals(): VectorString
     nonTerminals(): string[]
+    leftFactoring(): void
 }

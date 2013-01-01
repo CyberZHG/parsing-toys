@@ -1,5 +1,6 @@
 #include "cfg.h"
 #include "production_trie.h"
+#include <functional>
 
 void ContextFreeGrammar::leftFactoring() {
     bool hasUpdate = true;

@@ -100,7 +100,7 @@ public:
     [[nodiscard]] bool expandable(const Production& production) const;
 
     /**
-     * Find and group longest common prefixes.
+     * Find and group the longest common prefixes.
      */
     void leftFactoring();
 

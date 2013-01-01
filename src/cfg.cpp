@@ -3,6 +3,7 @@
 #include <format>
 #include <ranges>
 #include <limits>
+#include <algorithm>
 
 const string ContextFreeGrammar::EMPTY_SYMBOL = "ε";
 

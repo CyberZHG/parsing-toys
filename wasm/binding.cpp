@@ -14,5 +14,6 @@ EMSCRIPTEN_BINDINGS(ParsingToysWASM) {
         .function("toString", &ContextFreeGrammar::toString)
         .function("_terminals", &ContextFreeGrammar::terminals)
         .function("_nonTerminals", &ContextFreeGrammar::nonTerminals)
+        .function("leftFactoring", &ContextFreeGrammar::leftFactoring)
     ;
 }
