@@ -66,6 +66,7 @@ add_library(ParsingToys STATIC
         src/re/nfa.cpp
         src/re/dfa.cpp
         src/re/min_dfa.cpp
+        src/re/graph.cpp
 )
 
 target_include_directories(ParsingToys

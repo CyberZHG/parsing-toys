@@ -18,6 +18,7 @@ export default defineConfig({
                 slr1: resolve(__dirname, 'tools', 'cfg_slr1.html'),
                 lr1: resolve(__dirname, 'tools', 'cfg_lr1.html'),
                 lalr1: resolve(__dirname, 'tools', 'cfg_lalr1.html'),
+                min_dfa: resolve(__dirname, 'tools', 'min_dfa.html'),
             }
         }
     },

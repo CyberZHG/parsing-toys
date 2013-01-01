@@ -105,3 +105,46 @@ export class ContextFreeGrammar {
     computeLALR1ActionGotoTable(automaton: FiniteAutomaton): ActionGotoTable
     computeLL1Table(): MTable
 }
+
+export class NFAState {
+    constructor()
+    delete(): void
+}
+
+export class DFAState {
+    constructor()
+    delete(): void
+}
+
+export class NFAGraph {
+    size(): number
+    toSVG(): string
+    stateAt(index: number): string
+    numEdges(): number
+    edgeFrom(index: number): number
+    edgeTo(index: number): number
+    edgeLabel(index: number): string
+}
+
+export class DFAGraph {
+    size(): number
+    toSVG(): string
+    stateIdAt(index: number): string
+    stateKeyAt(index: number): string
+    stateTypeAt(index: number): string
+    numEdges(): number
+    edgeFrom(index: number): number
+    edgeTo(index: number): number
+    edgeLabel(index: number): string
+}
+
+export class RegularExpression {
+    constructor()
+    parse(pattern: string): boolean
+    errorMessage(): string
+    toNFA(): NFAState
+    static toDFA(nfa: NFAState): DFAState
+    static toMinDFA(dfa: DFAState): DFAState
+    static toNFAGraph(nfa: NFAState): NFAGraph
+    static toDFAGraph(dfa: DFAState): DFAGraph
+}

@@ -1,5 +1,6 @@
 #include "cfg.h"
 #include "automaton.h"
+#include "re.h"
 #include <vector>
 #include <string>
 #include <memory>
@@ -83,5 +84,41 @@ EMSCRIPTEN_BINDINGS(ParsingToysWASM) {
         .function("hasConflictAt", optional_override([](const MTable& self, const string& nt, const string& t) { return self.hasConflict(nt, t); }))
         .function("getCell", optional_override([](const MTable& self, const string& nt, const string& t, const string& sep) { return self.getCell(nt, t, sep); }))
         .function("parse", &MTable::parse)
+    ;
+    class_<RegularExpression>("RegularExpression")
+        .constructor<>()
+        .function("parse", &RegularExpression::parse)
+        .function("errorMessage", &RegularExpression::errorMessage)
+        .function("toNFA", &RegularExpression::toNFA)
+        .class_function("toDFA", &RegularExpression::toDFA)
+        .class_function("toMinDFA", &RegularExpression::toMinDFA)
+        .class_function("toNFAGraph", &RegularExpression::toNFAGraph)
+        .class_function("toDFAGraph", &RegularExpression::toDFAGraph)
+    ;
+    class_<NFAState>("NFAState")
+        .smart_ptr<shared_ptr<NFAState>>("NFAState")
+    ;
+    class_<DFAState>("DFAState")
+        .smart_ptr<shared_ptr<DFAState>>("DFAState")
+    ;
+    class_<NFAGraph>("NFAGraph")
+        .function("size", &NFAGraph::size)
+        .function("toSVG", &NFAGraph::toSVG)
+        .function("stateAt", &NFAGraph::stateAt)
+        .function("numEdges", &NFAGraph::numEdges)
+        .function("edgeFrom", &NFAGraph::edgeFrom)
+        .function("edgeTo", &NFAGraph::edgeTo)
+        .function("edgeLabel", &NFAGraph::edgeLabel)
+    ;
+    class_<DFAGraph>("DFAGraph")
+        .function("size", &DFAGraph::size)
+        .function("toSVG", &DFAGraph::toSVG)
+        .function("stateIdAt", &DFAGraph::stateIdAt)
+        .function("stateKeyAt", &DFAGraph::stateKeyAt)
+        .function("stateTypeAt", &DFAGraph::stateTypeAt)
+        .function("numEdges", &DFAGraph::numEdges)
+        .function("edgeFrom", &DFAGraph::edgeFrom)
+        .function("edgeTo", &DFAGraph::edgeTo)
+        .function("edgeLabel", &DFAGraph::edgeLabel)
     ;
 }

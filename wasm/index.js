@@ -8,6 +8,11 @@ const ActionGotoTable = ParsingToysWASM.ActionGotoTable;
 const ParseTreeNode = ParsingToysWASM.ParseTreeNode;
 const LLParsingSteps = ParsingToysWASM.LLParsingSteps;
 const MTable = ParsingToysWASM.MTable;
+const RegularExpression = ParsingToysWASM.RegularExpression;
+const NFAState = ParsingToysWASM.NFAState;
+const DFAState = ParsingToysWASM.DFAState;
+const NFAGraph = ParsingToysWASM.NFAGraph;
+const DFAGraph = ParsingToysWASM.DFAGraph;
 
 function _vectorStringToArray(vec) {
     let arr = [];
@@ -71,4 +76,9 @@ export {
     ParseTreeNode,
     LLParsingSteps,
     MTable,
+    RegularExpression,
+    NFAState,
+    DFAState,
+    NFAGraph,
+    DFAGraph,
 }
