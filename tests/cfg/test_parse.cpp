@@ -90,13 +90,13 @@ TEST(TestContextFreeGrammarParse, SpecialCase2) {
     EXPECT_TRUE(grammar.parse(R"(bexpr -> bexpr or bterm | bterm
 bterm -> bterm and bfactor | bfactor
 bfactor -> not bfactor | ( bexpr ) | true | false)"));
-    EXPECT_EQ(R"(bfactor -> not bfactor
+    EXPECT_EQ(R"(  bexpr -> bexpr or bterm
+         | bterm
+  bterm -> bterm and bfactor
+         | bfactor
+bfactor -> not bfactor
          | ( bexpr )
          | true
          | false
-  bterm -> bterm and bfactor
-         | bfactor
-  bexpr -> bexpr or bterm
-         | bterm
 )", grammar.toString());
 }

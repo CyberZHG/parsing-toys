@@ -84,6 +84,9 @@ bool ContextFreeGrammar::parse(const string& s) {
                 return false;
             }
             head = tokens[i].symbol;
+            if (!_productions.contains(head)) {
+                _ordering.emplace_back(head);
+            }
             _productions[head].emplace_back();
             ++i;
         } else if (tokens[i].type == ContextFreeGrammarToken::Type::ALTERNATION) {
@@ -120,7 +123,8 @@ string ContextFreeGrammar::toString() const {
     }
     string grammar;
     const string indent(maxHeadLength, ' ');
-    for (const auto& [head, productions]: _productions) {
+    for (const auto& head: _ordering) {
+        const auto& productions = _productions.find(head)->second;
         for (size_t i = 0; i < productions.size(); ++i) {
             if (i == 0) {
                 grammar += string(maxHeadLength - head.length(), ' ');
