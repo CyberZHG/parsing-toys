@@ -74,4 +74,6 @@ export class ContextFreeGrammar {
     computeFirstAndFollowSet(): FirstAndFollowSet
     computeLR0Automaton(): FiniteAutomaton
     computeLR0ActionGotoTable(automaton: FiniteAutomaton): ActionGotoTable
+    computeSLR1Automaton(): FiniteAutomaton
+    computeSLR1ActionGotoTable(automaton: FiniteAutomaton): ActionGotoTable
 }

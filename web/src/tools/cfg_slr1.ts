@@ -6,24 +6,23 @@ import { setupSVGPanZoom, setupSVGDownloadButtons } from '../display_svg.ts'
 import { renderParsingSteps } from '../lr_steps.ts'
 import { renderActionGotoTable } from '../action_goto_table.ts'
 
-interface LR0HashData {
+interface SLR1HashData {
     grammar: string
     input?: string
 }
 
-function getLR0HashData(): LR0HashData {
+function getSLR1HashData(): SLR1HashData {
     try {
         const value = getLocationHashValue()
         if (!value) return { grammar: '' }
         const data = JSON.parse(value)
         return { grammar: data.grammar || '', input: data.input || '' }
     } catch {
-        // Fallback for old format (plain string)
         return { grammar: getLocationHashValue(), input: '' }
     }
 }
 
-function setLR0HashData(data: LR0HashData): void {
+function setSLR1HashData(data: SLR1HashData): void {
     setLocationHashValue(JSON.stringify(data))
 }
 
@@ -39,7 +38,7 @@ T -> T * F | F
 F -> ( E ) | id`,
 }
 
-const lr0Button = document.querySelector<HTMLElement>('#button-cfg-lr0')!
+const slr1Button = document.querySelector<HTMLElement>('#button-cfg-slr1')!
 const automatonSVG = document.querySelector<SVGSVGElement>("#automaton-svg")!
 const actionGotoTableContainer = document.querySelector<HTMLElement>('#action-goto-table-container')!
 const inputString = document.querySelector<HTMLInputElement>('#input-string')!
@@ -47,8 +46,8 @@ const lrStepsContainer = document.querySelector<HTMLElement>('#lr-steps-containe
 const parseTreeContainer = document.querySelector<HTMLElement>('#parse-tree-container')!
 const parseTreeSVG = document.querySelector<SVGSVGElement>("#parse-tree-svg")!
 
-lr0Button.addEventListener('click', () => {
-    const errorMessage = document.querySelector<HTMLTextAreaElement>('#cfg-lr0-error-message')!
+slr1Button.addEventListener('click', () => {
+    const errorMessage = document.querySelector<HTMLTextAreaElement>('#cfg-slr1-error-message')!
     const cfg = new ContextFreeGrammar()
     const code = getCFGEditorValue()
     if (cfg.parse(code)) {
@@ -60,13 +59,13 @@ lr0Button.addEventListener('click', () => {
             parseTreeContainer.hidden = true
         } else {
             if (cfg.nonTerminals().length > 0) {
-                const automaton = cfg.computeLR0Automaton();
+                const automaton = cfg.computeSLR1Automaton();
                 const parser = new DOMParser()
                 const svgDoc = parser.parseFromString(automaton.toSVG(), 'image/svg+xml')
                 automatonSVG.innerHTML = svgDoc.documentElement.innerHTML
                 automatonSVG.setAttribute("viewBox", svgDoc.documentElement.getAttribute("viewBox")!)
 
-                const table = cfg.computeLR0ActionGotoTable(automaton)
+                const table = cfg.computeSLR1ActionGotoTable(automaton)
                 renderActionGotoTable(cfg, table)
 
                 const input = inputString.value.trim()
@@ -99,12 +98,12 @@ lr0Button.addEventListener('click', () => {
         lrStepsContainer.hidden = true
         parseTreeContainer.hidden = true
     }
-    setLR0HashData({ grammar: code, input: inputString.value.trim() })
+    setSLR1HashData({ grammar: code, input: inputString.value.trim() })
 })
 
 function onExamplesChange(key: string) : void {
     setCFGEditorValue(EXAMPLES[key])
-    lr0Button.click()
+    slr1Button.click()
 }
 
 document.querySelector<HTMLElement>('#cfg-editor-intro')!.innerHTML = `
@@ -125,7 +124,7 @@ setupSVGDownloadButtons(automatonSVG)
 setupSVGPanZoom(parseTreeSVG)
 setupSVGDownloadButtons(parseTreeSVG, "#parse-tree-download-svg", "#parse-tree-download-png", "parse-tree")
 
-const hashData = getLR0HashData()
+const hashData = getSLR1HashData()
 setCFGEditorValue(hashData.grammar)
 inputString.value = hashData.input || ''
-lr0Button.click()
+slr1Button.click()
