@@ -69,25 +69,33 @@ public:
      * A helper function for highlighting.
      * @return All the terminals.
      */
-    [[nodiscard]] vector<string> terminals() const;
+    [[nodiscard]] vector<Symbol> terminals() const;
     /**
      * A helper function for highlighting.
      * @return All the non-terminals.
      */
-    [[nodiscard]] vector<string> nonTerminals() const;
-
+    [[nodiscard]] vector<Symbol> nonTerminals() const;
 
     /**
      * Compute a key for a production to deduplicate.
      * @param production
      * @return
      */
-    static string computeProductionKey(const vector<string>& production);
+    static string computeProductionKey(const Production& production);
 
     /**
      * Remove duplicated productions for each non-terminal.
      */
     void deduplicate();
+
+    /**
+     * Generate a primed symbol.
+     * @param symbol Existing non-terminal symbol.
+     * @return The primed symbol.
+     */
+    string generatePrimedSymbol(const Symbol& symbol);
+
+    void addProductions(const Symbol& head, const Productions& productions);
 
 private:
     string _errorMessage;

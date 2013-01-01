@@ -2,6 +2,7 @@
 #include "string_utils.h"
 #include <format>
 #include <ranges>
+#include <limits>
 
 const string ContextFreeGrammar::EMPTY_SYMBOL = "ε";
 
@@ -184,6 +185,80 @@ void ContextFreeGrammar::deduplicate() {
             }
         }
         productions.resize(m);
+    }
+}
+
+string ContextFreeGrammar::generatePrimedSymbol(const string& symbol) {
+    if (!_productions.contains(symbol)) {
+        throw runtime_error(format("The original symbol '{}' does not exist.", symbol));
+    }
+    if (symbol.size() >= numeric_limits<int>::max()) {
+        throw runtime_error("The input symbol size is too large.");
+    }
+    auto baseSymbol = symbol;
+    const auto n = static_cast<int>(symbol.size());
+    auto i = n - 1;
+    bool hasPrime = false;
+    for (; i >= 0; --i) {
+        if (symbol[i] == '\'') {
+            hasPrime = true;
+            break;
+        }
+    }
+    int number = 0;
+    if (hasPrime && i + 1 < n) {
+        if (symbol[i + 1] != '_') {
+            hasPrime = false;
+        } else {
+            if (i + 2 >= n || !isdigit(symbol[i + 2])) {
+                hasPrime = false;
+            } else {
+                bool hasNumber = true;
+                for (auto j = i + 3; j < n; ++j) {
+                    if (!isdigit(symbol[j])) {
+                        hasPrime = false;
+                        hasNumber = false;
+                    }
+                }
+                if (hasNumber) {
+                    number = stoi(symbol.substr(i + 2));
+                }
+            }
+        }
+    }
+    string newSymbol;
+    if (!hasPrime) {
+        if (const auto candidate = symbol + "'"; !_productions.contains(candidate)) {
+            newSymbol = candidate;
+        } else {
+            baseSymbol = candidate;
+        }
+    }
+    if (newSymbol.empty()) {
+        while (true) {
+            if (number == numeric_limits<int>::max()) {
+                throw runtime_error("Can not find a new symbol name");
+            }
+            ++number;
+            newSymbol = symbol.substr(0, i) + "'_" + to_string(number);
+            if (_productions.contains(newSymbol)) {
+                baseSymbol = newSymbol;
+            } else {
+                break;
+            }
+        }
+    }
+    const auto it = ranges::find(_ordering, baseSymbol);
+    _ordering.insert(it + 1, newSymbol);
+    return newSymbol;
+}
+
+void ContextFreeGrammar::addProductions(const Symbol& head, const Productions& productions) {
+    if (const auto it = ranges::find(_ordering, head); it == _ordering.end()) {
+        _ordering.emplace_back(head);
+    }
+    for (const auto& production: productions) {
+        _productions[head].emplace_back(production);
     }
 }
 

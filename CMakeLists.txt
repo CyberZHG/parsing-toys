@@ -77,6 +77,7 @@ if(PARSING_TOYS_ENABLE_TESTS)
             tests/cfg/test_parse.cpp
             tests/cfg/test_production_trie.cpp
             tests/test_string_utils.cpp
+            tests/cfg/test_primed_symbol.cpp
     )
 
     target_link_libraries(runTests
