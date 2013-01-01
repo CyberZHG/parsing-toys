@@ -17,6 +17,7 @@ EMSCRIPTEN_BINDINGS(ParsingToysWASM) {
         .function("toString", &ContextFreeGrammar::toString)
         .function("_terminals", &ContextFreeGrammar::terminals)
         .function("_nonTerminals", &ContextFreeGrammar::nonTerminals)
+        .function("_orderedNonTerminals", &ContextFreeGrammar::orderedNonTerminals)
         .function("leftFactoring", &ContextFreeGrammar::leftFactoring)
         .function("leftRecursionElimination", &ContextFreeGrammar::leftRecursionElimination)
         .function("computeFirstAndFollowSet", &ContextFreeGrammar::computeFirstAndFollowSet)
@@ -46,7 +47,10 @@ EMSCRIPTEN_BINDINGS(ParsingToysWASM) {
     ;
     class_<ActionGotoTable>("ActionGotoTable")
         .constructor<>()
+        .function("size", optional_override([](const ActionGotoTable& self) { return self.actions.size(); }))
         .function("hasConflict", optional_override([](const ActionGotoTable& self) { return self.hasConflict(); }))
+        .function("hasConflictAt", optional_override([](const ActionGotoTable& self, size_t index, const string& symbol) { return self.hasConflict(index, symbol); }))
+        .function("getCell", optional_override([](const ActionGotoTable& self, size_t index, const string& symbol, const string& separator) { return self.toString(index, symbol, separator); }))
         .function("parse", &ActionGotoTable::parse)
         .function("getParseTree", optional_override([](const ActionGotoTable& self) { return self.parseTree; }))
     ;

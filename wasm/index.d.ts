@@ -50,7 +50,10 @@ export class ParseTreeNode {
 
 export class ActionGotoTable {
     constructor()
+    size(): number
     hasConflict(): boolean
+    hasConflictAt(index: number, symbol: string): boolean
+    getCell(index: number, symbol: string, separator: string): string
     parse(input: string): LRParsingSteps
     getParseTree(): ParseTreeNode | null
 }
@@ -64,6 +67,8 @@ export class ContextFreeGrammar {
     terminals(): string[]
     _nonTerminals(): VectorString
     nonTerminals(): string[]
+    _orderedNonTerminals(): VectorString
+    orderedNonTerminals(): string[]
     leftFactoring(): void
     leftRecursionElimination(): boolean
     computeFirstAndFollowSet(): FirstAndFollowSet

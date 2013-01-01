@@ -40,10 +40,66 @@ F -> ( E ) | id`,
 
 const lr0Button = document.querySelector<HTMLElement>('#button-cfg-lr0')!
 const automatonSVG = document.querySelector<SVGSVGElement>("#automaton-svg")!
+const actionGotoTableContainer = document.querySelector<HTMLElement>('#action-goto-table-container')!
+const actionGotoTable = document.querySelector<HTMLTableElement>('#action-goto-table')!
 const inputString = document.querySelector<HTMLInputElement>('#input-string')!
 const lrStepsContainer = document.querySelector<HTMLElement>('#lr-steps-container')!
 const parseTreeContainer = document.querySelector<HTMLElement>('#parse-tree-container')!
 const parseTreeSVG = document.querySelector<SVGSVGElement>("#parse-tree-svg")!
+
+const EOF_SYMBOL = '¥'
+
+type ActionGotoTableType = ReturnType<ContextFreeGrammar['computeLR0ActionGotoTable']>
+
+function renderActionGotoTable(cfg: ContextFreeGrammar, table: ActionGotoTableType): void {
+    const terminals = cfg.terminals().sort()
+    terminals.push(EOF_SYMBOL)
+    const nonTerminals = cfg.orderedNonTerminals()
+
+    // Build header rows
+    let headerHtml = '<thead>'
+    // First row: State (rowspan=2), ACTION (colspan=terminals), GOTO (colspan=non-terminals)
+    headerHtml += '<tr class="bg-gray-100">'
+    headerHtml += '<th class="border border-gray-300 px-2 py-1" rowspan="2">State</th>'
+    headerHtml += `<th class="border border-gray-300 px-2 py-1" colspan="${terminals.length}">ACTION</th>`
+    headerHtml += `<th class="border border-gray-300 px-2 py-1" colspan="${nonTerminals.length}">GOTO</th>`
+    headerHtml += '</tr>'
+    // Second row: individual terminal and non-terminal symbols
+    headerHtml += '<tr class="bg-gray-100">'
+    for (const t of terminals) {
+        headerHtml += `<th class="border border-gray-300 px-2 py-1">${t}</th>`
+    }
+    for (const nt of nonTerminals) {
+        headerHtml += `<th class="border border-gray-300 px-2 py-1">${nt}</th>`
+    }
+    headerHtml += '</tr></thead>'
+
+    // Build body rows
+    let bodyHtml = '<tbody>'
+    const numStates = table.size()
+    for (let i = 0; i < numStates; i++) {
+        bodyHtml += `<tr><td class="border border-gray-300 px-2 py-1 text-center">${i}</td>`
+        for (const symbol of [...terminals, ...nonTerminals]) {
+            const cellContent = table.getCell(i, symbol, '<br>')
+            const hasConflict = table.hasConflictAt(i, symbol)
+            const isAccept = cellContent === 'accept'
+
+            let cellClass = 'border border-gray-300 px-2 py-1 text-center'
+            if (hasConflict) {
+                cellClass += ' bg-red-100 text-red-800'
+            } else if (isAccept) {
+                cellClass += ' bg-green-100 text-green-800'
+            }
+
+            bodyHtml += `<td class="${cellClass}">${cellContent}</td>`
+        }
+        bodyHtml += '</tr>'
+    }
+    bodyHtml += '</tbody>'
+
+    actionGotoTable.innerHTML = headerHtml + bodyHtml
+    actionGotoTableContainer.hidden = false
+}
 
 lr0Button.addEventListener('click', () => {
     const errorMessage = document.querySelector<HTMLTextAreaElement>('#cfg-lr0-error-message')!
@@ -53,6 +109,7 @@ lr0Button.addEventListener('click', () => {
         if (cfg.terminals().includes("¥")) {
             errorMessage.textContent = "The ¥ symbol is used as the end-of-input marker; please do not use it in the grammar."
             errorMessage.parentElement!.hidden = false
+            actionGotoTableContainer.hidden = true
             lrStepsContainer.hidden = true
             parseTreeContainer.hidden = true
         } else {
@@ -63,9 +120,11 @@ lr0Button.addEventListener('click', () => {
                 automatonSVG.innerHTML = svgDoc.documentElement.innerHTML
                 automatonSVG.setAttribute("viewBox", svgDoc.documentElement.getAttribute("viewBox")!)
 
+                const table = cfg.computeLR0ActionGotoTable(automaton)
+                renderActionGotoTable(cfg, table)
+
                 const input = inputString.value.trim()
                 if (input) {
-                    const table = cfg.computeLR0ActionGotoTable(automaton)
                     const steps = table.parse(input)
                     renderParsingSteps(steps)
                     lrStepsContainer.hidden = false
@@ -90,6 +149,7 @@ lr0Button.addEventListener('click', () => {
     } else {
         errorMessage.textContent = cfg.errorMessage()
         errorMessage.parentElement!.hidden = false
+        actionGotoTableContainer.hidden = true
         lrStepsContainer.hidden = true
         parseTreeContainer.hidden = true
     }

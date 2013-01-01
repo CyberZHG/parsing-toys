@@ -67,7 +67,12 @@ function onExamplesChange(key: string) : void {
 
 document.querySelector<HTMLElement>('#cfg-editor-intro')!.innerHTML = `
   Context free grammar input:
-  <div class="text-gray-500 font-light text-sm">(The first symbol encountered in the grammar definition is treated as the start symbol)</div>
+  <div class="text-gray-500 font-light text-sm">
+    <ul>
+      <li>The first symbol encountered in the grammar definition is treated as the start symbol</li>
+      <li>The <code>¥</code> symbol is used as the end-of-input marker; please do not use it in the grammar.</li>
+    </ul>
+  </div>
 `
 
 

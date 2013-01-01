@@ -29,6 +29,9 @@ ContextFreeGrammar.prototype.terminals = function () {
 ContextFreeGrammar.prototype.nonTerminals = function () {
     return _vectorStringToArray(this._nonTerminals());
 }
+ContextFreeGrammar.prototype.orderedNonTerminals = function () {
+    return _vectorStringToArray(this._orderedNonTerminals());
+}
 
 FirstAndFollowSet.prototype.getFirstSet = function (symbol) {
     return _vectorStringToArray(this._getFirstSet(symbol))
