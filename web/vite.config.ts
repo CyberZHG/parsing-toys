@@ -12,6 +12,7 @@ export default defineConfig({
                 cfg_reformat: resolve(__dirname, 'tools', 'cfg_reformat.html'),
                 cfg_left_factoring: resolve(__dirname, 'tools', 'cfg_left_factoring.html'),
                 cfg_left_recursion: resolve(__dirname, 'tools', 'cfg_left_recursion.html'),
+                cnf: resolve(__dirname, 'tools', 'cnf.html'),
                 first_and_follow: resolve(__dirname, 'tools', 'cfg_first_and_follow.html'),
                 ll1: resolve(__dirname, 'tools', 'cfg_ll1.html'),
                 lr0: resolve(__dirname, 'tools', 'cfg_lr0.html'),

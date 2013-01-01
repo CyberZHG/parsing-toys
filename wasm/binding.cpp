@@ -31,6 +31,8 @@ EMSCRIPTEN_BINDINGS(ParsingToysWASM) {
         .function("computeLALR1Automaton", &ContextFreeGrammar::computeLALR1Automaton)
         .function("computeLALR1ActionGotoTable", &ContextFreeGrammar::computeLALR1ActionGotoTable)
         .function("computeLL1Table", &ContextFreeGrammar::computeLL1Table)
+        .function("isChomskyNormalForm", &ContextFreeGrammar::isChomskyNormalForm)
+        .function("toChomskyNormalForm", &ContextFreeGrammar::toChomskyNormalForm)
     ;
     class_<FirstAndFollowSet>("FirstAndFollowSet")
         .constructor<>()

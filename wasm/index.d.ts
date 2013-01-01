@@ -104,6 +104,8 @@ export class ContextFreeGrammar {
     computeLALR1Automaton(): FiniteAutomaton
     computeLALR1ActionGotoTable(automaton: FiniteAutomaton): ActionGotoTable
     computeLL1Table(): MTable
+    isChomskyNormalForm(): boolean
+    toChomskyNormalForm(): void
 }
 
 export class NFAState {

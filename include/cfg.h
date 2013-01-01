@@ -325,6 +325,9 @@ public:
      */
     [[nodiscard]] MTable computeLL1Table() const;
 
+    [[nodiscard]] bool isChomskyNormalForm() const;
+    void toChomskyNormalForm();
+
 private:
     std::string _errorMessage;
     std::vector<Symbol> _ordering;  // The output ordering
