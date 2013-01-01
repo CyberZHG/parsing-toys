@@ -1,4 +1,4 @@
-name: WASM Build & Test
+name: Deploy Pages
 
 on:
   push:
