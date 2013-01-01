@@ -6,6 +6,8 @@ const FirstAndFollowSet = ParsingToysWASM.FirstAndFollowSet;
 const LRParsingSteps = ParsingToysWASM.LRParsingSteps;
 const ActionGotoTable = ParsingToysWASM.ActionGotoTable;
 const ParseTreeNode = ParsingToysWASM.ParseTreeNode;
+const LLParsingSteps = ParsingToysWASM.LLParsingSteps;
+const MTable = ParsingToysWASM.MTable;
 
 function _vectorStringToArray(vec) {
     let arr = [];
@@ -53,10 +55,20 @@ LRParsingSteps.prototype.getRemainingInputs = function (index) {
     return _vectorStringToArray(this._getRemainingInputs(index))
 }
 
+LLParsingSteps.prototype.getStack = function (index) {
+    return _vectorStringToArray(this._getStack(index))
+}
+
+LLParsingSteps.prototype.getRemainingInputs = function (index) {
+    return _vectorStringToArray(this._getRemainingInputs(index))
+}
+
 export {
     ContextFreeGrammar,
     FirstAndFollowSet,
     LRParsingSteps,
     ActionGotoTable,
     ParseTreeNode,
+    LLParsingSteps,
+    MTable,
 }

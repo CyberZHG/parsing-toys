@@ -13,6 +13,7 @@ export default defineConfig({
                 cfg_left_factoring: resolve(__dirname, 'tools', 'cfg_left_factoring.html'),
                 cfg_left_recursion: resolve(__dirname, 'tools', 'cfg_left_recursion.html'),
                 first_and_follow: resolve(__dirname, 'tools', 'cfg_first_and_follow.html'),
+                ll1: resolve(__dirname, 'tools', 'cfg_ll1.html'),
                 lr0: resolve(__dirname, 'tools', 'cfg_lr0.html'),
                 slr1: resolve(__dirname, 'tools', 'cfg_slr1.html'),
                 lr1: resolve(__dirname, 'tools', 'cfg_lr1.html'),

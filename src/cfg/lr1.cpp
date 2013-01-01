@@ -1,6 +1,8 @@
 #include "cfg.h"
 #include "automaton.h"
 #include <unordered_set>
+#include <ranges>
+#include <algorithm>
 
 using namespace std;
 
@@ -89,8 +91,8 @@ static Production extractCore(const Production& production) {
 static Production createLR1Production(const Production& core, const unordered_set<Symbol>& lookaheads) {
     Production result = core;
     result.push_back(ContextFreeGrammar::LOOKAHEAD_SEPARATOR);
-    vector<Symbol> sortedLookaheads(lookaheads.begin(), lookaheads.end());
-    sort(sortedLookaheads.begin(), sortedLookaheads.end());
+    vector sortedLookaheads(lookaheads.begin(), lookaheads.end());
+    ranges::sort(sortedLookaheads);
     for (size_t i = 0; i < sortedLookaheads.size(); ++i) {
         if (i > 0) {
             result.push_back(ContextFreeGrammar::LOOKAHEAD_INNER_SEPARATOR);
@@ -104,7 +106,7 @@ static Production createLR1Production(const Production& core, const unordered_se
  * Create an LR(1) item production with a single lookahead.
  */
 static Production createLR1Production(const Production& core, const Symbol& lookahead) {
-    return createLR1Production(core, unordered_set<Symbol>{lookahead});
+    return createLR1Production(core, unordered_set{lookahead});
 }
 
 /**

@@ -91,6 +91,37 @@ struct ActionGotoTable {
     [[nodiscard]] std::string toString(const ContextFreeGrammar& grammar, const std::string& separator = " / ") const;
 };
 
+struct LLParsingSteps {
+    std::vector<std::vector<Symbol>> stack;
+    std::vector<std::vector<Symbol>> remainingInputs;
+    std::vector<std::string> actions;
+    std::shared_ptr<ParseTreeNode> parseTree = nullptr;
+
+    void addStep(const std::vector<Symbol>& _stack, const std::vector<Symbol>& _remainingInputs, const std::string& action);
+    [[nodiscard]] std::string toString() const;
+};
+
+struct MTable {
+    std::vector<Symbol> nonTerminals;
+    std::vector<Symbol> terminals;
+    std::unordered_map<Symbol, std::size_t> nonTerminalIndex;
+    std::unordered_map<Symbol, std::size_t> terminalIndex;
+    std::vector<std::vector<std::vector<Production>>> entries;
+    std::shared_ptr<ParseTreeNode> parseTree = nullptr;
+
+    void addEntry(const Symbol& nonTerminal, const Symbol& terminal, const Production& production);
+    [[nodiscard]] bool hasConflict() const;
+    [[nodiscard]] bool hasConflict(const Symbol& nonTerminal, const Symbol& terminal) const;
+    [[nodiscard]] std::string getCell(const Symbol& nonTerminal, const Symbol& terminal, const std::string& separator = " / ") const;
+    [[nodiscard]] std::size_t numNonTerminals() const;
+    [[nodiscard]] std::size_t numTerminals() const;
+    [[nodiscard]] Symbol getNonTerminal(std::size_t index) const;
+    [[nodiscard]] Symbol getTerminal(std::size_t index) const;
+
+    [[nodiscard]] LLParsingSteps parse(const std::string& s) const;
+    [[nodiscard]] std::string toString(const std::string& separator = " / ") const;
+};
+
 class ContextFreeGrammar {
 public:
     ContextFreeGrammar() = default;
@@ -284,6 +315,15 @@ public:
      * @return
      */
     [[nodiscard]] ActionGotoTable computeLALR1ActionGotoTable(const std::unique_ptr<FiniteAutomaton>& automaton) const;
+
+    /**
+     * Compute the LL(1) predictive parsing table.
+     * For each production A -> α, add M[A, a] = α for all a in FIRST(α).
+     * If ε is in FIRST(α), also add M[A, b] = α for all b in FOLLOW(A).
+     *
+     * @return The LL(1) parsing table.
+     */
+    [[nodiscard]] MTable computeLL1Table() const;
 
 private:
     std::string _errorMessage;

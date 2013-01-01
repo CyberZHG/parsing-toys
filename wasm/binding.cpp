@@ -29,6 +29,7 @@ EMSCRIPTEN_BINDINGS(ParsingToysWASM) {
         .function("computeLR1ActionGotoTable", &ContextFreeGrammar::computeLR1ActionGotoTable)
         .function("computeLALR1Automaton", &ContextFreeGrammar::computeLALR1Automaton)
         .function("computeLALR1ActionGotoTable", &ContextFreeGrammar::computeLALR1ActionGotoTable)
+        .function("computeLL1Table", &ContextFreeGrammar::computeLL1Table)
     ;
     class_<FirstAndFollowSet>("FirstAndFollowSet")
         .constructor<>()
@@ -63,5 +64,24 @@ EMSCRIPTEN_BINDINGS(ParsingToysWASM) {
     class_<ParseTreeNode>("ParseTreeNode")
         .smart_ptr<shared_ptr<ParseTreeNode>>("ParseTreeNode")
         .function("toSVG", &ParseTreeNode::toSVG)
+    ;
+    class_<LLParsingSteps>("LLParsingSteps")
+        .constructor<>()
+        .function("size", optional_override([](const LLParsingSteps& self) { return self.stack.size(); }))
+        .function("_getStack", optional_override([](const LLParsingSteps& self, size_t i) { return self.stack[i]; }))
+        .function("_getRemainingInputs", optional_override([](const LLParsingSteps& self, size_t i) { return self.remainingInputs[i]; }))
+        .function("getAction", optional_override([](const LLParsingSteps& self, size_t i) { return self.actions[i]; }))
+        .function("getParseTree", optional_override([](const LLParsingSteps& self) { return self.parseTree; }))
+    ;
+    class_<MTable>("MTable")
+        .constructor<>()
+        .function("numNonTerminals", &MTable::numNonTerminals)
+        .function("numTerminals", &MTable::numTerminals)
+        .function("getNonTerminal", &MTable::getNonTerminal)
+        .function("getTerminal", &MTable::getTerminal)
+        .function("hasConflict", optional_override([](const MTable& self) { return self.hasConflict(); }))
+        .function("hasConflictAt", optional_override([](const MTable& self, const string& nt, const string& t) { return self.hasConflict(nt, t); }))
+        .function("getCell", optional_override([](const MTable& self, const string& nt, const string& t, const string& sep) { return self.getCell(nt, t, sep); }))
+        .function("parse", &MTable::parse)
     ;
 }

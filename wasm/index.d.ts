@@ -58,6 +58,29 @@ export class ActionGotoTable {
     getParseTree(): ParseTreeNode | null
 }
 
+export class LLParsingSteps {
+    constructor()
+    size(): number
+    _getStack(index: number): VectorString
+    getStack(index: number): string[]
+    _getRemainingInputs(index: number): VectorString
+    getRemainingInputs(index: number): string[]
+    getAction(index: number): string
+    getParseTree(): ParseTreeNode | null
+}
+
+export class MTable {
+    constructor()
+    numNonTerminals(): number
+    numTerminals(): number
+    getNonTerminal(index: number): string
+    getTerminal(index: number): string
+    hasConflict(): boolean
+    hasConflictAt(nonTerminal: string, terminal: string): boolean
+    getCell(nonTerminal: string, terminal: string, separator: string): string
+    parse(input: string): LLParsingSteps
+}
+
 export class ContextFreeGrammar {
     constructor()
     parse(code: string): boolean
@@ -80,4 +103,5 @@ export class ContextFreeGrammar {
     computeLR1ActionGotoTable(automaton: FiniteAutomaton): ActionGotoTable
     computeLALR1Automaton(): FiniteAutomaton
     computeLALR1ActionGotoTable(automaton: FiniteAutomaton): ActionGotoTable
+    computeLL1Table(): MTable
 }
