@@ -29,6 +29,7 @@ function setLALRHashData(data: LALRHashData): void {
 const EXAMPLE_OPTIONS: Record<string, string> = {
     "example1": "Example 1: S -> S S + | S S * | a",
     "example2": "Example 2: E -> E + T | T  T -> T * F | F  F -> ( E ) | id",
+    "example3": "Example 3: S -> C C  C -> c C | d",
 }
 
 const EXAMPLES: Record<string, string> = {
@@ -36,11 +37,14 @@ const EXAMPLES: Record<string, string> = {
     "example2": `E -> E + T | T
 T -> T * F | F
 F -> ( E ) | id`,
+    "example3": `S -> C C
+C -> c C | d`,
 }
 
 const EXAMPLE_INPUTS: Record<string, string> = {
     "example1": "a a + a a + *",
     "example2": "id * ( id + id )",
+    "example3": "c d c c c d",
 }
 
 const lalrButton = document.querySelector<HTMLElement>('#button-cfg-lalr')!
@@ -64,13 +68,13 @@ lalrButton.addEventListener('click', () => {
             parseTreeContainer.hidden = true
         } else {
             if (cfg.nonTerminals().length > 0) {
-                const automaton = cfg.computeLALRAutomaton();
+                const automaton = cfg.computeLALR1Automaton();
                 const parser = new DOMParser()
                 const svgDoc = parser.parseFromString(automaton.toSVG(), 'image/svg+xml')
                 automatonSVG.innerHTML = svgDoc.documentElement.innerHTML
                 automatonSVG.setAttribute("viewBox", svgDoc.documentElement.getAttribute("viewBox")!)
 
-                const table = cfg.computeLALRActionGotoTable(automaton)
+                const table = cfg.computeLALR1ActionGotoTable(automaton)
                 renderActionGotoTable(cfg, table)
 
                 const input = inputString.value.trim()

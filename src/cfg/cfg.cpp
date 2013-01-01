@@ -10,7 +10,7 @@ using namespace std;
 const string ContextFreeGrammar::EMPTY_SYMBOL = "ε";
 const string ContextFreeGrammar::DOT_SYMBOL = "·";
 const string ContextFreeGrammar::EOF_SYMBOL = "¥";
-const string ContextFreeGrammar::LOOKAHEAD_SEPARATOR = "，";
+const string ContextFreeGrammar::LOOKAHEAD_SEPARATOR = "﹐";
 
 bool ContextFreeGrammarToken::operator==(const ContextFreeGrammarToken& other) const {
     return type == other.type && symbol == other.symbol && line == other.line && column == other.column;
@@ -152,6 +152,46 @@ string ContextFreeGrammar::toString() const {
     const string indent(maxHeadLength, ' ');
     for (const auto& head: _ordering) {
         const auto& productions = _productions.find(head)->second;
+        for (size_t i = 0; i < productions.size(); ++i) {
+            if (i == 0) {
+                grammar += string(maxHeadLength - head.length(), ' ');
+                grammar += head + " ->";
+            } else {
+                grammar += indent + "  |";
+            }
+            for (const auto& symbol: productions[i]) {
+                grammar += " " + symbol;
+            }
+            grammar += "\n";
+        }
+    }
+    return grammar;
+}
+
+std::string ContextFreeGrammar::toSortedString() const {
+    size_t maxHeadLength = 0;
+    for (const auto& head: _productions | views::keys) {
+        maxHeadLength = std::max(maxHeadLength, head.length());
+    }
+    string grammar;
+    const string indent(maxHeadLength, ' ');
+    auto ordering(_ordering);
+    ranges::sort(ordering);
+    for (const auto& head: ordering) {
+        auto productions(_productions.at(head));
+        ranges::sort(productions, [](const Production& a, const Production& b) {
+            const auto n = a.size();
+            const auto m = b.size();
+            for (size_t i = 0; i < min(n, m); ++i) {
+                if (a[i] < b[i]) {
+                    return true;
+                }
+                if (a[i] > b[i]) {
+                    return false;
+                }
+            }
+            return n <= m;
+        });
         for (size_t i = 0; i < productions.size(); ++i) {
             if (i == 0) {
                 grammar += string(maxHeadLength - head.length(), ' ');

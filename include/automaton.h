@@ -12,10 +12,7 @@ struct FiniteAutomatonNode {
     ContextFreeGrammar kernel;
     ContextFreeGrammar nonKernel;
 
-    /**
-     * For unit tests only.
-     * @return
-     */
+    /** For unit tests only. */
     [[nodiscard]] std::string toString() const;
 };
 

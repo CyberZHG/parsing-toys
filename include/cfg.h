@@ -127,6 +127,12 @@ public:
     [[nodiscard]] std::string toString() const;
 
     /**
+     * A formatted context-free grammar string in lexical order.
+     * @return Formatted string.
+     */
+    [[nodiscard]] std::string toSortedString() const;
+
+    /**
      * Find all terminals in the existing productions.
      */
     void initTerminals();
@@ -268,7 +274,7 @@ public:
      *
      * @return A deterministic finite automaton.
      */
-    std::unique_ptr<FiniteAutomaton> computeLALRAutomaton();
+    std::unique_ptr<FiniteAutomaton> computeLALR1Automaton();
 
     /**
      * Compute the ACTION/GOTO table for LALR(1) parsing.
@@ -276,7 +282,7 @@ public:
      * @param automaton
      * @return
      */
-    [[nodiscard]] ActionGotoTable computeLALRActionGotoTable(const std::unique_ptr<FiniteAutomaton>& automaton) const;
+    [[nodiscard]] ActionGotoTable computeLALR1ActionGotoTable(const std::unique_ptr<FiniteAutomaton>& automaton) const;
 
 private:
     std::string _errorMessage;

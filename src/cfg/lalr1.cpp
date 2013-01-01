@@ -16,7 +16,7 @@ using namespace std;
  * This produces fewer states than LR(1) but may introduce reduce-reduce
  * conflicts that weren't present in the LR(1) parser.
  */
-unique_ptr<FiniteAutomaton> ContextFreeGrammar::computeLALRAutomaton() {
+unique_ptr<FiniteAutomaton> ContextFreeGrammar::computeLALR1Automaton() {
     // First, build the full LR(1) automaton
     const auto lr1Automaton = computeLR1Automaton();
 
@@ -102,6 +102,6 @@ unique_ptr<FiniteAutomaton> ContextFreeGrammar::computeLALRAutomaton() {
  *
  * LALR may have more conflicts than LR(1) due to merged lookaheads.
  */
-ActionGotoTable ContextFreeGrammar::computeLALRActionGotoTable(const unique_ptr<FiniteAutomaton>& automaton) const {
+ActionGotoTable ContextFreeGrammar::computeLALR1ActionGotoTable(const unique_ptr<FiniteAutomaton>& automaton) const {
     return computeLR1ActionGotoTable(automaton);
 }

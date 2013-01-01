@@ -29,7 +29,7 @@ string FiniteAutomaton::newNodeLabel(const string& prefix) const {
 }
 
 size_t FiniteAutomaton::addNode(const FiniteAutomatonNode& node) {
-    const auto key = node.kernel.toString() + "---\n" + node.nonKernel.toString();
+    const auto key = node.kernel.toSortedString() + "---\n" + node.nonKernel.toSortedString();
     if (const auto it = _keyToNodeIndex.find(key); it != _keyToNodeIndex.end()) {
         return it->second;
     }

@@ -27,8 +27,8 @@ EMSCRIPTEN_BINDINGS(ParsingToysWASM) {
         .function("computeSLR1ActionGotoTable", &ContextFreeGrammar::computeSLR1ActionGotoTable)
         .function("computeLR1Automaton", &ContextFreeGrammar::computeLR1Automaton)
         .function("computeLR1ActionGotoTable", &ContextFreeGrammar::computeLR1ActionGotoTable)
-        .function("computeLALRAutomaton", &ContextFreeGrammar::computeLALRAutomaton)
-        .function("computeLALRActionGotoTable", &ContextFreeGrammar::computeLALRActionGotoTable)
+        .function("computeLALR1Automaton", &ContextFreeGrammar::computeLALR1Automaton)
+        .function("computeLALR1ActionGotoTable", &ContextFreeGrammar::computeLALR1ActionGotoTable)
     ;
     class_<FirstAndFollowSet>("FirstAndFollowSet")
         .constructor<>()
