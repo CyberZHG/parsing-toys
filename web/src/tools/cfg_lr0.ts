@@ -5,6 +5,27 @@ import { setupLocationHash, getLocationHashValue, setLocationHashValue } from '.
 import { setupSVGPanZoom, setupSVGDownloadButtons } from '../finite_automaton.ts'
 import { renderParsingSteps } from '../lr_steps.ts'
 
+interface LR0HashData {
+    grammar: string
+    input?: string
+}
+
+function getLR0HashData(): LR0HashData {
+    try {
+        const value = getLocationHashValue()
+        if (!value) return { grammar: '' }
+        const data = JSON.parse(value)
+        return { grammar: data.grammar || '', input: data.input || '' }
+    } catch {
+        // Fallback for old format (plain string)
+        return { grammar: getLocationHashValue(), input: '' }
+    }
+}
+
+function setLR0HashData(data: LR0HashData): void {
+    setLocationHashValue(JSON.stringify(data))
+}
+
 const EXAMPLE_OPTIONS: Record<string, string> = {
     "example1": "Example 1: S -> S S + | S S * | a",
     "example2": "Example 2: E -> E + T | T  T -> T * F | F  F -> ( E ) | id",
@@ -57,7 +78,7 @@ lr0Button.addEventListener('click', () => {
         errorMessage.parentElement!.hidden = false
         lrStepsContainer.hidden = true
     }
-    setLocationHashValue(code)
+    setLR0HashData({ grammar: code, input: inputString.value.trim() })
 })
 
 function onExamplesChange(key: string) : void {
@@ -81,5 +102,7 @@ setupLocationHash()
 setupSVGPanZoom(automatonSVG)
 setupSVGDownloadButtons(automatonSVG)
 
-setCFGEditorValue(getLocationHashValue())
+const hashData = getLR0HashData()
+setCFGEditorValue(hashData.grammar)
+inputString.value = hashData.input || ''
 lr0Button.click()
