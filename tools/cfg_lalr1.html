@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/parsing-toys/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Online LALR(1) Parsing</title>
+  <script type="module" crossorigin src="/parsing-toys/assets/lalr1-BrksXtN7.js"></script>
+  <link rel="modulepreload" crossorigin href="/parsing-toys/assets/__vite-browser-external-BgPlA5PU.js">
+  <link rel="modulepreload" crossorigin href="/parsing-toys/assets/choose_examples-BjAtfSqC.js">
+  <link rel="modulepreload" crossorigin href="/parsing-toys/assets/cfg_editor-Bof7UeYh.js">
+  <link rel="modulepreload" crossorigin href="/parsing-toys/assets/location_hash-DCeX6uqc.js">
+  <link rel="modulepreload" crossorigin href="/parsing-toys/assets/display_svg-Danp339a.js">
+  <link rel="modulepreload" crossorigin href="/parsing-toys/assets/action_goto_table-ox6zrwL9.js">
+  <link rel="stylesheet" crossorigin href="/parsing-toys/assets/__vite-browser-external-7K-0nqN3.css">
+</head>
+<body>
+<nav class="bg-gray-50 border-b border-gray-200">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="flex h-16 items-center justify-between">
+      <div class="flex items-center">
+        <span class="text-xl font-bold text-gray-700"><a href="/parsing-toys">ParsingToys</a></span>
+      </div>
+      <div class="hidden md:flex space-x-6">
+        <a href="/parsing-toys" class="flex items-center gap-2 text-gray-700 hover:text-blue-600">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+            <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+          </svg>
+          Home
+        </a>
+        <a href="https://github.com/CyberZHG/parsing-toys" class="flex items-center gap-2 text-gray-700 hover:text-blue-600">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+            <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
+          </svg>
+          GitHub
+        </a>
+        <a href="https://github.com/CyberZHG/parsing-toys/issues" class="flex items-center gap-2 text-gray-700 hover:text-blue-600">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+            <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+          </svg>
+          Issues
+        </a>
+      </div>
+      <div class="hidden md:block"></div>
+      <div class="hidden md:block"></div>
+      <button id="menu-btn" class="md:hidden text-gray-700 focus:outline-none">☰</button>
+    </div>
+  </div>
+  <div id="mobile-menu" class="hidden md:hidden px-4 pb-4 space-y-4">
+    <a href="/parsing-toys" class="flex items-center gap-2 text-gray-700">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+        <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+      </svg>
+      Home
+    </a>
+    <a href="https://github.com/CyberZHG/parsing-toys" class="flex items-center gap-2 text-gray-700">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+        <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
+      </svg>
+      GitHub
+    </a>
+    <a href="https://github.com/CyberZHG/parsing-toys/issues" class="flex items-center gap-2 text-gray-700">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+        <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+      </svg>
+      Issues
+    </a>
+  </div>
+</nav>
+<main class="max-w-7xl mx-auto px-4 py-10 min-h-screen flex flex-col">
+  <div class="relative flex flex-col py-4 w-full max-w-6xl mx-auto">
+    <button id="examples-menu-button-show" class="w-full border px-3 py-2 rounded flex justify-between items-center">
+      Examples
+      <span>▾</span>
+    </button>
+    <ul id="examples-menu" class="absolute top-full w-full bg-white border rounded shadow hidden z-10">
+      <!-- <li class="px-3 py-2 hover:bg-gray-100 cursor-pointer" data-value="option">Option</li> -->
+    </ul>
+  </div>
+  <div class="flex flex-col w-full gap-2 max-w-6xl mx-auto">
+    <div id="cfg-editor-intro" class="relative w-full text-gray-950 font-semibold ">
+      Context free grammar input:
+    </div>
+    <div class="flex border border-gray-700 rounded h-64">
+      <div id="cfg-editor-line-numbers" class="bg-gray-700 text-gray-500 text-right p-2 w-10 select-none font-mono text-sm overflow-hidden">1</div>
+      <div class="relative flex-1 h-full">
+        <div class="relative w-full max-w-6xl mx-auto">
+          <pre class="absolute inset-0 p-2 pr-4 overflow-hidden pointer-events-none text-sm font-mono whitespace-pre break-words text-gray-900"><code id="cfg-editor-highlighted"></code></pre>
+          <label for="cfg-editor">
+            <textarea id="cfg-editor" spellcheck="false" class="relative w-full h-62 p-2 pr-4 bg-transparent text-transparent caret-gray-950 resize-none outline-none overflow-auto whitespace-pre text-sm font-mono "></textarea>
+          </label>
+        </div>
+      </div>
+    </div>
+    <div class="flex gap-2 mt-2">
+      <button id="cfg-editor-button-insert-eps" class="px-5 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white text-sm font-semibold min-w-[20%]">Insert ε</button>
+      <button id="cfg-editor-button-copy-code" class="px-5 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white text-sm font-semibold min-w-[20%]">Copy Code</button>
+    </div>
+  </div>
+  <div class="flex flex-col w-full gap-2 max-w-6xl mx-auto mt-4">
+    <div class="relative w-full text-gray-950 font-semibold">
+      Input string:
+    </div>
+    <input id="input-string" type="text" placeholder="optional" class="w-full px-3 py-2 border border-gray-300 rounded font-mono text-sm focus:outline-none focus:border-gray-500" />
+  </div>
+  <div class="flex flex-col py-4 w-full gap-2 max-w-6xl mx-auto">
+    <div class="flex mt-2">
+      <button id="button-cfg-lalr" class="w-full py-2 bg-blue-700 hover:bg-blue-800 rounded font-semibold text-white text-sm">Generate LALR(1) Automaton</button>
+    </div>
+  </div>
+  <div class="flex flex-col pb-4 pt-0 w-full gap-2 max-w-6xl mx-auto">
+    <div class="flex items-center max-w-6xl gap-2 mt-2 text-red-500 text-sm" hidden>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+        <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+      </svg>
+      <div id="cfg-lalr-error-message">Error Message</div>
+    </div>
+  </div>
+  <div class="flex flex-col w-full gap-2 max-w-6xl mx-auto">
+    <div class="relative w-full text-gray-950 font-semibold ">
+      Automaton:
+    </div>
+    <div class="relative w-full aspect-[2/1] border border-gray-300 overflow-hidden">
+      <svg id="automaton-svg" class="w-full h-full cursor-grab active:cursor-grabbing select-none"></svg>
+    </div>
+    <div class="flex w-full gap-2">
+      <button id="automaton-download-svg" class="flex-1 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white text-sm font-semibold">Download SVG</button>
+      <button id="automaton-download-png" class="flex-1 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white text-sm font-semibold">Download PNG</button>
+    </div>
+  </div>
+  <div id="action-goto-table-container" class="flex flex-col w-full gap-2 max-w-6xl mx-auto mt-4" hidden>
+    <div class="relative w-full text-gray-950 font-semibold">
+      ACTION/GOTO Table:
+    </div>
+    <div class="relative w-full border border-gray-300 overflow-x-auto">
+      <table id="action-goto-table" class="w-full text-sm border-collapse">
+      </table>
+    </div>
+  </div>
+  <div id="lr-steps-container" class="flex flex-col w-full gap-2 max-w-6xl mx-auto mt-4" hidden>
+    <div class="relative w-full text-gray-950 font-semibold">
+      Parsing steps:
+    </div>
+    <div class="overflow-x-auto">
+      <table id="lr-steps-table" class="w-full text-sm border-collapse">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="border border-gray-300 px-3 py-2 text-center font-semibold">Step</th>
+            <th class="border border-gray-300 px-3 py-2 text-center font-semibold">Stack</th>
+            <th class="border border-gray-300 px-3 py-2 text-center font-semibold">Symbols</th>
+            <th class="border border-gray-300 px-3 py-2 text-center font-semibold">Input</th>
+            <th class="border border-gray-300 px-3 py-2 text-center font-semibold">Action</th>
+          </tr>
+        </thead>
+        <tbody id="lr-steps-tbody" class="font-mono">
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div id="parse-tree-container" class="flex flex-col w-full gap-2 max-w-6xl mx-auto mt-4" hidden>
+    <div class="relative w-full text-gray-950 font-semibold">
+      Parse tree:
+    </div>
+    <div class="relative w-full aspect-[2/1] border border-gray-300 overflow-hidden">
+      <svg id="parse-tree-svg" class="w-full h-full cursor-grab active:cursor-grabbing select-none"></svg>
+    </div>
+    <div class="flex w-full gap-2">
+      <button id="parse-tree-download-svg" class="flex-1 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white text-sm font-semibold">Download SVG</button>
+      <button id="parse-tree-download-png" class="flex-1 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white text-sm font-semibold">Download PNG</button>
+    </div>
+  </div>
+  <div class="flex flex-col w-full gap-2 max-w-6xl mx-auto pt-8">
+    <div class="relative w-full text-gray-950 font-semibold ">
+      Current URL:
+    </div>
+    <div class="flex w-full gap-2">
+      <label class="flex-1 ">
+        <input id="footer-url" type="text" value="" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200" disabled/>
+      </label>
+      <button id="footer-url-copy-button" class="px-5 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white text-sm font-semibold min-w-[20%]">
+        Copy URL
+      </button>
+    </div>
+  </div>
+</main>
+<footer class="border-t border-gray-200 bg-white">
+  <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between text-sm text-gray-500">
+    <p>
+      © Whenever
+      <span class="font-medium text-gray-700">ParsingToys</span>.
+      No rights reserved.
+    </p>
+    <div class="mt-2 sm:mt-0 flex gap-4">
+      <!--a href="/about.html" class="hover:text-blue-600">About</a-->
+    </div>
+  </div>
+</footer>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7XR2ZJPBG6"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-7XR2ZJPBG6');
+</script>
+</body>
+</html>
