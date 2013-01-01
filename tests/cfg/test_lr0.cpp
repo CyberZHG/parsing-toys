@@ -167,6 +167,9 @@ F -> ( E ) ·
 | 11 | reduce F -> ( E ) | reduce F -> ( E ) | reduce F -> ( E ) | reduce F -> ( E ) | reduce F -> ( E ) | reduce F -> ( E ) |  |  |  |
 )";
     EXPECT_EQ(expectedTable, table.toString(grammar));
+
+    const auto steps = table.parse("id * id + id");
+    cout << steps.toString() << endl;
 }
 
 TEST(TestContextFreeGrammarLR0Automaton, SpecialCase2) {

@@ -116,9 +116,7 @@ unique_ptr<FiniteAutomaton> ContextFreeGrammar::computeLR0Automaton() {
  * This often causes conflicts (shift-reduce or reduce-reduce).
  */
 ActionGotoTable ContextFreeGrammar::computeLR0ActionGotoTable(const unique_ptr<FiniteAutomaton>& automaton) const {
-    ActionGotoTable actionGotoTable;
-    actionGotoTable.actions.resize(automaton->size());
-    actionGotoTable.numPopSymbols.resize(automaton->size());
+    ActionGotoTable actionGotoTable(automaton->size());
 
     // Fill shift actions and GOTO entries from automaton edges.
     // Edge (u, v, X): if X is terminal -> ACTION[u,X] = shift v
@@ -126,8 +124,10 @@ ActionGotoTable ContextFreeGrammar::computeLR0ActionGotoTable(const unique_ptr<F
     for (const auto& [u, v, label] : automaton->edges()) {
         if (isTerminal(label)) {
             actionGotoTable.actions[u][label].emplace_back(format("shift {}", v));
+            actionGotoTable.nextState[u][label] = v;
         } else {
             actionGotoTable.actions[u][label].emplace_back(format("{}", v));
+            actionGotoTable.nextState[u][label] = v;
         }
     }
 
@@ -150,10 +150,12 @@ ActionGotoTable ContextFreeGrammar::computeLR0ActionGotoTable(const unique_ptr<F
                             // Add reduce to all terminals (LR(0) has no lookahead)
                             for (const auto& terminal : _terminals) {
                                 actionGotoTable.actions[u][terminal].emplace_back(action);
-                                actionGotoTable.numPopSymbols[u][terminal].emplace_back(production.size());
+                                actionGotoTable.numPopSymbols[u][terminal] = production.size() - 1;
+                                actionGotoTable.reducedSymbols[u][terminal] = head;
                             }
                             actionGotoTable.actions[u][EOF_SYMBOL].emplace_back(action);
-                            actionGotoTable.numPopSymbols[u][EOF_SYMBOL].emplace_back(production.size());
+                            actionGotoTable.numPopSymbols[u][EOF_SYMBOL] = production.size() - 1;
+                            actionGotoTable.reducedSymbols[u][EOF_SYMBOL] = head;
                         }
                     }
                 }

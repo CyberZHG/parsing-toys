@@ -3,14 +3,18 @@
 
 using namespace std;
 
-vector<string> stringSplit(const string& str, const char delimiter) {
+vector<string> stringSplit(const string& str, const char delimiter, const bool removeEmpty) {
     vector<string> splits;
     size_t last = 0, pos = 0;
     while ((pos = str.find(delimiter, last)) != string::npos) {
-        splits.push_back(str.substr(last, pos - last));
+        if (const auto sub = str.substr(last, pos - last); !sub.empty() || !removeEmpty) {
+            splits.emplace_back(sub);
+        }
         last = pos + 1;
     }
-    splits.push_back(str.substr(last));
+    if (const auto sub = str.substr(last); !sub.empty() || !removeEmpty) {
+        splits.emplace_back(sub);
+    }
     return splits;
 }
 

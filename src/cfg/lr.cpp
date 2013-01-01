@@ -1,0 +1,175 @@
+#include "cfg.h"
+#include "string_utils.h"
+#include <ranges>
+#include <format>
+#include <algorithm>
+
+using namespace std;
+
+void LRParsingSteps::addStep(const vector<size_t>& _stack, const vector<Symbol>& _symbols, const vector<Symbol>& _remainingInputs, const string& action) {
+    stack.emplace_back(_stack);
+    symbols.emplace_back(_symbols);
+    remainingInputs.emplace_back(_remainingInputs);
+    actions.emplace_back(action);
+}
+
+string LRParsingSteps::toString() const {
+    string result = R"(| Stack | Symbols | Inputs | Action |
+|:-:|:-:|:-:|:-:|
+)";
+    for (size_t i = 0; i < stack.size(); i++) {
+        result += "| ";
+        for (const auto& state : stack[i]) {
+            result += format("{} ", state);
+        }
+        result += "| ";
+        for (const auto& symbol : symbols[i]) {
+            result += format("{} ", symbol);
+        }
+        result += "| ";
+        for (const auto& symbol : remainingInputs[i]) {
+            result += format("{} ", symbol);
+        }
+        result += "| " + actions[i] + " |\n";
+    }
+    return result;
+}
+
+bool ActionGotoTable::hasConflict() const {
+    for (const auto& subActions : actions) {
+        for (const auto& action : subActions | views::values) {
+            if (action.size() > 1) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool ActionGotoTable::hasConflict(const size_t index, const Symbol& symbol) const {
+    if (const auto it = actions[index].find(symbol); it != actions[index].end()) {
+        return it->second.size() > 1;
+    }
+    return false;
+}
+
+string ActionGotoTable::toString(const size_t index, const Symbol& symbol, const string& separator) const {
+    if (const auto it = actions[index].find(symbol); it != actions[index].end()) {
+        return stringJoin(it->second, separator);
+    }
+    return "";
+}
+
+/**
+ * Simulate LR parsing using the ACTION/GOTO table.
+ *
+ * @param s Input string (space-separated tokens, e.g., "id + id * id")
+ * @return Parsing steps.
+ */
+LRParsingSteps ActionGotoTable::parse(const string& s) const {
+    LRParsingSteps steps;
+    vector<size_t> stack = {0};   // State stack, initialized with state 0
+    vector<string> symbols;       // Symbol stack (terminals and non-terminals)
+    vector<string> remaining = stringSplit(s, ' ', true);
+    remaining.emplace_back(ContextFreeGrammar::EOF_SYMBOL);
+
+    // Remove empty symbols from input
+    size_t n = 0;
+    for (size_t i = 0; i < remaining.size(); ++i) {
+        if (remaining[i] != ContextFreeGrammar::EMPTY_SYMBOL) {
+            remaining[n++] = remaining[i];
+        }
+    }
+    remaining.resize(n);
+
+    while (!remaining.empty()) {
+        const auto state = stack.back();
+        const auto& nextSymbol = remaining.front();
+
+        // Check for conflicts (multiple actions for same state/symbol)
+        if (hasConflict(state, nextSymbol)) {
+            steps.addStep(stack, symbols, remaining, "conflict: " + toString(state, nextSymbol));
+            break;
+        }
+
+        // Look up action in ACTION/GOTO table
+        const auto it = actions[state].find(nextSymbol);
+        if (it == actions[state].end() || it->second.empty()) {
+            steps.addStep(stack, symbols, remaining, "invalid symbol");
+            break;
+        }
+        steps.addStep(stack, symbols, remaining, it->second[0]);
+        if (it->second[0] == "accept") {
+            break;
+        }
+
+        // Shift action: nextState exists for terminals
+        if (const auto shiftIt = nextState[state].find(nextSymbol); shiftIt != nextState[state].end()) {
+            // Push new state and symbol, consume input
+            stack.push_back(shiftIt->second);
+            symbols.push_back(nextSymbol);
+            remaining.erase(remaining.begin(), remaining.begin() + 1);
+        } else {
+            // Reduce action: A -> α (pop |α| items, then GOTO)
+            const auto reduceIt = numPopSymbols[state].find(nextSymbol);
+            if (reduceIt == numPopSymbols[state].end()) {
+                steps.addStep(stack, symbols, remaining, "invalid action/goto table");
+                break;
+            }
+
+            // Pop |α| states and symbols from both stacks
+            for (size_t i = 0; i < reduceIt->second; i++) {
+                stack.pop_back();
+                symbols.pop_back();
+            }
+
+            // Find the reduced non-terminal A
+            const auto reducedIt = reducedSymbols[state].find(nextSymbol);
+            if (reducedIt == reducedSymbols[state].end()) {
+                steps.addStep(stack, symbols, remaining, "invalid action/goto table");
+                break;
+            }
+
+            // GOTO[stack.top(), A]: push new state and the non-terminal
+            const auto gotoIt = nextState[stack.back()].find(reducedIt->second);
+            if (gotoIt == nextState[stack.back()].end()) {
+                steps.addStep(stack, symbols, remaining, "invalid action/goto table");
+                break;
+            }
+            stack.push_back(gotoIt->second);
+            symbols.push_back(reducedIt->second);
+        }
+    }
+    return steps;
+}
+
+std::string ActionGotoTable::toString(const ContextFreeGrammar& grammar, const string& separator) const {
+    auto terminals = grammar.terminals();
+    ranges::sort(terminals);
+    const auto& nonTerminals = grammar.orderedNonTerminals();
+    terminals.emplace_back(ContextFreeGrammar::EOF_SYMBOL);
+    string result = "| State |";
+    for (const auto& symbol : terminals) {
+        result += " " + symbol + " |";
+    }
+    for (const auto& symbol : nonTerminals) {
+        result += " " + symbol + " |";
+    }
+    result += "\n";
+    result += "|:-:|";
+    for (size_t i = 0; i < terminals.size() + nonTerminals.size(); i++) {
+        result += ":-:|";
+    }
+    result += "\n";
+    for (size_t i = 0; i < actions.size(); ++i) {
+        result += format("| {} |", i);
+        for (const auto& symbol : terminals) {
+            result += " " + toString(i, symbol, separator) + " |";
+        }
+        for (const auto& symbol : nonTerminals) {
+            result += " " + toString(i, symbol, separator) + " |";
+        }
+        result += "\n";
+    }
+    return result;
+}

@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 
-std::vector<std::string> stringSplit(const std::string& str, char delimiter);
+std::vector<std::string> stringSplit(const std::string& str, char delimiter, bool removeEmpty = false);
 std::string stringJoin(const std::vector<std::string>& strings, const std::string& separator);
 std::string stringReplace(const std::string& str, char from, const std::string& to);
 bool operator<(const std::vector<std::string>& a, const std::vector<std::string>& b);

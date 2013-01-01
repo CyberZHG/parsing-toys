@@ -43,13 +43,32 @@ struct FirstAndFollowSet {
     [[nodiscard]] std::vector<Symbol> getFollowSet(const Symbol& symbol) const;
 };
 
+struct LRParsingSteps {
+    std::vector<std::vector<std::size_t>> stack;
+    std::vector<std::vector<Symbol>> symbols;
+    std::vector<std::vector<Symbol>> remainingInputs;
+    std::vector<std::string> actions;
+
+    void addStep(const std::vector<std::size_t>& _stack, const std::vector<std::string>& _symbols, const std::vector<std::string>& _remainingInputs, const std::string &action);
+
+    /** For unit tests only. */
+    [[nodiscard]] std::string toString() const;
+};
+
 struct ActionGotoTable {
     std::vector<std::unordered_map<Symbol, std::vector<std::string>>> actions;
-    std::vector<std::unordered_map<Symbol, std::vector<std::size_t>>> numPopSymbols;
+    std::vector<std::unordered_map<Symbol, std::size_t>> nextState;
+    std::vector<std::unordered_map<Symbol, std::size_t>> numPopSymbols;
+    std::vector<std::unordered_map<Symbol, Symbol>> reducedSymbols;
+
+    ActionGotoTable() = default;
+    explicit ActionGotoTable(const std::size_t n) : actions(n), nextState(n), numPopSymbols(n), reducedSymbols(n) {}
 
     [[nodiscard]] bool hasConflict() const;
     [[nodiscard]] bool hasConflict(size_t index, const Symbol& symbol) const;
     [[nodiscard]] std::string toString(size_t index, const Symbol& symbol, const std::string& separator = " / ") const;
+
+    [[nodiscard]] LRParsingSteps parse(const std::string& s) const;
 
     /** For unit tests only. */
     [[nodiscard]] std::string toString(const ContextFreeGrammar& grammar, const std::string& separator = " / ") const;
@@ -189,6 +208,7 @@ public:
      * @return
      */
     [[nodiscard]] ActionGotoTable computeLR0ActionGotoTable(const std::unique_ptr<FiniteAutomaton>& automaton) const;
+
 private:
     std::string _errorMessage;
     std::vector<Symbol> _ordering;  // The output ordering
