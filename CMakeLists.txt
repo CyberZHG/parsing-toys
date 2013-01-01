@@ -52,6 +52,7 @@ add_library(ParsingToys STATIC
         src/production_trie.cpp
         src/left_factor.cpp
         src/left_recursion.cpp
+        src/first_and_follow.cpp
 )
 
 target_include_directories(ParsingToys
@@ -82,6 +83,7 @@ if(PARSING_TOYS_ENABLE_TESTS)
             tests/cfg/test_primed_symbol.cpp
             tests/cfg/test_left_factor.cpp
             tests/cfg/test_left_recursion.cpp
+            tests/cfg/test_first_and_follow.cpp
     )
 
     target_link_libraries(runTests

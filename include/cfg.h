@@ -24,6 +24,18 @@ struct ContextFreeGrammarToken {
     bool operator==(const ContextFreeGrammarToken& other) const;
 };
 
+struct FirstAndFollowSet {
+    vector<string> ordering;
+    unordered_map<string, unordered_set<string>> first;
+    unordered_map<string, unordered_set<string>> follow;
+
+    [[nodiscard]] size_t size() const;
+    [[nodiscard]] string symbolAt(size_t index) const;
+    [[nodiscard]] bool getNullable(const string &symbol) const;
+    [[nodiscard]] vector<string> getFirstSet(const string& symbol) const;
+    [[nodiscard]] vector<string> getFollowSet(const string& symbol) const;
+};
+
 class ContextFreeGrammar {
 public:
     using Symbol = string;
@@ -118,6 +130,14 @@ public:
      * @return False if the left recursion cannot be eliminated.
      */
     bool leftRecursionElimination();
+
+    /**
+     * FIRST set: The set of terminals that can appear as the first symbol.
+     * FOLLOW set: The set of terminals that can appear immediately to the right of the non-terminal.
+     *
+     * @return First and follow sets.
+     */
+    [[nodiscard]] FirstAndFollowSet computeFirstAndFollowSet() const;
 
 private:
     string _errorMessage;
