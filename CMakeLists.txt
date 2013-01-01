@@ -19,7 +19,7 @@ include(FetchContent)
 FetchContent_Declare(
         GraphLayout
         GIT_REPOSITORY https://github.com/CyberZHG/GraphLayout.git
-        GIT_TAG v1.0.0
+        GIT_TAG v1.0.2
 )
 
 FetchContent_MakeAvailable(GraphLayout)
@@ -45,14 +45,15 @@ endif()
 
 add_library(ParsingToys STATIC
         include/cfg.h
-        src/cfg.cpp
+        src/cfg/cfg.cpp
         include/string_utils.h
         src/string_utils.cpp
         include/production_trie.h
         src/production_trie.cpp
-        src/left_factor.cpp
-        src/left_recursion.cpp
-        src/first_and_follow.cpp
+        src/cfg/left_factor.cpp
+        src/cfg/left_recursion.cpp
+        src/cfg/first_and_follow.cpp
+        src/cfg/closure.cpp
 )
 
 target_include_directories(ParsingToys
@@ -84,6 +85,7 @@ if(PARSING_TOYS_ENABLE_TESTS)
             tests/cfg/test_left_factor.cpp
             tests/cfg/test_left_recursion.cpp
             tests/cfg/test_first_and_follow.cpp
+            tests/cfg/test_closure.cpp
     )
 
     target_link_libraries(runTests

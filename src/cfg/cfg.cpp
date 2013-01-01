@@ -6,6 +6,7 @@
 #include <algorithm>
 
 const string ContextFreeGrammar::EMPTY_SYMBOL = "ε";
+const string ContextFreeGrammar::DOT_SYMBOL = "·";
 
 bool ContextFreeGrammarToken::operator==(const ContextFreeGrammarToken& other) const {
     return type == other.type && symbol == other.symbol && line == other.line && column == other.column;
@@ -197,6 +198,10 @@ string ContextFreeGrammar::computeProductionKey(const vector<string>& production
     return stringJoin(production, " ");
 }
 
+string ContextFreeGrammar::computeProductionKey(const Symbol& head, const Production& production) {
+    return head + " -> " + computeProductionKey(production);
+}
+
 void ContextFreeGrammar::deduplicate() {
     _productionKeys.clear();
     for (auto& [head, productions] : _productions) {
@@ -280,6 +285,21 @@ string ContextFreeGrammar::generatePrimedSymbol(const string& symbol) {
         _ordering.insert(it + 1, newSymbol);
     }
     return newSymbol;
+}
+
+void ContextFreeGrammar::addProduction(const Symbol& head, const Production& production) {
+    if (const auto it = ranges::find(_ordering, head); it == _ordering.end()) {
+        _ordering.emplace_back(head);
+    }
+    if (const auto it = _terminals.find(head); it != _terminals.end()) {
+        _terminals.erase(it);
+    }
+    _productions[head].emplace_back(production);
+    for (const auto& symbol : production) {
+        if (!_productions.contains(symbol)) {
+            _terminals.insert(symbol);
+        }
+    }
 }
 
 void ContextFreeGrammar::addProductions(const Symbol& head, const Productions& productions) {

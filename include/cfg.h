@@ -45,6 +45,7 @@ public:
     ContextFreeGrammar() = default;
 
     static const string EMPTY_SYMBOL;
+    static const string DOT_SYMBOL;
 
     /**
      * Tokenization.
@@ -97,6 +98,13 @@ public:
      * @return
      */
     static string computeProductionKey(const Production& production);
+    /**
+     * Compute a key for a production to deduplicate.
+     * @param head
+     * @param production
+     * @return
+     */
+    static string computeProductionKey(const Symbol& head, const Production& production);
 
     /**
      * Remove duplicated productions for each non-terminal.
@@ -110,6 +118,7 @@ public:
      */
     string generatePrimedSymbol(const Symbol& symbol);
 
+    void addProduction(const Symbol &head, const Production &production);
     void addProductions(const Symbol& head, const Productions& productions);
 
     [[nodiscard]] bool expandable(const Production& production) const;
@@ -138,6 +147,14 @@ public:
      * @return First and follow sets.
      */
     [[nodiscard]] FirstAndFollowSet computeFirstAndFollowSet() const;
+
+    /**
+     * Compute the closure of an item set. The closure adds all items for non-terminals that can be expanded next.
+     *
+     * @param kernel The kernel set.
+     * @return The non-kernel set.
+     */
+    [[nodiscard]] ContextFreeGrammar computeClosure(const ContextFreeGrammar& kernel) const;
 
 private:
     string _errorMessage;

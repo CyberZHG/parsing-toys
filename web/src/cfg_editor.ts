@@ -13,6 +13,7 @@ export function setupCFGEditor(prefix: string = 'cfg-editor') {
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#39;')
             .replace(/-&gt;/g, '<span class="text-blue-500">-&gt;</span>')
+            .replace(/→/g, '<span class="text-blue-500">→</span>')
             .replace(/\|/g, '<span class="text-yellow-600">|</span>')
             .replace(/ε/g, '<span class="text-green-700">ε</span>')
     }
