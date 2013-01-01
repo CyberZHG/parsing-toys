@@ -46,6 +46,8 @@ endif()
 add_library(ParsingToys STATIC
         include/cfg.h
         src/cfg.cpp
+        include/string_utils.h
+        src/string_utils.cpp
 )
 
 target_include_directories(ParsingToys

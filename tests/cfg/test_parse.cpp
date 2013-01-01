@@ -91,6 +91,30 @@ TEST(TestContextFreeGrammarParse, ExistingHead2) {
     EXPECT_EQ("S -> a\n   | b\nA -> c\n", grammar.toString());
 }
 
+TEST(TestContextFreeGrammarParse, Deduplicate1) {
+    ContextFreeGrammar grammar;
+    EXPECT_TRUE(grammar.parse("S->a | b | a"));
+    EXPECT_EQ("S -> a\n   | b\n", grammar.toString());
+}
+
+TEST(TestContextFreeGrammarParse, Deduplicate2) {
+    ContextFreeGrammar grammar;
+    EXPECT_TRUE(grammar.parse("S->a | b | a | b | c"));
+    EXPECT_EQ("S -> a\n   | b\n   | c\n", grammar.toString());
+}
+
+TEST(TestContextFreeGrammarParse, Deduplicate3) {
+    ContextFreeGrammar grammar;
+    EXPECT_TRUE(grammar.parse("S->a | b | c | b | a"));
+    EXPECT_EQ("S -> a\n   | b\n   | c\n", grammar.toString());
+}
+
+TEST(TestContextFreeGrammarParse, Deduplicate4) {
+    ContextFreeGrammar grammar;
+    EXPECT_TRUE(grammar.parse("S->a A->b S->a"));
+    EXPECT_EQ("S -> a\nA -> b\n", grammar.toString());
+}
+
 TEST(TestContextFreeGrammarParse, SpecialCase1) {
     ContextFreeGrammar grammar;
     EXPECT_TRUE(grammar.parse("S -> S S + | S S * | a"));

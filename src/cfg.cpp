@@ -1,4 +1,5 @@
 #include "cfg.h"
+#include "string_utils.h"
 #include <format>
 #include <ranges>
 
@@ -109,6 +110,8 @@ bool ContextFreeGrammar::parse(const string& s) {
     if (hasEmptyProduction(lastLine, lastColumn)) {
         return false;
     }
+    initTerminals();
+    deduplicate();
     return true;
 }
 
@@ -139,6 +142,40 @@ string ContextFreeGrammar::toString() const {
         }
     }
     return grammar;
+}
+
+void ContextFreeGrammar::initTerminals() {
+    _terminals.clear();
+    for (const auto& productions : _productions | views::values) {
+        for (const auto& production: productions) {
+            for (const auto& symbol: production) {
+                if (!_productions.contains(symbol)) {
+                    _terminals.insert(symbol);
+                }
+            }
+        }
+    }
+}
+
+string ContextFreeGrammar::computeProductionKey(const vector<string>& production) {
+    return stringJoin(production, " ");
+}
+
+void ContextFreeGrammar::deduplicate() {
+    _productionKeys.clear();
+    for (auto& [head, productions] : _productions) {
+        size_t m = 0;
+        for (size_t i = 0; i < productions.size(); ++i) {
+            if (const auto key = computeProductionKey(productions[i]); !_productionKeys[head].contains(key)) {
+                _productionKeys[head].insert(key);
+                if (i != m) {
+                    productions[m] = productions[i];
+                }
+                ++m;
+            }
+        }
+        productions.resize(m);
+    }
 }
 
 void PrintTo(const ContextFreeGrammarToken& token, ostream* os) {

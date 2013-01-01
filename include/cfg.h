@@ -8,11 +8,14 @@
 #include <unordered_set>
 using namespace std;
 
+/**
+ * Tokenized results.
+ */
 struct ContextFreeGrammarToken {
     enum class Type {
         SYMBOL,
-        PRODUCTION,
-        ALTERNATION,
+        PRODUCTION,  // The '->' sign
+        ALTERNATION,  // The '|' sign
     };
     Type type;
     string symbol;
@@ -29,18 +32,57 @@ public:
 
     ContextFreeGrammar() = default;
 
+    /**
+     * Tokenization.
+     * @param s A string representing a context-free grammar.
+     * @return Tokens
+     */
     static vector<ContextFreeGrammarToken> tokenize(const string& s);
+
+    /**
+     * Tokenize and parse a context-free grammar.
+     * @param s A string representing a context-free grammar.
+     * @return
+     */
     bool parse(const string& s);
+
+    /**
+     * TPossible error messages during parsing.
+     * @return Error message.
+     */
     [[nodiscard]] const string& errorMessage() const;
+
+    /**
+     * A formatted context-free grammar string.
+     * @return Formatted string.
+     */
     [[nodiscard]] string toString() const;
+
+    /**
+     * Find all terminals in the existing productions.
+     */
+    void initTerminals();
+
+    /**
+     * Compute a key for a production to deduplicate.
+     * @param production
+     * @return
+     */
+    static string computeProductionKey(const vector<string>& production);
+
+    /**
+     * Remove duplicated productions for each non-terminal.
+     */
+    void deduplicate();
 
 private:
     static const string EMPTY_SYMBOL;
 
     string _errorMessage;
-    vector<Symbol> _ordering;
-    unordered_map<Symbol, Productions> _productions;
-    unordered_set<Symbol> _terminals;
+    vector<Symbol> _ordering;  // The output ordering
+    unordered_map<Symbol, Productions> _productions;  // All the productions
+    unordered_map<Symbol, unordered_set<string>> _productionKeys;  // Helper member for checking the existence of a production
+    unordered_set<Symbol> _terminals;  // Helper member for checking the existence of terminals
 };
 
 void PrintTo(const ContextFreeGrammarToken& token, ostream* os);
