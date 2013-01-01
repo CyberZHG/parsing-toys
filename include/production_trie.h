@@ -48,6 +48,12 @@ public:
      */
     static vector<vector<string>> computeProductionsUnderPrefix(const shared_ptr<ProductionTrieNode>& node, const unordered_map<int ,int>* parents = nullptr);
 
+    /**
+     * Remove a node from the trie.
+     * @param node A trie node.
+     */
+    static void removeNode(const shared_ptr<ProductionTrieNode>& node);
+
 private:
     shared_ptr<ProductionTrieNode> _head;
 };

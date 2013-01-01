@@ -97,6 +97,13 @@ public:
 
     void addProductions(const Symbol& head, const Productions& productions);
 
+    [[nodiscard]] bool expandable(const Production& production) const;
+
+    /**
+     * Find and group longest common prefixes.
+     */
+    void leftFactoring();
+
 private:
     string _errorMessage;
     vector<Symbol> _ordering;  // The output ordering

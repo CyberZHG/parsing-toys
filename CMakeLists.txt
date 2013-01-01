@@ -50,6 +50,7 @@ add_library(ParsingToys STATIC
         src/string_utils.cpp
         include/production_trie.h
         src/production_trie.cpp
+        src/left_factor.cpp
 )
 
 target_include_directories(ParsingToys
@@ -78,6 +79,7 @@ if(PARSING_TOYS_ENABLE_TESTS)
             tests/cfg/test_production_trie.cpp
             tests/test_string_utils.cpp
             tests/cfg/test_primed_symbol.cpp
+            tests/cfg/test_left_factor.cpp
     )
 
     target_link_libraries(runTests

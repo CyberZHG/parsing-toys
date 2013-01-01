@@ -259,7 +259,16 @@ void ContextFreeGrammar::addProductions(const Symbol& head, const Productions& p
     }
     for (const auto& production: productions) {
         _productions[head].emplace_back(production);
+        if (production.size() == 1 && production[0] == EMPTY_SYMBOL) {
+            _terminals.insert(EMPTY_SYMBOL);
+        }
     }
+}
+
+bool ContextFreeGrammar::expandable(const Production& production) const {
+    return ranges::any_of(production, [&](const Symbol& symbol) {
+        return _productions.contains(symbol);
+    });
 }
 
 void PrintTo(const ContextFreeGrammarToken& token, ostream* os) {

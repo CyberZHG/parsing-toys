@@ -102,3 +102,18 @@ vector<vector<string>> ProductionTrie::computeProductionsUnderPrefix(const share
     ranges::sort(productions);
     return productions;
 }
+
+void ProductionTrie::removeNode(const shared_ptr<ProductionTrieNode>& node) {
+    if (auto parent = node->parent; parent != nullptr) {
+        for (const auto& [head, child]: parent->children) {
+            if (child.get() == node.get()) {
+                parent->children.erase(head);
+                break;
+            }
+        }
+        while (parent != nullptr) {
+            parent->count -= node->count;
+            parent = parent->parent;
+        }
+    }
+}
