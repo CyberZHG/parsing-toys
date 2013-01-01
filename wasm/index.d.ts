@@ -18,6 +18,12 @@ export class FirstAndFollowSet {
     getFollowSet(symbol: string): string[]
 }
 
+export class FiniteAutomaton {
+    constructor()
+    size(): number
+    toSVG(): string
+}
+
 export class ContextFreeGrammar {
     constructor()
     parse(code: string): boolean
@@ -30,4 +36,5 @@ export class ContextFreeGrammar {
     leftFactoring(): void
     leftRecursionElimination(): boolean
     computeFirstAndFollowSet(): FirstAndFollowSet
+    computeLR0Automaton(): FiniteAutomaton
 }

@@ -3,6 +3,17 @@
 
 using namespace std;
 
+vector<string> stringSplit(const string& str, const char delimiter) {
+    vector<string> splits;
+    size_t last = 0, pos = 0;
+    while ((pos = str.find(delimiter, last)) != string::npos) {
+        splits.push_back(str.substr(last, pos - last));
+        last = pos + 1;
+    }
+    splits.push_back(str.substr(last));
+    return splits;
+}
+
 string stringJoin(const vector<string>& strings, const string& separator) {
     string result;
     for (size_t i = 0; i < strings.size(); i++) {
@@ -10,6 +21,18 @@ string stringJoin(const vector<string>& strings, const string& separator) {
             result += separator;
         }
         result += strings[i];
+    }
+    return result;
+}
+
+string stringReplace(const string& str, const char from, const string& to) {
+    string result;
+    for (const auto& ch : str) {
+        if (ch == from) {
+            result += to;
+        } else {
+            result += ch;
+        }
     }
     return result;
 }

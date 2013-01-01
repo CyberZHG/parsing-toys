@@ -3,6 +3,8 @@
 #include <gtest/gtest.h>
 #include <ranges>
 #include <algorithm>
+#include <fstream>
+#include <format>
 
 using namespace std;
 
@@ -140,6 +142,13 @@ F -> ( E ) ·
 8 -- + --> 6
 9 -- * --> 7
 )", automaton->edgesToString());
+
+    const ::testing::TestInfo* info = ::testing::UnitTest::GetInstance()->current_test_info();
+    const auto svg = automaton->toSVG();
+    const auto filePath = format("{}_{}.svg", info->test_suite_name(), info->name());
+    ofstream file(filePath);
+    file << svg;
+    file.close();
 }
 
 TEST(TestContextFreeGrammarLR0Automaton, SpecialCase2) {
@@ -191,6 +200,13 @@ B -> b ·
 2 -- B --> 3
 2 -- b --> 4
 )", automaton->edgesToString());
+
+    const ::testing::TestInfo* info = ::testing::UnitTest::GetInstance()->current_test_info();
+    const auto svg = automaton->toSVG();
+    const auto filePath = format("{}_{}.svg", info->test_suite_name(), info->name());
+    ofstream file(filePath);
+    file << svg;
+    file.close();
 }
 
 TEST(TestContextFreeGrammarLR0Automaton, SpecialCase3) {
@@ -233,6 +249,13 @@ E -> E a ·
 0 -- b --> 2
 1 -- a --> 3
 )", automaton->edgesToString());
+
+    const ::testing::TestInfo* info = ::testing::UnitTest::GetInstance()->current_test_info();
+    const auto svg = automaton->toSVG();
+    const auto filePath = format("{}_{}.svg", info->test_suite_name(), info->name());
+    ofstream file(filePath);
+    file << svg;
+    file.close();
 }
 
 TEST(TestContextFreeGrammarLR0Automaton, SpecialCase4) {
@@ -284,6 +307,13 @@ S -> A A ·
 2 -- A --> 4
 2 -- a --> 3
 )", automaton->edgesToString());
+
+    const ::testing::TestInfo* info = ::testing::UnitTest::GetInstance()->current_test_info();
+    const auto svg = automaton->toSVG();
+    const auto filePath = format("{}_{}.svg", info->test_suite_name(), info->name());
+    ofstream file(filePath);
+    file << svg;
+    file.close();
 }
 
 TEST(TestContextFreeGrammarLR0Automaton, SpecialCase5) {
@@ -335,4 +365,11 @@ B -> c ·
 0 -- B --> 3
 0 -- c --> 4
 )", automaton->edgesToString());
+
+    const ::testing::TestInfo* info = ::testing::UnitTest::GetInstance()->current_test_info();
+    const auto svg = automaton->toSVG();
+    const auto filePath = format("{}_{}.svg", info->test_suite_name(), info->name());
+    ofstream file(filePath);
+    file << svg;
+    file.close();
 }

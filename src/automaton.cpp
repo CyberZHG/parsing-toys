@@ -1,7 +1,9 @@
 #include "automaton.h"
 #include "string_utils.h"
+#include "graph_layout.h"
 
 using namespace std;
+using namespace graph_layout;
 
 string FiniteAutomatonNode::toString() const {
     string result = label + "\n===\n";
@@ -47,6 +49,54 @@ size_t FiniteAutomaton::addEdge(const size_t u, const size_t v, const string& la
     return addEdge(edge);
 }
 
+std::string FiniteAutomaton::toSVG() const {
+    DirectedGraphHierarchicalLayout layout;
+    layout.setFeedbackArcsMethod(FeedbackArcsMethod::MIN_ID);
+    layout.attributes().setVertexDefaultMonospace();
+    layout.attributes().setEdgeDefaultMonospace();
+    layout.attributes().setVertexDefaultShape(AttributeShape::RECORD);
+    layout.attributes().setEdgeDefaultSplines(AttributeSplines::SPLINE);
+    layout.attributes().setRankDir(AttributeRankDir::LEFT_TO_RIGHT);
+    const auto n = _nodes.size();
+    const auto& graph = layout.createGraph(n + 1);
+    vector<string> nodeLabels(n + 1);
+    for (size_t i = 0; i < n; ++i) {
+        const auto& [accept, label, kernel, nonKernel] = _nodes[i];
+        nodeLabels[i] = "{";
+        nodeLabels[i] += label;
+        nodeLabels[i] += "|";
+        for (const auto& line : stringSplit(kernel.toString(), '\n')) {
+            if (line.empty()) {
+                continue;
+            }
+            nodeLabels[i] += stringReplace(stringReplace(line, '|', "\\|"), ' ', "\\ ") + "\\l";
+        }
+        if (!nonKernel.nonTerminals().empty()) {
+            nodeLabels[i] += "|";
+            for (const auto& line : stringSplit(nonKernel.toString(), '\n')) {
+                if (line.empty()) {
+                    continue;
+                }
+                nodeLabels[i] += stringReplace(stringReplace(line, '|', "\\|"), ' ', "\\ ") + "\\l";
+            }
+        }
+        nodeLabels[i] += "}";
+        if (accept) {
+            const auto edgeId = graph->addEdge(static_cast<int>(i), static_cast<int>(n));
+        layout.attributes().setEdgeTailLabel(edgeId, "$");
+        }
+    }
+    nodeLabels[n] = "accept";
+    layout.setVertexLabels(nodeLabels);
+    layout.attributes().setVertexShape(static_cast<int>(n), AttributeShape::NONE);
+    for (const auto& [u, v, label] : _edges) {
+        const auto edgeId = graph->addEdge(static_cast<int>(u), static_cast<int>(v));
+        layout.attributes().setEdgeTailLabel(edgeId, label);
+    }
+    layout.layoutGraph();
+    return layout.render();
+}
+
 string FiniteAutomaton::edgesToString() const {
     string result;
     for (const auto&[u, v, label] : _edges) {
@@ -54,4 +104,3 @@ string FiniteAutomaton::edgesToString() const {
     }
     return result;
 }
-

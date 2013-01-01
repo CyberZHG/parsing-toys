@@ -1,6 +1,8 @@
 #include "cfg.h"
+#include "automaton.h"
 #include <vector>
 #include <string>
+#include <memory>
 #include <emscripten/bind.h>
 using namespace emscripten;
 using namespace std;
@@ -17,6 +19,7 @@ EMSCRIPTEN_BINDINGS(ParsingToysWASM) {
         .function("leftFactoring", &ContextFreeGrammar::leftFactoring)
         .function("leftRecursionElimination", &ContextFreeGrammar::leftRecursionElimination)
         .function("computeFirstAndFollowSet", &ContextFreeGrammar::computeFirstAndFollowSet)
+        .function("computeLR0Automaton", &ContextFreeGrammar::computeLR0Automaton)
     ;
     class_<FirstAndFollowSet>("FirstAndFollowSet")
         .constructor<>()
@@ -25,5 +28,10 @@ EMSCRIPTEN_BINDINGS(ParsingToysWASM) {
         .function("getNullable", &FirstAndFollowSet::getNullable)
         .function("_getFirstSet", &FirstAndFollowSet::getFirstSet)
         .function("_getFollowSet", &FirstAndFollowSet::getFollowSet)
+    ;
+    class_<FiniteAutomaton>("FiniteAutomaton")
+        .constructor<>()
+        .function("size", &FiniteAutomaton::size)
+        .function("toSVG", &FiniteAutomaton::toSVG)
     ;
 }
