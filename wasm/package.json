@@ -2,10 +2,12 @@
   "name": "parsing-toys",
   "version": "0.0.0",
   "type": "module",
-  "main": "index.ds",
+  "main": "index.js",
+  "types": "index.d.ts",
   "files": [
-    "index.ts",
-    "build/ParsingToysWASM.ts",
+    "index.js",
+    "index.d.js",
+    "build/ParsingToysWASM.js",
     "build/ParsingToysWASM.wasm"
   ],
   "devDependencies": {
@@ -17,7 +19,7 @@
   },
   "scripts": {
     "build": "bash build.sh",
-    "lint": "npx eslint index.ts test/**/*.ts",
+    "lint": "npx eslint index.js test/**/*.ts",
     "test": "mocha test/**/*.ts"
   },
   "homepage": "https://cyberzhg.github.io/parsing-toys/",

@@ -98,7 +98,7 @@ if (PARSING_TOYS_BIND_ES)
 
     target_compile_options(ParsingToysWASM PRIVATE "-O3")
 
-    set_target_properties(ParsingToysWASM PROPERTIES SUFFIX ".ts")
+    set_target_properties(ParsingToysWASM PROPERTIES SUFFIX ".js")
 
     target_link_options(ParsingToysWASM PRIVATE
             "--bind"

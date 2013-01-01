@@ -67,6 +67,13 @@ bool ContextFreeGrammar::parse(const string& s) {
         }
         return hasEmpty;
     };
+    auto noHeadFound = [&](const size_t line, const size_t column) -> bool {
+        if (head.empty()) {
+            _errorMessage = "Line " + to_string(line) + " Column " + to_string(column) + ": Can not find the head of the production.";
+            return true;
+        }
+        return false;
+    };
     for (size_t i = 0; i < n; ++i) {
         if (tokens[i].type == ContextFreeGrammarToken::Type::PRODUCTION) {
             _errorMessage = format("Line {} Column {}: Can not find the head of the production.", tokens[i].line, tokens[i].column);
@@ -80,15 +87,23 @@ bool ContextFreeGrammar::parse(const string& s) {
             _productions[head].emplace_back();
             ++i;
         } else if (tokens[i].type == ContextFreeGrammarToken::Type::ALTERNATION) {
+            if (noHeadFound(tokens[i].line, tokens[i].column)) {
+                return false;
+            }
             if (hasEmptyProduction(tokens[i].line, tokens[i].column)) {
                 return false;
             }
             _productions[head].emplace_back();
         } else {
+            if (noHeadFound(tokens[i].line, tokens[i].column)) {
+                return false;
+            }
             _productions[head].back().emplace_back(tokens[i].symbol);
         }
     }
-    if (hasEmptyProduction(tokens.back().line, tokens.back().column + tokens.back().symbol.size())) {
+    const auto lastLine = tokens.back().line;
+    const auto lastColumn = tokens.back().column + tokens.back().symbol.size();
+    if (hasEmptyProduction(lastLine, lastColumn)) {
         return false;
     }
     return true;

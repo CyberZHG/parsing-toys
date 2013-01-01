@@ -43,6 +43,18 @@ TEST(TestContextFreeGrammarParse, NoHead3) {
     EXPECT_EQ("Line 1 Column 6: Can not find the head of the production.", grammar.errorMessage());
 }
 
+TEST(TestContextFreeGrammarParse, NoHead4) {
+    ContextFreeGrammar grammar;
+    EXPECT_FALSE(grammar.parse("S"));
+    EXPECT_EQ("Line 1 Column 1: Can not find the head of the production.", grammar.errorMessage());
+}
+
+TEST(TestContextFreeGrammarParse, NoHead5) {
+    ContextFreeGrammar grammar;
+    EXPECT_FALSE(grammar.parse("|"));
+    EXPECT_EQ("Line 1 Column 1: Can not find the head of the production.", grammar.errorMessage());
+}
+
 TEST(TestContextFreeGrammarParse, EmptyProduction1) {
     ContextFreeGrammar grammar;
     EXPECT_FALSE(grammar.parse("S->"));
