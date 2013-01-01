@@ -48,5 +48,10 @@ EMSCRIPTEN_BINDINGS(ParsingToysWASM) {
         .constructor<>()
         .function("hasConflict", optional_override([](const ActionGotoTable& self) { return self.hasConflict(); }))
         .function("parse", &ActionGotoTable::parse)
+        .function("getParseTree", optional_override([](const ActionGotoTable& self) { return self.parseTree; }))
+    ;
+    class_<ParseTreeNode>("ParseTreeNode")
+        .smart_ptr<shared_ptr<ParseTreeNode>>("ParseTreeNode")
+        .function("toSVG", &ParseTreeNode::toSVG)
     ;
 }

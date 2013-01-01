@@ -1,6 +1,11 @@
-export function setupSVGDownloadButtons(svg: SVGSVGElement): void {
-    const downloadSVGButton = document.querySelector<HTMLButtonElement>("#automaton-download-svg")!
-    const downloadPNGButton = document.querySelector<HTMLButtonElement>("#automaton-download-png")!
+export function setupSVGDownloadButtons(
+    svg: SVGSVGElement,
+    svgButtonId: string = "#automaton-download-svg",
+    pngButtonId: string = "#automaton-download-png",
+    filename: string = "automaton"
+): void {
+    const downloadSVGButton = document.querySelector<HTMLButtonElement>(svgButtonId)!
+    const downloadPNGButton = document.querySelector<HTMLButtonElement>(pngButtonId)!
 
     downloadSVGButton.addEventListener("click", () => {
         const svgData = new XMLSerializer().serializeToString(svg)
@@ -8,7 +13,7 @@ export function setupSVGDownloadButtons(svg: SVGSVGElement): void {
         const url = URL.createObjectURL(blob)
         const a = document.createElement("a")
         a.href = url
-        a.download = "automaton.svg"
+        a.download = `${filename}.svg`
         a.click()
         URL.revokeObjectURL(url)
     })
@@ -36,7 +41,7 @@ export function setupSVGDownloadButtons(svg: SVGSVGElement): void {
                     const pngUrl = URL.createObjectURL(blob)
                     const a = document.createElement("a")
                     a.href = pngUrl
-                    a.download = "automaton.png"
+                    a.download = `${filename}.png`
                     a.click()
                     URL.revokeObjectURL(pngUrl)
                 }

@@ -42,10 +42,17 @@ export class LRParsingSteps {
     getAction(index: number): string
 }
 
+export class ParseTreeNode {
+    constructor()
+    toSVG(): string
+    delete(): void
+}
+
 export class ActionGotoTable {
     constructor()
     hasConflict(): boolean
     parse(input: string): LRParsingSteps
+    getParseTree(): ParseTreeNode | null
 }
 
 export class ContextFreeGrammar {

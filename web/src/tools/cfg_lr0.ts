@@ -2,7 +2,7 @@ import { setupExamplesMenu } from "../choose_examples.ts";
 import { setupCFGEditor, getCFGEditorValue, setCFGEditorValue } from '../cfg_editor.ts';
 import { ContextFreeGrammar } from '../wasm/index.js'
 import { setupLocationHash, getLocationHashValue, setLocationHashValue } from '../location_hash.ts'
-import { setupSVGPanZoom, setupSVGDownloadButtons } from '../finite_automaton.ts'
+import { setupSVGPanZoom, setupSVGDownloadButtons } from '../display_svg.ts'
 import { renderParsingSteps } from '../lr_steps.ts'
 
 interface LR0HashData {
@@ -42,6 +42,8 @@ const lr0Button = document.querySelector<HTMLElement>('#button-cfg-lr0')!
 const automatonSVG = document.querySelector<SVGSVGElement>("#automaton-svg")!
 const inputString = document.querySelector<HTMLInputElement>('#input-string')!
 const lrStepsContainer = document.querySelector<HTMLElement>('#lr-steps-container')!
+const parseTreeContainer = document.querySelector<HTMLElement>('#parse-tree-container')!
+const parseTreeSVG = document.querySelector<SVGSVGElement>("#parse-tree-svg")!
 
 lr0Button.addEventListener('click', () => {
     const errorMessage = document.querySelector<HTMLTextAreaElement>('#cfg-lr0-error-message')!
@@ -52,6 +54,7 @@ lr0Button.addEventListener('click', () => {
             errorMessage.textContent = "The ¥ symbol is used as the end-of-input marker; please do not use it in the grammar."
             errorMessage.parentElement!.hidden = false
             lrStepsContainer.hidden = true
+            parseTreeContainer.hidden = true
         } else {
             if (cfg.nonTerminals().length > 0) {
                 const automaton = cfg.computeLR0Automaton();
@@ -67,8 +70,20 @@ lr0Button.addEventListener('click', () => {
                     const steps = table.parse(input)
                     renderParsingSteps(steps)
                     lrStepsContainer.hidden = false
+
+                    const parseTree = table.getParseTree()
+                    if (parseTree) {
+                        const treeSvgDoc = parser.parseFromString(parseTree.toSVG(), 'image/svg+xml')
+                        parseTree.delete()
+                        parseTreeSVG.innerHTML = treeSvgDoc.documentElement.innerHTML
+                        parseTreeSVG.setAttribute("viewBox", treeSvgDoc.documentElement.getAttribute("viewBox")!)
+                        parseTreeContainer.hidden = false
+                    } else {
+                        parseTreeContainer.hidden = true
+                    }
                 } else {
                     lrStepsContainer.hidden = true
+                    parseTreeContainer.hidden = true
                 }
             }
             errorMessage.parentElement!.hidden = true
@@ -77,6 +92,7 @@ lr0Button.addEventListener('click', () => {
         errorMessage.textContent = cfg.errorMessage()
         errorMessage.parentElement!.hidden = false
         lrStepsContainer.hidden = true
+        parseTreeContainer.hidden = true
     }
     setLR0HashData({ grammar: code, input: inputString.value.trim() })
 })
@@ -101,6 +117,8 @@ setupCFGEditor()
 setupLocationHash()
 setupSVGPanZoom(automatonSVG)
 setupSVGDownloadButtons(automatonSVG)
+setupSVGPanZoom(parseTreeSVG)
+setupSVGDownloadButtons(parseTreeSVG, "#parse-tree-download-svg", "#parse-tree-download-png", "parse-tree")
 
 const hashData = getLR0HashData()
 setCFGEditorValue(hashData.grammar)

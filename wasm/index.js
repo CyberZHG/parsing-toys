@@ -5,6 +5,7 @@ const ContextFreeGrammar = ParsingToysWASM.ContextFreeGrammar;
 const FirstAndFollowSet = ParsingToysWASM.FirstAndFollowSet;
 const LRParsingSteps = ParsingToysWASM.LRParsingSteps;
 const ActionGotoTable = ParsingToysWASM.ActionGotoTable;
+const ParseTreeNode = ParsingToysWASM.ParseTreeNode;
 
 function _vectorStringToArray(vec) {
     let arr = [];
@@ -54,4 +55,5 @@ export {
     FirstAndFollowSet,
     LRParsingSteps,
     ActionGotoTable,
+    ParseTreeNode,
 }
