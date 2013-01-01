@@ -63,20 +63,25 @@ bool ContextFreeGrammar::leftRecursionElimination() {
             _errorMessage = format("Left recursion cannot be eliminated for \"{}\".", head);
             break;
         }
-        const auto primedSymbol = generatePrimedSymbol(head);
-        for (auto& production : nonRecursiveProductions) {
-            production.emplace_back(primedSymbol);
-        }
-        for (auto& production : recursiveProductions) {
-            for (size_t i = 0; i + 1 < production.size(); ++i) {
-                production[i] = production[i + 1];
+        const auto onlySelfLoop = recursiveProductions.size() == 1
+            && recursiveProductions[0].size() == 1
+            && recursiveProductions[0][0] == head;
+        if (!onlySelfLoop) {
+            const auto primedSymbol = generatePrimedSymbol(head);
+            for (auto& production : nonRecursiveProductions) {
+                production.emplace_back(primedSymbol);
             }
-            production[production.size() - 1] = primedSymbol;
+            for (auto& production : recursiveProductions) {
+                for (size_t i = 0; i + 1 < production.size(); ++i) {
+                    production[i] = production[i + 1];
+                }
+                production[production.size() - 1] = primedSymbol;
+                _productions[primedSymbol].emplace_back(production);
+            }
+            _productions[primedSymbol].emplace_back(vector{EMPTY_SYMBOL});
+            _terminals.insert(EMPTY_SYMBOL);
         }
-        recursiveProductions.emplace_back(vector{EMPTY_SYMBOL});
-        _terminals.insert(EMPTY_SYMBOL);
         _productions[head] = nonRecursiveProductions;
-        _productions[primedSymbol] = recursiveProductions;
     }
     return eliminable;
 }

@@ -29,13 +29,11 @@ test('example-3', () => {
     const cfg = new ContextFreeGrammar()
     cfg.parse("A -> C | c d  B -> C | c d  C -> A | B | c d")
     expect(cfg.leftRecursionElimination()).toBeTruthy()
-    expect(cfg.toString()).toBe(` A -> C
-    | c d
- B -> C
-    | c d
- C -> c d C'
-C' -> C'
-    | ε
+    expect(cfg.toString()).toBe(`A -> C
+   | c d
+B -> C
+   | c d
+C -> c d
 `)
 })
 
