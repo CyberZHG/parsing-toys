@@ -99,6 +99,7 @@ public:
     static const std::string DOT_SYMBOL;
     static const std::string EOF_SYMBOL;
     static const std::string LOOKAHEAD_SEPARATOR;
+    static const std::string LOOKAHEAD_INNER_SEPARATOR;
 
     /**
      * Tokenization.

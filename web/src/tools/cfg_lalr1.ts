@@ -60,8 +60,8 @@ lalrButton.addEventListener('click', () => {
     const cfg = new ContextFreeGrammar()
     const code = getCFGEditorValue()
     if (cfg.parse(code)) {
-        if (cfg.terminals().includes("¥") || cfg.terminals().includes("§")) {
-            errorMessage.textContent = "The ¥ and § symbols are reserved; please do not use them in the grammar."
+        if (cfg.terminals().includes("¥") || cfg.terminals().includes("﹐")) {
+            errorMessage.textContent = "The ¥ and ﹐ symbols are reserved; please do not use them in the grammar."
             errorMessage.parentElement!.hidden = false
             actionGotoTableContainer.hidden = true
             lrStepsContainer.hidden = true
@@ -121,7 +121,7 @@ document.querySelector<HTMLElement>('#cfg-editor-intro')!.innerHTML = `
   <div class="text-gray-500 font-light text-sm">
     <ul>
       <li>The first symbol encountered in the grammar definition is treated as the start symbol</li>
-      <li>The <code>¥</code> and <code>§</code> symbols are reserved; please do not use them in the grammar.</li>
+      <li>The <code>¥</code> and <code>﹐</code> symbols are reserved; please do not use them in the grammar.</li>
     </ul>
   </div>
 `

@@ -28,10 +28,8 @@ C -> c C | d
 S' -> · S ﹐ ¥
 ---
 S -> · C C ﹐ ¥
-C -> · c C ﹐ c
-   | · c C ﹐ d
-   | · d ﹐ c
-   | · d ﹐ d
+C -> · c C ﹐ c ／ d
+   | · d ﹐ c ／ d
 )", automaton->nodeAt(0).toString());
 
     EXPECT_EQ(R"(I₁
@@ -51,19 +49,15 @@ C -> · c C ﹐ ¥
 
     EXPECT_EQ(R"(I₃
 ===
-C -> c · C ﹐ c
-   | c · C ﹐ d
+C -> c · C ﹐ c ／ d
 ---
-C -> · c C ﹐ d
-   | · d ﹐ d
-   | · c C ﹐ c
-   | · d ﹐ c
+C -> · c C ﹐ c ／ d
+   | · d ﹐ c ／ d
 )", automaton->nodeAt(3).toString());
 
     EXPECT_EQ(R"(I₄
 ===
-C -> d · ﹐ c
-   | d · ﹐ d
+C -> d · ﹐ c ／ d
 ---
 )", automaton->nodeAt(4).toString());
 
@@ -89,8 +83,7 @@ C -> d · ﹐ ¥
 
     EXPECT_EQ(R"(I₈
 ===
-C -> c C · ﹐ c
-   | c C · ﹐ d
+C -> c C · ﹐ c ／ d
 ---
 )", automaton->nodeAt(8).toString());
 

@@ -13,17 +13,12 @@ using namespace std;
  * @param firstFollow Precomputed FIRST/FOLLOW sets
  * @return Set of terminals that can appear first in βa
  */
-static unordered_set<Symbol> computeFirstOfSequence(
-    const vector<Symbol>& symbols,
-    const Symbol& lookahead,
-    const FirstAndFollowSet& firstFollow
-) {
+static unordered_set<Symbol> computeFirstOfSequence(const vector<Symbol>& symbols, const Symbol& lookahead, const FirstAndFollowSet& firstFollow) {
     unordered_set<Symbol> result;
     bool allNullable = true;
 
     for (const auto& symbol : symbols) {
         if (firstFollow.first.contains(symbol)) {
-            // Non-terminal: add its FIRST set
             for (const auto& s : firstFollow.first.at(symbol)) {
                 if (s != ContextFreeGrammar::EMPTY_SYMBOL) {
                     result.insert(s);
@@ -34,40 +29,46 @@ static unordered_set<Symbol> computeFirstOfSequence(
                 break;
             }
         } else {
-            // Terminal: add it and stop
             result.insert(symbol);
             allNullable = false;
             break;
         }
     }
-
-    // If all symbols in β are nullable, add the lookahead
     if (allNullable) {
         result.insert(lookahead);
     }
-
     return result;
 }
 
 /**
- * Extract the lookahead from an LR(1) item production.
- * LR(1) items are encoded as: A -> α · β ， lookahead
+ * Extract all lookaheads from an LR(1) item production.
+ * LR(1) items are encoded as: A -> α · β ﹐ lookahead1／lookahead2／...
+ * Multiple lookaheads are separated by LOOKAHEAD_INNER_SEPARATOR.
+ *
+ * @param production
+ * @return Set of lookahead symbols
  */
-static Symbol extractLookahead(const Production& production) {
+static unordered_set<Symbol> extractLookaheads(const Production& production) {
+    unordered_set<Symbol> result;
     for (size_t i = production.size(); i > 0; --i) {
         if (production[i - 1] == ContextFreeGrammar::LOOKAHEAD_SEPARATOR) {
-            if (i < production.size()) {
-                return production[i];
+            for (size_t j = i; j < production.size(); ++j) {
+                if (production[j] != ContextFreeGrammar::LOOKAHEAD_INNER_SEPARATOR) {
+                    result.insert(production[j]);
+                }
             }
             break;
         }
     }
-    return ContextFreeGrammar::EOF_SYMBOL;
+    if (result.empty()) {
+        result.insert(ContextFreeGrammar::EOF_SYMBOL);
+    }
+    return result;
 }
 
 /**
  * Extract the core production (without lookahead) from an LR(1) item.
- * Returns everything before the ， separator.
+ * Returns everything before the ﹐ separator.
  */
 static Production extractCore(const Production& production) {
     Production core;
@@ -81,21 +82,50 @@ static Production extractCore(const Production& production) {
 }
 
 /**
- * Create an LR(1) item production with lookahead.
- * Encodes [A -> α · β, lookahead] as α · β ， lookahead
+ * Create an LR(1) item production with multiple lookaheads.
+ * Encodes [A -> α · β, {a, b, c}] as α · β ﹐ a／b／c
+ * Lookaheads are sorted for deterministic output.
  */
-static Production createLR1Production(const Production& core, const Symbol& lookahead) {
+static Production createLR1Production(const Production& core, const unordered_set<Symbol>& lookaheads) {
     Production result = core;
     result.push_back(ContextFreeGrammar::LOOKAHEAD_SEPARATOR);
-    result.push_back(lookahead);
+    vector<Symbol> sortedLookaheads(lookaheads.begin(), lookaheads.end());
+    sort(sortedLookaheads.begin(), sortedLookaheads.end());
+    for (size_t i = 0; i < sortedLookaheads.size(); ++i) {
+        if (i > 0) {
+            result.push_back(ContextFreeGrammar::LOOKAHEAD_INNER_SEPARATOR);
+        }
+        result.push_back(sortedLookaheads[i]);
+    }
     return result;
+}
+
+/**
+ * Create an LR(1) item production with a single lookahead.
+ */
+static Production createLR1Production(const Production& core, const Symbol& lookahead) {
+    return createLR1Production(core, unordered_set<Symbol>{lookahead});
+}
+
+/**
+ * Compute a key for the core part (without lookahead) of an LR(1) production.
+ */
+static string computeCoreKey(const Symbol& head, const Production& production) {
+    string key = head + " ->";
+    for (const auto& symbol : production) {
+        if (symbol == ContextFreeGrammar::LOOKAHEAD_SEPARATOR) {
+            break;
+        }
+        key += " " + symbol;
+    }
+    return key;
 }
 
 /**
  * Build LR(1) automaton (canonical collection of LR(1) item sets).
  *
  * LR(1) items are [A -> α · β, a] where 'a' is a lookahead terminal.
- * Items are encoded as: A -> α · β ， a
+ * Items are encoded as: A -> α · β ﹐ a
  *
  * The closure operation for LR(1):
  * For each item [A -> α · B β, a], add [B -> · γ, b] for each production B -> γ
@@ -116,6 +146,35 @@ unique_ptr<FiniteAutomaton> ContextFreeGrammar::computeLR1Automaton() {
     const auto firstFollow = computeFirstAndFollowSet();
 
     auto automaton = make_unique<FiniteAutomaton>();
+
+    // Merge productions with the same core by combining their lookaheads
+    auto mergeLookaheads = [](const ContextFreeGrammar& grammar) -> ContextFreeGrammar {
+        unordered_map<string, unordered_set<Symbol>> coreLookaheads;
+        unordered_map<string, pair<Symbol, Production>> coreToHeadAndCore;
+        vector<string> coreOrdering;
+
+        for (const auto& head : grammar._ordering) {
+            for (const auto& production : grammar._productions.at(head)) {
+                const string coreKey = computeCoreKey(head, production);
+                if (!coreLookaheads.contains(coreKey)) {
+                    coreLookaheads[coreKey] = {};
+                    coreToHeadAndCore[coreKey] = {head, extractCore(production)};
+                    coreOrdering.push_back(coreKey);
+                }
+                for (const auto& la : extractLookaheads(production)) {
+                    coreLookaheads[coreKey].insert(la);
+                }
+            }
+        }
+
+        ContextFreeGrammar merged;
+        for (const auto& coreKey : coreOrdering) {
+            const auto& [head, core] = coreToHeadAndCore[coreKey];
+            const auto& lookaheads = coreLookaheads[coreKey];
+            merged.addProduction(head, createLR1Production(core, lookaheads));
+        }
+        return merged;
+    };
 
     // Initial state: I₀ with kernel {[S' -> · S, ¥]}
     FiniteAutomatonNode initialNode;
@@ -146,15 +205,19 @@ unique_ptr<FiniteAutomaton> ContextFreeGrammar::computeLR1Automaton() {
 
                         // If symbol after dot is a non-terminal, expand it
                         if (isNonTerminal(symbolAfterDot)) {
-                            // Extract β (symbols after B) and lookahead
+                            // Extract β (symbols after B) and lookaheads
                             vector<Symbol> beta;
                             for (size_t j = i + 2; j < production.size() && production[j] != LOOKAHEAD_SEPARATOR; ++j) {
                                 beta.push_back(production[j]);
                             }
-                            Symbol lookahead = extractLookahead(production);
+                            auto lookaheads = extractLookaheads(production);
 
-                            // Compute FIRST(βa)
-                            auto firstSet = computeFirstOfSequence(beta, lookahead, firstFollow);
+                            // Compute FIRST(βa) for each lookahead
+                            unordered_set<Symbol> firstSet;
+                            for (const auto& lookahead : lookaheads) {
+                                auto fs = computeFirstOfSequence(beta, lookahead, firstFollow);
+                                firstSet.insert(fs.begin(), fs.end());
+                            }
 
                             // Add [B -> · γ, b] for each B -> γ and b in FIRST(βa)
                             if (_productions.contains(symbolAfterDot)) {
@@ -163,7 +226,6 @@ unique_ptr<FiniteAutomaton> ContextFreeGrammar::computeLR1Automaton() {
                                     for (const auto& s : gamma) {
                                         newCore.push_back(s);
                                     }
-
                                     for (const auto& b : firstSet) {
                                         auto newProd = createLR1Production(newCore, b);
                                         if (auto key = computeProductionKey(symbolAfterDot, newProd); !addedItems.contains(key)) {
@@ -181,7 +243,7 @@ unique_ptr<FiniteAutomaton> ContextFreeGrammar::computeLR1Automaton() {
             }
         }
 
-        return closure;
+        return mergeLookaheads(closure);
     };
 
     initialNode.nonKernel = computeLR1Closure(initialNode.kernel);
@@ -237,6 +299,7 @@ unique_ptr<FiniteAutomaton> ContextFreeGrammar::computeLR1Automaton() {
                     }
                 }
             }
+            newNode.kernel = mergeLookaheads(newNode.kernel);
             newNode.nonKernel = computeLR1Closure(newNode.kernel);
             const size_t v = automaton->addNode(newNode);
             automaton->addEdge(u, v, transitionSymbol);
@@ -280,12 +343,13 @@ ActionGotoTable ContextFreeGrammar::computeLR1ActionGotoTable(const unique_ptr<F
                 for (const auto& head : grammar._ordering) {
                     const auto& productions = grammar._productions.at(head);
                     for (const auto& production : productions) {
-                        // Check if dot is at the end (just before ， separator)
                         Production core = extractCore(production);
                         if (!core.empty() && core.back() == DOT_SYMBOL) {
-                            // Extract lookahead and add reduce action only for that terminal
-                            Symbol lookahead = extractLookahead(production);
-                            actionGotoTable.addReduce(u, lookahead, head, core);
+                            // Extract lookaheads and add reduce action for each
+                            auto lookaheads = extractLookaheads(production);
+                            for (const auto& lookahead : lookaheads) {
+                                actionGotoTable.addReduce(u, lookahead, head, core);
+                            }
                         }
                     }
                 }

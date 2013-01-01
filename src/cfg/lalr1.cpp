@@ -2,8 +2,75 @@
 #include "automaton.h"
 #include <unordered_set>
 #include <unordered_map>
+#include <algorithm>
 
 using namespace std;
+
+/**
+ * Extract all lookaheads from an LR(1) item production.
+ */
+static unordered_set<Symbol> extractLookaheads(const Production& production) {
+    unordered_set<Symbol> result;
+    for (size_t i = production.size(); i > 0; --i) {
+        if (production[i - 1] == ContextFreeGrammar::LOOKAHEAD_SEPARATOR) {
+            for (size_t j = i; j < production.size(); ++j) {
+                if (production[j] != ContextFreeGrammar::LOOKAHEAD_INNER_SEPARATOR) {
+                    result.insert(production[j]);
+                }
+            }
+            break;
+        }
+    }
+    if (result.empty()) {
+        result.insert(ContextFreeGrammar::EOF_SYMBOL);
+    }
+    return result;
+}
+
+/**
+ * Extract the core production (without lookahead) from an LR(1) item.
+ */
+static Production extractCore(const Production& production) {
+    Production core;
+    for (const auto& symbol : production) {
+        if (symbol == ContextFreeGrammar::LOOKAHEAD_SEPARATOR) {
+            break;
+        }
+        core.push_back(symbol);
+    }
+    return core;
+}
+
+/**
+ * Create an LR(1) item production with multiple lookaheads.
+ */
+static Production createLR1Production(const Production& core, const unordered_set<Symbol>& lookaheads) {
+    Production result = core;
+    result.push_back(ContextFreeGrammar::LOOKAHEAD_SEPARATOR);
+    vector<Symbol> sortedLookaheads(lookaheads.begin(), lookaheads.end());
+    sort(sortedLookaheads.begin(), sortedLookaheads.end());
+    for (size_t i = 0; i < sortedLookaheads.size(); ++i) {
+        if (i > 0) {
+            result.push_back(ContextFreeGrammar::LOOKAHEAD_INNER_SEPARATOR);
+        }
+        result.push_back(sortedLookaheads[i]);
+    }
+    return result;
+}
+
+/**
+ * Compute a key for the core part (without lookahead) of an LR(1) production.
+ */
+static string computeItemCoreKey(const Symbol& head, const Production& production) {
+    string key = head + " ->";
+    for (const auto& symbol : production) {
+        if (symbol == ContextFreeGrammar::LOOKAHEAD_SEPARATOR) {
+            break;
+        }
+        key += " " + symbol;
+    }
+    return key;
+}
 
 /**
  * Build LALR(1) automaton by merging LR(1) states with identical cores.
@@ -38,6 +105,35 @@ unique_ptr<FiniteAutomaton> ContextFreeGrammar::computeLALR1Automaton() {
         return newGrammar;
     };
 
+    // Merge productions with the same core by combining their lookaheads
+    auto mergeLookaheads = [](const ContextFreeGrammar& grammar) -> ContextFreeGrammar {
+        unordered_map<string, unordered_set<Symbol>> coreLookaheads;
+        unordered_map<string, pair<Symbol, Production>> coreToHeadAndCore;
+        vector<string> coreOrdering;
+
+        for (const auto& head : grammar._ordering) {
+            for (const auto& production : grammar._productions.at(head)) {
+                const string coreKey = computeItemCoreKey(head, production);
+                if (!coreLookaheads.contains(coreKey)) {
+                    coreLookaheads[coreKey] = {};
+                    coreToHeadAndCore[coreKey] = {head, extractCore(production)};
+                    coreOrdering.push_back(coreKey);
+                }
+                for (const auto& la : extractLookaheads(production)) {
+                    coreLookaheads[coreKey].insert(la);
+                }
+            }
+        }
+
+        ContextFreeGrammar merged;
+        for (const auto& coreKey : coreOrdering) {
+            const auto& [head, core] = coreToHeadAndCore[coreKey];
+            const auto& lookaheads = coreLookaheads[coreKey];
+            merged.addProduction(head, createLR1Production(core, lookaheads));
+        }
+        return merged;
+    };
+
     auto computeCoreKey = [&](const ContextFreeGrammar& kernel, const ContextFreeGrammar& nonKernel) -> string {
         const string kernelStr = removeLookaheads(kernel).toSortedString();
         const string nonKernelStr = removeLookaheads(nonKernel).toSortedString();
@@ -57,10 +153,8 @@ unique_ptr<FiniteAutomaton> ContextFreeGrammar::computeLALR1Automaton() {
             lr1ToMerged[i] = coreKeyToMergedIndex[coreKey];
             // Merge lookaheads into existing state using operator|
             auto& mergedNode = lalrAutomaton->nodeAt(lr1ToMerged[i]);
-            mergedNode.kernel = mergedNode.kernel | node.kernel;
-            mergedNode.nonKernel = mergedNode.nonKernel | node.nonKernel;
-            mergedNode.kernel.deduplicate();
-            mergedNode.nonKernel.deduplicate();
+            mergedNode.kernel = mergeLookaheads(mergedNode.kernel | node.kernel);
+            mergedNode.nonKernel = mergeLookaheads(mergedNode.nonKernel | node.nonKernel);
             mergedNode.accept = mergedNode.accept || node.accept;
         } else {
             // New core, create a new merged state
