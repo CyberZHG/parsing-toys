@@ -38,6 +38,11 @@ T -> T * F | F
 F -> ( E ) | id`,
 }
 
+const EXAMPLE_INPUTS: Record<string, string> = {
+    "example1": "a a + a a + *",
+    "example2": "id * ( id + id )",
+}
+
 const slr1Button = document.querySelector<HTMLElement>('#button-cfg-slr1')!
 const automatonSVG = document.querySelector<SVGSVGElement>("#automaton-svg")!
 const actionGotoTableContainer = document.querySelector<HTMLElement>('#action-goto-table-container')!
@@ -103,6 +108,7 @@ slr1Button.addEventListener('click', () => {
 
 function onExamplesChange(key: string) : void {
     setCFGEditorValue(EXAMPLES[key])
+    inputString.value = EXAMPLE_INPUTS[key]
     slr1Button.click()
 }
 

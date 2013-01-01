@@ -8,13 +8,13 @@ test('example-1', () => {
     expect(automaton.size()).eq(6)
 
     const table = cfg.computeLR0ActionGotoTable(automaton)
-    const steps = table.parse("a a +")
-    expect(steps.size()).eq(7)
+    const steps = table.parse("a a + a a + *")
+    expect(steps.size()).eq(15)
     expect(steps.getStack(0)).toStrictEqual([0])
     expect(steps.getSymbols(0)).toStrictEqual([])
-    expect(steps.getRemainingInputs(0)).toStrictEqual(["a", "a", "+", "¥"])
+    expect(steps.getRemainingInputs(0)).toStrictEqual(["a", "a", "+", "a", "a", "+", "*", "¥"])
     expect(steps.getAction(0)).eq("shift 2")
-    expect(steps.getAction(6)).eq("accept")
+    expect(steps.getAction(14)).eq("accept")
 })
 
 test('example-2', () => {
@@ -24,11 +24,6 @@ test('example-2', () => {
     expect(automaton.size()).eq(12)
 
     const table = cfg.computeLR0ActionGotoTable(automaton)
-    const steps = table.parse("( id ) + id")
-    expect(steps.size()).eq(15)
-    expect(steps.getStack(0)).toStrictEqual([0])
-    expect(steps.getSymbols(0)).toStrictEqual([])
-    expect(steps.getRemainingInputs(0)).toStrictEqual(["(", "id", ")", "+", "id", "¥"])
-    expect(steps.getAction(0)).eq("shift 4")
-    expect(steps.getAction(14)).eq("accept")
+    const steps = table.parse("id * ( id + id )")
+    expect(steps.size()).eq(4)
 })
