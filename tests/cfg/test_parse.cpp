@@ -1,5 +1,7 @@
 #include "cfg.h"
 #include <gtest/gtest.h>
+#include <ranges>
+#include <algorithm>
 
 TEST(TestContextFreeGrammarParse, Empty) {
     ContextFreeGrammar grammar;
@@ -135,4 +137,18 @@ bfactor -> not bfactor
          | true
          | false
 )", grammar.toString());
+    auto terminals = grammar.terminals();
+    ranges::sort(terminals);
+    auto expected = vector{"(", ")", "and", "false", "not", "or", "true"};
+    ASSERT_EQ(expected.size(), terminals.size());
+    for (size_t i = 0; i < expected.size(); ++i) {
+        EXPECT_EQ(expected[i], terminals[i]);
+    }
+    auto nonTerminals = grammar.nonTerminals();
+    ranges::sort(nonTerminals);
+    expected = vector{"bexpr", "bfactor", "bterm"};
+    ASSERT_EQ(expected.size(), nonTerminals.size());
+    for (size_t i = 0; i < expected.size(); ++i) {
+        EXPECT_EQ(expected[i], nonTerminals[i]);
+    }
 }

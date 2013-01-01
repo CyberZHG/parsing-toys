@@ -64,6 +64,18 @@ public:
     void initTerminals();
 
     /**
+     * A helper function for highlighting.
+     * @return All the terminals.
+     */
+    [[nodiscard]] vector<string> terminals() const;
+    /**
+     * A helper function for highlighting.
+     * @return All the non-terminals.
+     */
+    [[nodiscard]] vector<string> nonTerminals() const;
+
+
+    /**
      * Compute a key for a production to deduplicate.
      * @param production
      * @return

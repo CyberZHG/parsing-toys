@@ -9,7 +9,7 @@ reformatButton.addEventListener('click', () => {
     const cfg = new ContextFreeGrammar()
     const code = getCFGEditorValue()
     if (cfg.parse(code)) {
-        updateCFGResult(cfg.toString())
+        updateCFGResult(cfg.toString(), cfg.terminals(), cfg.nonTerminals())
         errorMessage.parentElement!.hidden = true
     } else {
         errorMessage.textContent = cfg.errorMessage()

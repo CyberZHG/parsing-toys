@@ -157,6 +157,15 @@ void ContextFreeGrammar::initTerminals() {
     }
 }
 
+vector<string> ContextFreeGrammar::terminals() const {
+    return {_terminals.begin(), _terminals.end()};
+}
+
+vector<string> ContextFreeGrammar::nonTerminals() const {
+    const auto heads = _productions | views::keys;
+    return {heads.begin(), heads.end()};
+}
+
 string ContextFreeGrammar::computeProductionKey(const vector<string>& production) {
     return stringJoin(production, " ");
 }
