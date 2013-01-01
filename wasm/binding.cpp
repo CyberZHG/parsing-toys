@@ -33,6 +33,7 @@ EMSCRIPTEN_BINDINGS(ParsingToysWASM) {
         .function("computeLL1Table", &ContextFreeGrammar::computeLL1Table)
         .function("isChomskyNormalForm", &ContextFreeGrammar::isChomskyNormalForm)
         .function("toChomskyNormalForm", &ContextFreeGrammar::toChomskyNormalForm)
+        .function("cykParse", &ContextFreeGrammar::cykParse)
     ;
     class_<FirstAndFollowSet>("FirstAndFollowSet")
         .constructor<>()
@@ -86,6 +87,14 @@ EMSCRIPTEN_BINDINGS(ParsingToysWASM) {
         .function("hasConflictAt", optional_override([](const MTable& self, const string& nt, const string& t) { return self.hasConflict(nt, t); }))
         .function("getCell", optional_override([](const MTable& self, const string& nt, const string& t, const string& sep) { return self.getCell(nt, t, sep); }))
         .function("parse", &MTable::parse)
+    ;
+    class_<CYKTable>("CYKTable")
+        .constructor<size_t>()
+        .function("size", &CYKTable::size)
+        .function("_getCell", &CYKTable::getCell)
+        .function("getCellString", &CYKTable::getCellString)
+        .function("isAccepted", optional_override([](const CYKTable& self) { return self.accepted; }))
+        .function("getParseTree", optional_override([](const CYKTable& self) { return self.parseTree; }))
     ;
     class_<RegularExpression>("RegularExpression")
         .constructor<>()

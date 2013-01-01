@@ -8,6 +8,7 @@ const ActionGotoTable = ParsingToysWASM.ActionGotoTable;
 const ParseTreeNode = ParsingToysWASM.ParseTreeNode;
 const LLParsingSteps = ParsingToysWASM.LLParsingSteps;
 const MTable = ParsingToysWASM.MTable;
+const CYKTable = ParsingToysWASM.CYKTable;
 const RegularExpression = ParsingToysWASM.RegularExpression;
 const NFAState = ParsingToysWASM.NFAState;
 const DFAState = ParsingToysWASM.DFAState;
@@ -68,6 +69,10 @@ LLParsingSteps.prototype.getRemainingInputs = function (index) {
     return _vectorStringToArray(this._getRemainingInputs(index))
 }
 
+CYKTable.prototype.getCell = function (i, j) {
+    return _vectorStringToArray(this._getCell(i, j))
+}
+
 export {
     ContextFreeGrammar,
     FirstAndFollowSet,
@@ -76,6 +81,7 @@ export {
     ParseTreeNode,
     LLParsingSteps,
     MTable,
+    CYKTable,
     RegularExpression,
     NFAState,
     DFAState,

@@ -122,6 +122,18 @@ struct MTable {
     [[nodiscard]] std::string toString(const std::string& separator = " / ") const;
 };
 
+struct CYKTable {
+    std::size_t n = 0;
+    std::vector<std::vector<std::vector<Symbol>>> table;
+    std::shared_ptr<ParseTreeNode> parseTree = nullptr;
+    bool accepted = false;
+
+    explicit CYKTable(std::size_t size);
+    [[nodiscard]] std::size_t size() const;
+    [[nodiscard]] std::vector<Symbol> getCell(std::size_t r, std::size_t c) const;
+    [[nodiscard]] std::string getCellString(std::size_t r, std::size_t c, const std::string& separator = ", ") const;
+};
+
 class ContextFreeGrammar {
 public:
     ContextFreeGrammar() = default;
@@ -327,6 +339,8 @@ public:
 
     [[nodiscard]] bool isChomskyNormalForm() const;
     void toChomskyNormalForm();
+
+    [[nodiscard]] CYKTable cykParse(const std::string& s) const;
 
 private:
     std::string _errorMessage;

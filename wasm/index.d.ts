@@ -81,6 +81,16 @@ export class MTable {
     parse(input: string): LLParsingSteps
 }
 
+export class CYKTable {
+    constructor(size: number)
+    size(): number
+    _getCell(i: number, j: number): VectorString
+    getCell(i: number, j: number): string[]
+    getCellString(i: number, j: number, separator: string): string
+    isAccepted(): boolean
+    getParseTree(): ParseTreeNode | null
+}
+
 export class ContextFreeGrammar {
     constructor()
     parse(code: string): boolean
@@ -106,6 +116,7 @@ export class ContextFreeGrammar {
     computeLL1Table(): MTable
     isChomskyNormalForm(): boolean
     toChomskyNormalForm(): void
+    cykParse(input: string): CYKTable
 }
 
 export class NFAState {

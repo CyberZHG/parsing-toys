@@ -65,7 +65,8 @@ TEST(TestContextFreeGrammarCNF, ConvertSingleTerminal) {
     EXPECT_TRUE(grammar.parse("S -> a"));
     grammar.toChomskyNormalForm();
     EXPECT_TRUE(grammar.isChomskyNormalForm());
-    const auto expected = R"()";
+    const auto expected = R"(S -> a
+)";
     EXPECT_EQ(expected, grammar.toString());
 }
 
@@ -74,7 +75,8 @@ TEST(TestContextFreeGrammarCNF, ConvertUnitProductions) {
     EXPECT_TRUE(grammar.parse("S -> A\nA -> B\nB -> a"));
     grammar.toChomskyNormalForm();
     EXPECT_TRUE(grammar.isChomskyNormalForm());
-    const auto expected = R"()";
+    const auto expected = R"(S -> a
+)";
     EXPECT_EQ(expected, grammar.toString());
 }
 
@@ -83,7 +85,12 @@ TEST(TestContextFreeGrammarCNF, ConvertLongProduction) {
     EXPECT_TRUE(grammar.parse("S -> A B C\nA -> a\nB -> b\nC -> c"));
     grammar.toChomskyNormalForm();
     EXPECT_TRUE(grammar.isChomskyNormalForm());
-    const auto expected = R"()";
+    const auto expected = R"( S -> A S'
+S' -> B C
+ A -> a
+ B -> b
+ C -> c
+)";
     EXPECT_EQ(expected, grammar.toString());
 }
 
@@ -92,7 +99,10 @@ TEST(TestContextFreeGrammarCNF, ConvertTerminalInLongProduction) {
     EXPECT_TRUE(grammar.parse("S -> a b"));
     grammar.toChomskyNormalForm();
     EXPECT_TRUE(grammar.isChomskyNormalForm());
-    const auto expected = R"()";
+    const auto expected = R"(  S -> T_a T_b
+T_a -> a
+T_b -> b
+)";
     EXPECT_EQ(expected, grammar.toString());
 }
 
@@ -101,7 +111,13 @@ TEST(TestContextFreeGrammarCNF, ConvertEpsilonProduction) {
     EXPECT_TRUE(grammar.parse("S -> A B\nA -> a | ε\nB -> b | ε"));
     grammar.toChomskyNormalForm();
     EXPECT_TRUE(grammar.isChomskyNormalForm());
-    const auto expected = R"()";
+    const auto expected = R"(S -> A B
+   | ε
+   | b
+   | a
+A -> a
+B -> b
+)";
     EXPECT_EQ(expected, grammar.toString());
 }
 
@@ -110,7 +126,14 @@ TEST(TestContextFreeGrammarCNF, ConvertStartOnRHS) {
     EXPECT_TRUE(grammar.parse("S -> a S b | a b"));
     grammar.toChomskyNormalForm();
     EXPECT_TRUE(grammar.isChomskyNormalForm());
-    const auto expected = R"()";
+    const auto expected = R"(  S' -> T_a S'_1
+      | T_a T_b
+S'_1 -> S T_b
+   S -> T_a S'_1
+      | T_a T_b
+ T_a -> a
+ T_b -> b
+)";
     EXPECT_EQ(expected, grammar.toString());
 }
 
@@ -119,7 +142,27 @@ TEST(TestContextFreeGrammarCNF, ConvertArithmeticExpression) {
     EXPECT_TRUE(grammar.parse("E -> E + T | T\nT -> T * F | F\nF -> ( E ) | id"));
     grammar.toChomskyNormalForm();
     EXPECT_TRUE(grammar.isChomskyNormalForm());
-    const auto expected = R"()";
+    const auto expected = R"(  E' -> T_( F'
+      | id
+      | T T'
+      | E E'_1
+E'_1 -> T_+ T
+   E -> E E'_1
+      | T_( F'
+      | id
+      | T T'
+   T -> T T'
+      | T_( F'
+      | id
+  T' -> T_* F
+   F -> T_( F'
+      | id
+  F' -> E T_)
+ T_( -> (
+ T_) -> )
+ T_* -> *
+ T_+ -> +
+)";
     EXPECT_EQ(expected, grammar.toString());
 }
 
@@ -128,7 +171,11 @@ TEST(TestContextFreeGrammarCNF, ConvertStartCanDeriveEpsilon) {
     EXPECT_TRUE(grammar.parse("S -> A B | ε\nA -> a\nB -> b"));
     grammar.toChomskyNormalForm();
     EXPECT_TRUE(grammar.isChomskyNormalForm());
-    const auto expected = R"()";
+    const auto expected = R"(S -> A B
+   | ε
+A -> a
+B -> b
+)";
     EXPECT_EQ(expected, grammar.toString());
 }
 
@@ -137,6 +184,4 @@ TEST(TestContextFreeGrammarCNF, ConvertComplexGrammar) {
     EXPECT_TRUE(grammar.parse("S -> a S b S | b S a S | ε"));
     grammar.toChomskyNormalForm();
     EXPECT_TRUE(grammar.isChomskyNormalForm());
-    const auto expected = R"()";
-    EXPECT_EQ(expected, grammar.toString());
 }

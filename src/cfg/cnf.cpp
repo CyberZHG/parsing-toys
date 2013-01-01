@@ -1,6 +1,7 @@
 #include "cfg.h"
 #include <queue>
 #include <ranges>
+#include <algorithm>
 
 using namespace std;
 
@@ -49,7 +50,6 @@ void ContextFreeGrammar::toChomskyNormalForm() {
     if (_ordering.empty()) {
         return;
     }
-
     const auto& originalStart = _ordering[0];
     bool startOnRHS = false;
     for (const auto& productions: _productions | views::values) {
@@ -70,7 +70,9 @@ void ContextFreeGrammar::toChomskyNormalForm() {
     }
 
     unordered_map<Symbol, Symbol> terminalToNonTerminal;
-    for (const auto& terminal : _terminals) {
+    vector sortedTerminals(_terminals.begin(), _terminals.end());
+    ranges::sort(sortedTerminals);
+    for (const auto& terminal : sortedTerminals) {
         if (terminal == EMPTY_SYMBOL) {
             continue;
         }
@@ -96,7 +98,7 @@ void ContextFreeGrammar::toChomskyNormalForm() {
         }
     }
 
-    vector<Symbol> orderingSnapshot = _ordering;
+    const vector<Symbol> orderingSnapshot = _ordering;
     for (const auto& head : orderingSnapshot) {
         Productions newProductions;
         for (const auto& production : _productions[head]) {
@@ -234,6 +236,33 @@ void ContextFreeGrammar::toChomskyNormalForm() {
         }
         _productions[head] = newProductions;
     }
+
+    unordered_set<Symbol> reachableFromStart;
+    queue<Symbol> reachQueue;
+    reachQueue.push(_ordering[0]);
+    reachableFromStart.insert(_ordering[0]);
+    while (!reachQueue.empty()) {
+        auto current = reachQueue.front();
+        reachQueue.pop();
+        for (const auto& production : _productions[current]) {
+            for (const auto& symbol : production) {
+                if (isNonTerminal(symbol) && !reachableFromStart.contains(symbol)) {
+                    reachableFromStart.insert(symbol);
+                    reachQueue.push(symbol);
+                }
+            }
+        }
+    }
+
+    vector<Symbol> newOrdering;
+    for (const auto& symbol : _ordering) {
+        if (reachableFromStart.contains(symbol)) {
+            newOrdering.push_back(symbol);
+        } else {
+            _productions.erase(symbol);
+        }
+    }
+    _ordering = newOrdering;
 
     deduplicate();
     initTerminals();

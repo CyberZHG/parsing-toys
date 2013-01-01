@@ -12,14 +12,15 @@ export default defineConfig({
                 cfg_reformat: resolve(__dirname, 'tools', 'cfg_reformat.html'),
                 cfg_left_factoring: resolve(__dirname, 'tools', 'cfg_left_factoring.html'),
                 cfg_left_recursion: resolve(__dirname, 'tools', 'cfg_left_recursion.html'),
-                cnf: resolve(__dirname, 'tools', 'cnf.html'),
+                cnf: resolve(__dirname, 'tools', 'cfg_cnf.html'),
+                cyk: resolve(__dirname, 'tools', 'cfg_cyk.html'),
                 first_and_follow: resolve(__dirname, 'tools', 'cfg_first_and_follow.html'),
                 ll1: resolve(__dirname, 'tools', 'cfg_ll1.html'),
                 lr0: resolve(__dirname, 'tools', 'cfg_lr0.html'),
                 slr1: resolve(__dirname, 'tools', 'cfg_slr1.html'),
                 lr1: resolve(__dirname, 'tools', 'cfg_lr1.html'),
                 lalr1: resolve(__dirname, 'tools', 'cfg_lalr1.html'),
-                min_dfa: resolve(__dirname, 'tools', 'min_dfa.html'),
+                min_dfa: resolve(__dirname, 'tools', 're_min_dfa.html'),
             }
         }
     },
