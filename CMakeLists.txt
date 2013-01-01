@@ -48,6 +48,8 @@ add_library(ParsingToys STATIC
         src/cfg.cpp
         include/string_utils.h
         src/string_utils.cpp
+        include/production_trie.h
+        src/production_trie.cpp
 )
 
 target_include_directories(ParsingToys
@@ -73,6 +75,8 @@ if(PARSING_TOYS_ENABLE_TESTS)
             tests/test_main.cpp
             tests/cfg/test_tokenize.cpp
             tests/cfg/test_parse.cpp
+            tests/cfg/test_production_trie.cpp
+            tests/test_string_utils.cpp
     )
 
     target_link_libraries(runTests

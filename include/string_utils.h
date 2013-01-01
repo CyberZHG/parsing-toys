@@ -6,5 +6,7 @@
 using namespace std;
 
 string stringJoin(const vector<string>& strings, const string& separator);
+bool operator<(const vector<string>& a, const vector<string>& b);
+bool operator==(const vector<string>& a, const vector<string>& b);
 
 #endif //PARSINGTOYS_STRING_UTILS_H

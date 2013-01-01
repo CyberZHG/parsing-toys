@@ -32,6 +32,8 @@ public:
 
     ContextFreeGrammar() = default;
 
+    static const string EMPTY_SYMBOL;
+
     /**
      * Tokenization.
      * @param s A string representing a context-free grammar.
@@ -88,8 +90,6 @@ public:
     void deduplicate();
 
 private:
-    static const string EMPTY_SYMBOL;
-
     string _errorMessage;
     vector<Symbol> _ordering;  // The output ordering
     unordered_map<Symbol, Productions> _productions;  // All the productions
