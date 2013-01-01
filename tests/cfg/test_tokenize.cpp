@@ -136,8 +136,8 @@ TEST(TestContextFreeGrammarTokenize, EmptySymbol1) {
     EXPECT_EQ(ContextFreeGrammarToken({ContextFreeGrammarToken::Type::SYMBOL, "S", 1, 1}), tokens[0]);
     EXPECT_EQ(ContextFreeGrammarToken({ContextFreeGrammarToken::Type::PRODUCTION, "->", 1, 2}), tokens[1]);
     EXPECT_EQ(ContextFreeGrammarToken({ContextFreeGrammarToken::Type::SYMBOL, "ε", 1, 4}), tokens[2]);
-    EXPECT_EQ(ContextFreeGrammarToken({ContextFreeGrammarToken::Type::ALTERNATION, "|", 1, 6}), tokens[3]);
-    EXPECT_EQ(ContextFreeGrammarToken({ContextFreeGrammarToken::Type::SYMBOL, "-", 1, 7}), tokens[4]);
+    EXPECT_EQ(ContextFreeGrammarToken({ContextFreeGrammarToken::Type::ALTERNATION, "|", 1, 5}), tokens[3]);
+    EXPECT_EQ(ContextFreeGrammarToken({ContextFreeGrammarToken::Type::SYMBOL, "-", 1, 6}), tokens[4]);
 }
 
 TEST(TestContextFreeGrammarTokenize, EmptySymbol2) {
@@ -160,4 +160,14 @@ TEST(TestContextFreeGrammarTokenize, TwoHeads) {
     EXPECT_EQ(ContextFreeGrammarToken({ContextFreeGrammarToken::Type::PRODUCTION, "->", 1, 7}), tokens[4]);
     EXPECT_EQ(ContextFreeGrammarToken({ContextFreeGrammarToken::Type::SYMBOL, "-", 1, 9}), tokens[5]);
     EXPECT_EQ(ContextFreeGrammarToken({ContextFreeGrammarToken::Type::SYMBOL, "+", 1, 11}), tokens[6]);
+}
+
+TEST(TestContextFreeGrammarTokenize, UTF8) {
+    const auto tokens = ContextFreeGrammar::tokenize("吃→睡｜玩");
+    EXPECT_EQ(5, tokens.size());
+    EXPECT_EQ(ContextFreeGrammarToken({ContextFreeGrammarToken::Type::SYMBOL, "吃", 1, 1}), tokens[0]);
+    EXPECT_EQ(ContextFreeGrammarToken({ContextFreeGrammarToken::Type::PRODUCTION, "→", 1, 2}), tokens[1]);
+    EXPECT_EQ(ContextFreeGrammarToken({ContextFreeGrammarToken::Type::SYMBOL, "睡", 1, 3}), tokens[2]);
+    EXPECT_EQ(ContextFreeGrammarToken({ContextFreeGrammarToken::Type::ALTERNATION, "｜", 1, 4}), tokens[3]);
+    EXPECT_EQ(ContextFreeGrammarToken({ContextFreeGrammarToken::Type::SYMBOL, "玩", 1, 5}), tokens[4]);
 }
