@@ -1,19 +1,18 @@
-#ifndef PARSINGTOYS_SYMBOL_TRIE_H
-#define PARSINGTOYS_SYMBOL_TRIE_H
+#ifndef PARSING_TOYS_PRODUCTION_TRIE_H
+#define PARSING_TOYS_PRODUCTION_TRIE_H
 
 #include <memory>
 #include <string>
 #include <vector>
 #include <unordered_set>
 #include <unordered_map>
-using namespace std;
 
 struct ProductionTrieNode {
     int count = 0;
     ProductionTrieNode *parent = nullptr;
-    unordered_set<int> originalIndices;  // Keep track of the indices in the original productions
-    unordered_set<int> expansionIndices;
-    unordered_map<string, shared_ptr<ProductionTrieNode>> children;
+    std::unordered_set<int> originalIndices;  // Keep track of the indices in the original productions
+    std::unordered_set<int> expansionIndices;
+    std::unordered_map<std::string, std::shared_ptr<ProductionTrieNode>> children;
 };
 
 class ProductionTrie {
@@ -29,7 +28,7 @@ public:
      * @param originalIndex The index before expansion.
      * @param expansionIndex The index after expansion.
      */
-    void insert(const vector<string>& production, int originalIndex, int expansionIndex = NO_EXPANSION) const;
+    void insert(const std::vector<std::string>& production, int originalIndex, int expansionIndex = NO_EXPANSION) const;
 
     /**
      * Find the longest common prefix in the current trie.
@@ -38,7 +37,7 @@ public:
      * if the frequency is still the same, choose the lexicographically smallest one.
      * @return The prefix and corresponding trie node.
      */
-    [[nodiscard]] pair<vector<string>, shared_ptr<ProductionTrieNode>> findLongestCommonPrefix() const;
+    [[nodiscard]] std::pair<std::vector<std::string>, std::shared_ptr<ProductionTrieNode>> findLongestCommonPrefix() const;
 
     /**
      * Find all child productions under the current node and sort them in lexicographical order.
@@ -46,16 +45,16 @@ public:
      * @param parents The parent relation of expansion indices.
      * @return
      */
-    static vector<vector<string>> computeProductionsUnderPrefix(const shared_ptr<ProductionTrieNode>& node, const unordered_map<int ,int>* parents = nullptr);
+    static std::vector<std::vector<std::string>> computeProductionsUnderPrefix(const std::shared_ptr<ProductionTrieNode>& node, const std::unordered_map<int ,int>* parents = nullptr);
 
     /**
      * Remove a node from the trie.
      * @param node A trie node.
      */
-    static void removeNode(const shared_ptr<ProductionTrieNode>& node);
+    static void removeNode(const std::shared_ptr<ProductionTrieNode>& node);
 
 private:
-    shared_ptr<ProductionTrieNode> _head;
+    std::shared_ptr<ProductionTrieNode> _head;
 };
 
-#endif //PARSINGTOYS_SYMBOL_TRIE_H
+#endif //PARSING_TOYS_PRODUCTION_TRIE_H

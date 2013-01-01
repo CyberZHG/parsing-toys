@@ -3,6 +3,8 @@
 #include <ranges>
 #include <algorithm>
 
+using namespace std;
+
 TEST(TestContextFreeGrammarParse, Empty) {
     ContextFreeGrammar grammar;
     EXPECT_TRUE(grammar.parse(""));

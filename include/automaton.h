@@ -1,15 +1,14 @@
-#ifndef PARSINGTOYS_AUTOMATON_H
-#define PARSINGTOYS_AUTOMATON_H
+#ifndef PARSING_TOYS_AUTOMATON_H
+#define PARSING_TOYS_AUTOMATON_H
 
 #include "cfg.h"
 #include <string>
 #include <vector>
 #include <unordered_map>
-using namespace std;
 
 struct FiniteAutomatonNode {
     bool accept = false;
-    string label;
+    std::string label;
     ContextFreeGrammar kernel;
     ContextFreeGrammar nonKernel;
 
@@ -17,12 +16,12 @@ struct FiniteAutomatonNode {
      * For unit tests only.
      * @return
      */
-    string toString() const;
+    [[nodiscard]] std::string toString() const;
 };
 
 struct FiniteAutomatonEdge {
     int u, v;
-    string label;
+    std::string label;
 };
 
 class FiniteAutomaton {
@@ -30,23 +29,23 @@ public:
     FiniteAutomaton() = default;
     ~FiniteAutomaton() = default;
 
-    size_t size() const;
-    FiniteAutomatonNode& nodeAt(size_t i);
-    string newNodeLabel(const string& prefix = "I") const;
-    size_t addNode(const FiniteAutomatonNode& node);
-    size_t addEdge(const FiniteAutomatonEdge& edge);
-    size_t addEdge(int u, int v, const string& label);
+    [[nodiscard]] std::size_t size() const;
+    FiniteAutomatonNode& nodeAt(std::size_t i);
+    [[nodiscard]] std::string newNodeLabel(const std::string& prefix = "I") const;
+    std::size_t addNode(const FiniteAutomatonNode& node);
+    std::size_t addEdge(const FiniteAutomatonEdge& edge);
+    std::size_t addEdge(int u, int v, const std::string& label);
 
     /**
      * For unit tests only.
      * @return
      */
-    string edgesToString() const;
+    [[nodiscard]] std::string edgesToString() const;
 
 private:
-    vector<FiniteAutomatonNode> _nodes;
-    vector<FiniteAutomatonEdge> _edges;
-    unordered_map<string, size_t> _keyToNodeIndex;
+    std::vector<FiniteAutomatonNode> _nodes;
+    std::vector<FiniteAutomatonEdge> _edges;
+    std::unordered_map<std::string, std::size_t> _keyToNodeIndex;
 };
 
-#endif //PARSINGTOYS_AUTOMATON_H
+#endif //PARSING_TOYS_AUTOMATON_H

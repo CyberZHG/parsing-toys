@@ -1,5 +1,7 @@
 #include "cfg.h"
 
+using namespace std;
+
 ContextFreeGrammar ContextFreeGrammar::computeClosure(const ContextFreeGrammar& kernel) const {
     ContextFreeGrammar nonKernel;
     unordered_set<string> nonKernelKeys;

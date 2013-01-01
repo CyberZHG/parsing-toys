@@ -5,6 +5,8 @@
 #include <ranges>
 #include <algorithm>
 
+using namespace std;
+
 ProductionTrie::ProductionTrie() {
     _head = make_shared<ProductionTrieNode>();
 }

@@ -3,6 +3,8 @@
 #include <ranges>
 #include <algorithm>
 
+using namespace std;
+
 TEST(TestContextFreeGrammarClosure, Empty) {
     const ContextFreeGrammar grammar, kernel;
     const auto nonKernel = grammar.computeClosure(kernel);

@@ -2,6 +2,8 @@
 #include <format>
 #include <functional>
 
+using namespace std;
+
 bool ContextFreeGrammar::leftRecursionElimination() {
     bool eliminable = true;
     unordered_set<Symbol> eliminated;

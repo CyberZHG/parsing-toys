@@ -1,6 +1,8 @@
 #include "string_utils.h"
 #include <algorithm>
 
+using namespace std;
+
 string stringJoin(const vector<string>& strings, const string& separator) {
     string result;
     for (size_t i = 0; i < strings.size(); i++) {
@@ -41,10 +43,21 @@ string toSubscript(size_t number) {
     if (number == 0) {
         return SUBSCRIPTS[0];
     }
-    string result = "";
+    string result;
     while (number > 0) {
-        result = SUBSCRIPTS[number % 10] + result;
+        const auto& subscript = SUBSCRIPTS[number % 10];
+        result.insert(result.begin(), subscript.begin(), subscript.end());
         number /= 10;
     }
     return result;
+}
+
+size_t utf8Length(const string& s) {
+    size_t length = 0;
+    for (const auto c : s) {
+        if ((c & 0b11000000) != 0b10000000) {
+            ++length;
+        }
+    }
+    return length;
 }

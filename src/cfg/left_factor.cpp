@@ -2,6 +2,8 @@
 #include "production_trie.h"
 #include <functional>
 
+using namespace std;
+
 void ContextFreeGrammar::leftFactoring() {
     unordered_set<Symbol> primedSymbols;
     const vector<Symbol> originalNonTerminals = _ordering;

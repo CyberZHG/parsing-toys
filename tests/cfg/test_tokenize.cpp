@@ -1,6 +1,8 @@
 #include "cfg.h"
 #include <gtest/gtest.h>
 
+using namespace std;
+
 TEST(TestContextFreeGrammarTokenize, DifferentTokens) {
     EXPECT_NE(ContextFreeGrammarToken({ContextFreeGrammarToken::Type::PRODUCTION, "->", 1, 1}),
               ContextFreeGrammarToken({ContextFreeGrammarToken::Type::SYMBOL, "->", 1, 1}));

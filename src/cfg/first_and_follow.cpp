@@ -2,6 +2,8 @@
 #include <ranges>
 #include <algorithm>
 
+using namespace std;
+
 size_t FirstAndFollowSet::size() const {
     return ordering.size();
 }

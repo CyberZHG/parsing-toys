@@ -1,6 +1,8 @@
 #include "string_utils.h"
 #include <gtest/gtest.h>
 
+using namespace std;
+
 TEST(TestStringUtils, VectorStringEqual) {
     EXPECT_FALSE((vector<string>{"a"} == vector<string>{"a", "b"}));
     EXPECT_FALSE((vector<string>{"a", "b", "c"} == vector<string>{"a", "b", "d"}));

@@ -4,6 +4,8 @@
 #include <ranges>
 #include <algorithm>
 
+using namespace std;
+
 TEST(TestContextFreeGrammarLR0Automaton, Empty) {
     ContextFreeGrammar grammar;
     EXPECT_TRUE(grammar.parse(""));
@@ -137,5 +139,200 @@ F -> ( E ) ·
 8 -- ) --> 11
 8 -- + --> 6
 9 -- * --> 7
+)", automaton->edgesToString());
+}
+
+TEST(TestContextFreeGrammarLR0Automaton, SpecialCase2) {
+    ContextFreeGrammar grammar;
+    grammar.parse(R"(
+S → A B
+A → ε
+B → b
+)");
+    const auto automaton = grammar.computeLR0Automaton();
+    EXPECT_EQ(5, automaton->size());
+
+    EXPECT_EQ(R"(I₀
+===
+S' -> · S
+---
+S -> · A B
+A -> ·
+)", automaton->nodeAt(0).toString());
+
+    EXPECT_EQ(R"(I₁
+===
+S' -> S ·
+---
+)", automaton->nodeAt(1).toString());
+    EXPECT_TRUE(automaton->nodeAt(1).accept);
+
+    EXPECT_EQ(R"(I₂
+===
+S -> A · B
+---
+B -> · b
+)", automaton->nodeAt(2).toString());
+
+    EXPECT_EQ(R"(I₃
+===
+S -> A B ·
+---
+)", automaton->nodeAt(3).toString());
+
+    EXPECT_EQ(R"(I₄
+===
+B -> b ·
+---
+)", automaton->nodeAt(4).toString());
+
+    EXPECT_EQ(R"(0 -- S --> 1
+0 -- A --> 2
+2 -- B --> 3
+2 -- b --> 4
+)", automaton->edgesToString());
+}
+
+TEST(TestContextFreeGrammarLR0Automaton, SpecialCase3) {
+    ContextFreeGrammar grammar;
+    grammar.parse(R"(
+E → E a | b
+)");
+    const auto automaton = grammar.computeLR0Automaton();
+    EXPECT_EQ(4, automaton->size());
+
+    EXPECT_EQ(R"(I₀
+===
+E' -> · E
+---
+E -> · E a
+   | · b
+)", automaton->nodeAt(0).toString());
+
+    EXPECT_EQ(R"(I₁
+===
+E' -> E ·
+ E -> E · a
+---
+)", automaton->nodeAt(1).toString());
+    EXPECT_TRUE(automaton->nodeAt(1).accept);
+
+    EXPECT_EQ(R"(I₂
+===
+E -> b ·
+---
+)", automaton->nodeAt(2).toString());
+
+    EXPECT_EQ(R"(I₃
+===
+E -> E a ·
+---
+)", automaton->nodeAt(3).toString());
+
+    EXPECT_EQ(R"(0 -- E --> 1
+0 -- b --> 2
+1 -- a --> 3
+)", automaton->edgesToString());
+}
+
+TEST(TestContextFreeGrammarLR0Automaton, SpecialCase4) {
+    ContextFreeGrammar grammar;
+    grammar.parse(R"(
+S → A A
+A → a
+)");
+    const auto automaton = grammar.computeLR0Automaton();
+    EXPECT_EQ(5, automaton->size());
+
+    EXPECT_EQ(R"(I₀
+===
+S' -> · S
+---
+S -> · A A
+A -> · a
+)", automaton->nodeAt(0).toString());
+
+    EXPECT_EQ(R"(I₁
+===
+S' -> S ·
+---
+)", automaton->nodeAt(1).toString());
+    EXPECT_TRUE(automaton->nodeAt(1).accept);
+
+    EXPECT_EQ(R"(I₂
+===
+S -> A · A
+---
+A -> · a
+)", automaton->nodeAt(2).toString());
+
+    EXPECT_EQ(R"(I₃
+===
+A -> a ·
+---
+)", automaton->nodeAt(3).toString());
+
+    EXPECT_EQ(R"(I₄
+===
+S -> A A ·
+---
+)", automaton->nodeAt(4).toString());
+
+    EXPECT_EQ(R"(0 -- S --> 1
+0 -- A --> 2
+0 -- a --> 3
+2 -- A --> 4
+2 -- a --> 3
+)", automaton->edgesToString());
+}
+
+TEST(TestContextFreeGrammarLR0Automaton, SpecialCase5) {
+    ContextFreeGrammar grammar;
+    grammar.parse(R"(
+S → A
+A → B
+B → c
+)");
+    const auto automaton = grammar.computeLR0Automaton();
+    EXPECT_EQ(5, automaton->size());
+
+    EXPECT_EQ(R"(I₀
+===
+S' -> · S
+---
+S -> · A
+A -> · B
+B -> · c
+)", automaton->nodeAt(0).toString());
+
+    EXPECT_EQ(R"(I₁
+===
+S' -> S ·
+---
+)", automaton->nodeAt(1).toString());
+    EXPECT_TRUE(automaton->nodeAt(1).accept);
+
+    EXPECT_EQ(R"(I₂
+===
+S -> A ·
+---
+)", automaton->nodeAt(2).toString());
+
+    EXPECT_EQ(R"(I₃
+===
+A -> B ·
+---
+)", automaton->nodeAt(3).toString());
+
+    EXPECT_EQ(R"(I₄
+===
+B -> c ·
+---
+)", automaton->nodeAt(4).toString());
+
+    EXPECT_EQ(R"(0 -- S --> 1
+0 -- A --> 2
+0 -- B --> 3
+0 -- c --> 4
 )", automaton->edgesToString());
 }

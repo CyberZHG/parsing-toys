@@ -4,6 +4,8 @@
 #include <ranges>
 #include <algorithm>
 
+using namespace std;
+
 TEST(TestProductionTrie, LongestCommonPrefixEmpty) {
     const ProductionTrie trie;
     const auto [prefix, node] = trie.findLongestCommonPrefix();

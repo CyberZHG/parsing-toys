@@ -3,6 +3,8 @@
 #include <ranges>
 #include <algorithm>
 
+using namespace std;
+
 TEST(TestPrimedSymbol, AddProduction1) {
     ContextFreeGrammar grammar;
     grammar.addProductions("B", {{"b"}});

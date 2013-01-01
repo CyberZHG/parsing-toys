@@ -2,6 +2,8 @@
 #include "automaton.h"
 #include <unordered_set>
 
+using namespace std;
+
 unique_ptr<FiniteAutomaton> ContextFreeGrammar::computeLR0Automaton() {
     if (_ordering.empty()) {
         throw runtime_error("Can not find a start symbol");

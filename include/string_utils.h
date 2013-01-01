@@ -1,13 +1,13 @@
-#ifndef PARSINGTOYS_STRING_UTILS_H
-#define PARSINGTOYS_STRING_UTILS_H
+#ifndef PARSING_TOYS_STRING_UTILS_H
+#define PARSING_TOYS_STRING_UTILS_H
 
 #include <vector>
 #include <string>
-using namespace std;
 
-string stringJoin(const vector<string>& strings, const string& separator);
-bool operator<(const vector<string>& a, const vector<string>& b);
-bool operator==(const vector<string>& a, const vector<string>& b);
-string toSubscript(size_t number);
+std::string stringJoin(const std::vector<std::string>& strings, const std::string& separator);
+bool operator<(const std::vector<std::string>& a, const std::vector<std::string>& b);
+bool operator==(const std::vector<std::string>& a, const std::vector<std::string>& b);
+std::string toSubscript(std::size_t number);
+std::size_t utf8Length(const std::string& s);
 
-#endif //PARSINGTOYS_STRING_UTILS_H
+#endif //PARSING_TOYS_STRING_UTILS_H

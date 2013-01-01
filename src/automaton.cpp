@@ -1,6 +1,8 @@
 #include "automaton.h"
 #include "string_utils.h"
 
+using namespace std;
+
 string FiniteAutomatonNode::toString() const {
     string result = label + "\n===\n";
     result += kernel.toString() + "---\n";
@@ -46,7 +48,7 @@ size_t FiniteAutomaton::addEdge(const int u, const int v, const string& label) {
 }
 
 string FiniteAutomaton::edgesToString() const {
-    string result = "";
+    string result;
     for (const auto&[u, v, label] : _edges) {
         result += to_string(u) + " -- " + label + " --> " + to_string(v) + "\n";
     }

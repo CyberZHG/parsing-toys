@@ -7,11 +7,10 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <memory>
-using namespace std;
 
-using Symbol = string;
-using Production = vector<string>;
-using Productions = vector<Production>;
+using Symbol = std::string;
+using Production = std::vector<std::string>;
+using Productions = std::vector<Production>;
 
 class FiniteAutomaton;
 
@@ -26,55 +25,55 @@ struct ContextFreeGrammarToken {
     };
     Type type;
     Symbol symbol;
-    size_t line, column;
+    std::size_t line, column;
 
     bool operator==(const ContextFreeGrammarToken& other) const;
 };
 
 struct FirstAndFollowSet {
-    vector<Symbol> ordering;
-    unordered_map<Symbol, unordered_set<Symbol>> first;
-    unordered_map<Symbol, unordered_set<Symbol>> follow;
+    std::vector<Symbol> ordering;
+    std::unordered_map<Symbol, std::unordered_set<Symbol>> first;
+    std::unordered_map<Symbol, std::unordered_set<Symbol>> follow;
 
-    [[nodiscard]] size_t size() const;
-    [[nodiscard]] Symbol symbolAt(size_t index) const;
+    [[nodiscard]] std::size_t size() const;
+    [[nodiscard]] Symbol symbolAt(std::size_t index) const;
     [[nodiscard]] bool getNullable(const Symbol &symbol) const;
-    [[nodiscard]] vector<Symbol> getFirstSet(const Symbol& symbol) const;
-    [[nodiscard]] vector<Symbol> getFollowSet(const Symbol& symbol) const;
+    [[nodiscard]] std::vector<Symbol> getFirstSet(const Symbol& symbol) const;
+    [[nodiscard]] std::vector<Symbol> getFollowSet(const Symbol& symbol) const;
 };
 
 class ContextFreeGrammar {
 public:
     ContextFreeGrammar() = default;
 
-    static const string EMPTY_SYMBOL;
-    static const string DOT_SYMBOL;
+    static const std::string EMPTY_SYMBOL;
+    static const std::string DOT_SYMBOL;
 
     /**
      * Tokenization.
      * @param s A string representing a context-free grammar.
      * @return Tokens
      */
-    static vector<ContextFreeGrammarToken> tokenize(const string& s);
+    static std::vector<ContextFreeGrammarToken> tokenize(const std::string& s);
 
     /**
      * Tokenize and parse a context-free grammar.
      * @param s A string representing a context-free grammar.
      * @return
      */
-    bool parse(const string& s);
+    bool parse(const std::string& s);
 
     /**
      * TPossible error messages during parsing.
      * @return Error message.
      */
-    [[nodiscard]] const string& errorMessage() const;
+    [[nodiscard]] const std::string& errorMessage() const;
 
     /**
      * A formatted context-free grammar string.
      * @return Formatted string.
      */
-    [[nodiscard]] string toString() const;
+    [[nodiscard]] std::string toString() const;
 
     /**
      * Find all terminals in the existing productions.
@@ -85,12 +84,12 @@ public:
      * A helper function for highlighting.
      * @return All the terminals.
      */
-    [[nodiscard]] vector<Symbol> terminals() const;
+    [[nodiscard]] std::vector<Symbol> terminals() const;
     /**
      * A helper function for highlighting.
      * @return All the non-terminals.
      */
-    [[nodiscard]] vector<Symbol> nonTerminals() const;
+    [[nodiscard]] std::vector<Symbol> nonTerminals() const;
 
     [[nodiscard]] bool isTerminal(const Symbol& symbol) const;
     [[nodiscard]] bool isNonTerminal(const Symbol& symbol) const;
@@ -100,14 +99,14 @@ public:
      * @param production
      * @return
      */
-    static string computeProductionKey(const Production& production);
+    static std::string computeProductionKey(const Production& production);
     /**
      * Compute a key for a production to deduplicate.
      * @param head
      * @param production
      * @return
      */
-    static string computeProductionKey(const Symbol& head, const Production& production);
+    static std::string computeProductionKey(const Symbol& head, const Production& production);
 
     /**
      * Remove duplicated productions for each non-terminal.
@@ -120,7 +119,7 @@ public:
      * @param updateOrdering Whether to update the output order.
      * @return The primed symbol.
      */
-    string generatePrimedSymbol(const Symbol& symbol, bool updateOrdering = true);
+    std::string generatePrimedSymbol(const Symbol& symbol, bool updateOrdering = true);
 
     void addProduction(const Symbol &head, const Production &production);
     void addProductions(const Symbol& head, const Productions& productions);
@@ -135,7 +134,7 @@ public:
     /**
      * Try to eliminate left recursions based on the current ordering.
      *
-     * When all right-hand sides of a non-terminal’s productions start with that non-terminal,
+     * When all right-hand sides of a non-terminal's productions start with that non-terminal,
      * the left recursion cannot be eliminated.
      *
      * @attention This function does not provide atomicity.
@@ -166,15 +165,15 @@ public:
      *
      * @return A deterministic finite automaton.
      */
-    unique_ptr<FiniteAutomaton> computeLR0Automaton();
+    std::unique_ptr<FiniteAutomaton> computeLR0Automaton();
 private:
-    string _errorMessage;
-    vector<Symbol> _ordering;  // The output ordering
-    unordered_map<Symbol, Productions> _productions;  // All the productions
-    unordered_map<Symbol, unordered_set<string>> _productionKeys;  // Helper member for checking the existence of a production
-    unordered_set<Symbol> _terminals;  // Helper member for checking the existence of terminals
+    std::string _errorMessage;
+    std::vector<Symbol> _ordering;  // The output ordering
+    std::unordered_map<Symbol, Productions> _productions;  // All the productions
+    std::unordered_map<Symbol, std::unordered_set<std::string>> _productionKeys;  // Helper member for checking the existence of a production
+    std::unordered_set<Symbol> _terminals;  // Helper member for checking the existence of terminals
 };
 
-void PrintTo(const ContextFreeGrammarToken& token, ostream* os);
+void PrintTo(const ContextFreeGrammarToken& token, std::ostream* os);
 
 #endif //PARSING_TOYS_CFG_H

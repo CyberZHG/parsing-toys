@@ -5,6 +5,8 @@
 #include <limits>
 #include <algorithm>
 
+using namespace std;
+
 const string ContextFreeGrammar::EMPTY_SYMBOL = "ε";
 const string ContextFreeGrammar::DOT_SYMBOL = "·";
 
@@ -126,7 +128,7 @@ bool ContextFreeGrammar::parse(const string& s) {
         }
     }
     const auto lastLine = tokens.back().line;
-    const auto lastColumn = tokens.back().column + tokens.back().symbol.size();
+    const auto lastColumn = tokens.back().column + utf8Length(tokens.back().symbol);
     if (hasEmptyProduction(lastLine, lastColumn)) {
         return false;
     }
