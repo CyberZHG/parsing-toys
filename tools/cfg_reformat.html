@@ -5,16 +5,16 @@
   <link rel="icon" type="image/svg+xml" href="/parsing-toys/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Parsing Toys</title>
-  <script type="module" crossorigin src="/parsing-toys/assets/cfg_reformat-S2Ob8ozx.js"></script>
-  <link rel="modulepreload" crossorigin href="/parsing-toys/assets/__vite-browser-external-B7005DX0.js">
-  <link rel="stylesheet" crossorigin href="/parsing-toys/assets/__vite-browser-external-DI6cQP3X.css">
+  <script type="module" crossorigin src="/parsing-toys/assets/cfg_reformat-lzZC1MSy.js"></script>
+  <link rel="modulepreload" crossorigin href="/parsing-toys/assets/__vite-browser-external-BE8MVyHV.js">
+  <link rel="stylesheet" crossorigin href="/parsing-toys/assets/__vite-browser-external-CjlpCRWA.css">
 </head>
 <body>
 <nav class="bg-gray-50 border-b border-gray-200">
   <div class="max-w-7xl mx-auto px-4">
     <div class="flex h-16 items-center justify-between">
       <div class="flex items-center">
-        <span class="text-xl font-bold text-gray-700">ParsingToys</span>
+        <span class="text-xl font-bold text-gray-700"><a href="/parsing-toys">ParsingToys</a></span>
       </div>
       <div class="hidden md:flex space-x-6">
         <a href="/parsing-toys" class="flex items-center gap-2 text-gray-700 hover:text-blue-600">
@@ -79,8 +79,8 @@
       </div>
     </div>
     <div class="flex gap-2 mt-2">
-      <button id="cfg-editor-button-insert-eps" class="px-5 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white text-sm">Insert ε</button>
-      <button id="cfg-editor-button-copy-code" class="px-5 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white text-sm">Copy Code</button>
+      <button id="cfg-editor-button-insert-eps" class="px-5 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white text-sm font-semibold min-w-[20%]">Insert ε</button>
+      <button id="cfg-editor-button-copy-code" class="px-5 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white text-sm font-semibold min-w-[20%]">Copy Code</button>
     </div>
   </div>
   <div class="flex flex-col py-4 w-full gap-2 max-w-3xl mx-auto">
@@ -105,8 +105,21 @@
       <pre class="w-full max-w-3xl whitespace-pre overflow-auto h-64 p-2 text-sm font-mono text-gray-900"><code id="cfg-result-highlighted"></code></pre>
     </div>
     <div class="flex gap-2 mt-2">
-      <button id="cfg-result-button-copy-code" class="px-5 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white text-sm">
+      <button id="cfg-result-button-copy-code" class="px-5 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white text-sm font-semibold min-w-[20%]">
         Copy Code
+      </button>
+    </div>
+  </div>
+  <div class="flex flex-col w-full gap-2 max-w-3xl mx-auto pt-8">
+    <div class="relative w-full text-gray-950 font-semibold ">
+      Current URL:
+    </div>
+    <div class="flex w-full gap-2">
+      <label class="flex-1 ">
+        <input id="footer-url" type="text" value="" class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200" disabled/>
+      </label>
+      <button id="footer-url-copy-button" class="px-5 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white text-sm font-semibold min-w-[20%]">
+        Copy URL
       </button>
     </div>
   </div>
