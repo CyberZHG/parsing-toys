@@ -1,4 +1,4 @@
-import"./__vite-browser-external-CpYqa-Ba.js";import{s as o}from"./choose_examples-BjAtfSqC.js";import{C as r,g as S,u as l,s as i,a as m,b as c,c as p,d as s,e as E}from"./location_hash-CKUY87g8.js";const u={example1:"Example 1: S -> i E t S | i E t S e S | a  E -> b",example2:"Example 2: S -> S S + | S S * | a",example3:"Example 3: S -> S + S | S S | ( S ) | S * | a",example4:"Example 4: A -> id | B | a  B -> C  C -> D  D -> id b"},d={example1:`S -> i E t S 
+import"./__vite-browser-external-pUU1Sn4A.js";import{s as o}from"./choose_examples-BjAtfSqC.js";import{C as r,g as S,u as l,s as i,a as m,b as c,c as p,d as s,e as E}from"./location_hash-BE04YPNf.js";const u={example1:"Example 1: S -> i E t S | i E t S e S | a  E -> b",example2:"Example 2: S -> S S + | S S * | a",example3:"Example 3: S -> S + S | S S | ( S ) | S * | a",example4:"Example 4: A -> id | B | a  B -> C  C -> D  D -> id b"},d={example1:`S -> i E t S 
    | i E t S e S 
    | a
 E -> b`,example2:`S -> S S + 
