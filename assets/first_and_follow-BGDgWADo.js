@@ -1,4 +1,4 @@
-import"./__vite-browser-external-C7_NouPi.js";import{s as p}from"./choose_examples-BjAtfSqC.js";import{C as f,g as u,s as g,a as x,b as E,c as i,d as T}from"./location_hash-MzB8CwVA.js";const y={example1:"Example 1: E -> T E'  T -> F T'  E' -> + T E' | ε  T' -> * F T' | ε  F -> ( E ) | id",example2:"Example 2: S -> A B C  A -> a | ε  B -> b | ε  C -> c"},F={example1:` E -> T E'
+import"./__vite-browser-external-C7_NouPi.js";import{s as p}from"./choose_examples-BjAtfSqC.js";import{C as f,g as u,s as g,a as x,b as E,c as i,d as T}from"./location_hash-DD1AWvbi.js";const y={example1:"Example 1: E -> T E'  T -> F T'  E' -> + T E' | ε  T' -> * F T' | ε  F -> ( E ) | id",example2:"Example 2: S -> A B C  A -> a | ε  B -> b | ε  C -> c"},F={example1:` E -> T E'
  T -> F T'
 E' -> + T E'
     | ε
