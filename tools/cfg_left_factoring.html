@@ -5,12 +5,12 @@
   <link rel="icon" type="image/svg+xml" href="/parsing-toys/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Online Left Factoring</title>
-  <script type="module" crossorigin src="/parsing-toys/assets/cfg_left_factoring-DPcCAo0h.js"></script>
-  <link rel="modulepreload" crossorigin href="/parsing-toys/assets/__vite-browser-external-C7_NouPi.js">
+  <script type="module" crossorigin src="/parsing-toys/assets/cfg_left_factoring-fCZw8Sl8.js"></script>
+  <link rel="modulepreload" crossorigin href="/parsing-toys/assets/__vite-browser-external-DW2qscRg.js">
   <link rel="modulepreload" crossorigin href="/parsing-toys/assets/choose_examples-BjAtfSqC.js">
-  <link rel="modulepreload" crossorigin href="/parsing-toys/assets/location_hash-CAPHNAeh.js">
+  <link rel="modulepreload" crossorigin href="/parsing-toys/assets/location_hash-CQmiu6wv.js">
   <link rel="modulepreload" crossorigin href="/parsing-toys/assets/cfg_result-CcZunNg_.js">
-  <link rel="stylesheet" crossorigin href="/parsing-toys/assets/__vite-browser-external-D4PckT-i.css">
+  <link rel="stylesheet" crossorigin href="/parsing-toys/assets/__vite-browser-external-Cy5DGxmM.css">
 </head>
 <body>
 <nav class="bg-gray-50 border-b border-gray-200">
@@ -66,7 +66,7 @@
   </div>
 </nav>
 <main class="max-w-7xl mx-auto px-4 py-10 min-h-screen flex flex-col">
-  <div class="relative flex flex-col py-4 w-full max-w-3xl mx-auto">
+  <div class="relative flex flex-col py-4 w-full max-w-6xl mx-auto">
     <button id="examples-menu-button-show" class="w-full border px-3 py-2 rounded flex justify-between items-center">
       Examples
       <span>▾</span>
@@ -75,14 +75,14 @@
       <!-- <li class="px-3 py-2 hover:bg-gray-100 cursor-pointer" data-value="option">Option</li> -->
     </ul>
   </div>
-  <div class="flex flex-col w-full gap-2 max-w-3xl mx-auto">
+  <div class="flex flex-col w-full gap-2 max-w-6xl mx-auto">
     <div id="cfg-editor-intro" class="relative w-full text-gray-950 font-semibold ">
       Context free grammar input:
     </div>
     <div class="flex border border-gray-700 rounded h-64">
       <div id="cfg-editor-line-numbers" class="bg-gray-700 text-gray-500 text-right p-2 w-10 select-none font-mono text-sm overflow-hidden">1</div>
       <div class="relative flex-1 h-full">
-        <div class="relative w-full max-w-3xl mx-auto">
+        <div class="relative w-full max-w-6xl mx-auto">
           <pre class="absolute inset-0 p-2 pr-4 overflow-hidden pointer-events-none text-sm font-mono whitespace-pre break-words text-gray-900"><code id="cfg-editor-highlighted"></code></pre>
           <label for="cfg-editor">
             <textarea id="cfg-editor" spellcheck="false" class="relative w-full h-62 p-2 pr-4 bg-transparent text-transparent caret-gray-950 resize-none outline-none overflow-auto whitespace-pre text-sm font-mono "></textarea>
@@ -95,26 +95,26 @@
       <button id="cfg-editor-button-copy-code" class="px-5 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white text-sm font-semibold min-w-[20%]">Copy Code</button>
     </div>
   </div>
-  <div class="flex flex-col py-4 w-full gap-2 max-w-3xl mx-auto">
+  <div class="flex flex-col py-4 w-full gap-2 max-w-6xl mx-auto">
     <div class="flex mt-2">
       <button id="button-cfg-left-factoring" class="w-full py-2 bg-blue-700 hover:bg-blue-800 rounded font-semibold text-white text-sm">Left Factoring</button>
     </div>
   </div>
-  <div class="flex flex-col pb-4 pt-0 w-full gap-2 max-w-3xl mx-auto">
-    <div class="flex items-center max-w-3xl gap-2 mt-2 text-red-500 text-sm" hidden>
+  <div class="flex flex-col pb-4 pt-0 w-full gap-2 max-w-6xl mx-auto">
+    <div class="flex items-center max-w-6xl gap-2 mt-2 text-red-500 text-sm" hidden>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
         <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
       </svg>
       <div id="cfg-left-factoring-error-message">Error Message</div>
     </div>
   </div>
-  <div class="flex flex-col w-full gap-2 max-w-3xl mx-auto">
+  <div class="flex flex-col w-full gap-2 max-w-6xl mx-auto">
     <div class="relative w-full text-gray-950 font-semibold ">
       Output:
     </div>
     <div class="flex border border-gray-700 rounded h-64">
       <div id="cfg-result-line-numbers" class="bg-gray-700 text-gray-500 text-right p-2 w-10 select-none font-mono text-sm overflow-hidden">1</div>
-      <pre tabindex="0" class="w-full max-w-3xl whitespace-pre overflow-auto h-64 p-2 pr-4 text-sm font-semibold font-mono text-gray-900"><code id="cfg-result-highlighted"></code></pre>
+      <pre tabindex="0" class="w-full max-w-6xl whitespace-pre overflow-auto h-64 p-2 pr-4 text-sm font-semibold font-mono text-gray-900"><code id="cfg-result-highlighted"></code></pre>
     </div>
     <div class="flex gap-2 mt-2">
       <button id="cfg-result-button-copy-code" class="px-5 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white text-sm font-semibold min-w-[20%]">
@@ -122,7 +122,7 @@
       </button>
     </div>
   </div>
-  <div class="flex flex-col w-full gap-2 max-w-3xl mx-auto pt-8">
+  <div class="flex flex-col w-full gap-2 max-w-6xl mx-auto pt-8">
     <div class="relative w-full text-gray-950 font-semibold ">
       Current URL:
     </div>
