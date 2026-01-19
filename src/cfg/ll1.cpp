@@ -50,7 +50,9 @@ void MTable::addEntry(const Symbol& nonTerminal, const Symbol& terminal, const P
 bool MTable::hasConflict() const {
     for (const auto& row : entries) {
         for (const auto& cell : row) {
-            if (cell.size() > 1) return true;
+            if (cell.size() > 1) {
+                return true;
+            }
         }
     }
     return false;
@@ -100,7 +102,7 @@ Symbol MTable::getTerminal(const size_t index) const {
     return terminals[index];
 }
 
-LLParsingSteps MTable::parse(const string& s) const {
+LLParsingSteps MTable::parse(const string& s) {
     LLParsingSteps steps;
     vector stack = {ContextFreeGrammar::EOF_SYMBOL};
     if (!nonTerminals.empty()) {
@@ -136,7 +138,7 @@ LLParsingSteps MTable::parse(const string& s) const {
 
         if (top == ContextFreeGrammar::EOF_SYMBOL && input == ContextFreeGrammar::EOF_SYMBOL) {
             steps.addStep(stack, remaining, "accept");
-            steps.parseTree = rootNode;
+            parseTree = rootNode;
             break;
         }
 
@@ -209,7 +211,7 @@ LLParsingSteps MTable::parse(const string& s) const {
     }
 
     if (stack.empty() && remaining.empty()) {
-        steps.parseTree = rootNode;
+        parseTree = rootNode;
     }
 
     return steps;

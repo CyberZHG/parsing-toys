@@ -95,7 +95,6 @@ struct LLParsingSteps {
     std::vector<std::vector<Symbol>> stack;
     std::vector<std::vector<Symbol>> remainingInputs;
     std::vector<std::string> actions;
-    std::shared_ptr<ParseTreeNode> parseTree = nullptr;
 
     void addStep(const std::vector<Symbol>& _stack, const std::vector<Symbol>& _remainingInputs, const std::string& action);
     [[nodiscard]] std::string toString() const;
@@ -118,7 +117,7 @@ struct MTable {
     [[nodiscard]] Symbol getNonTerminal(std::size_t index) const;
     [[nodiscard]] Symbol getTerminal(std::size_t index) const;
 
-    [[nodiscard]] LLParsingSteps parse(const std::string& s) const;
+    [[nodiscard]] LLParsingSteps parse(const std::string& s);
     [[nodiscard]] std::string toString(const std::string& separator = " / ") const;
 };
 

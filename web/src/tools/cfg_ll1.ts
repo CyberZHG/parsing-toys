@@ -26,18 +26,17 @@ function setLL1HashData(data: LL1HashData): void {
 }
 
 const EXAMPLE_OPTIONS: Record<string, string> = {
-    "example1": "Example 1: E -> T E'  E' -> + T E' | ε  T -> F T'  T' -> * F T' | ε  F -> ( E ) | id",
-    "example2": "Example 2: S -> i E t S S' | a  S' -> e S | ε  E -> b",
+    "example1": "Example 1: E -> E + T | T  T -> T * F | F  F -> ( E ) | id",
+    "example2": "Example 2: S -> i E t S | i E t S e S | a  E -> b",
 }
 
 const EXAMPLES: Record<string, string> = {
-    "example1": `E -> T E'
-E' -> + T E' | ε
-T -> F T'
-T' -> * F T' | ε
+    "example1": `E -> E + T | T
+T -> T * F | F
 F -> ( E ) | id`,
-    "example2": `S -> i E t S S' | a
-S' -> e S | ε
+    "example2": `S -> i E t S
+   | i E t S e S
+   | a
 E -> b`,
 }
 
@@ -152,7 +151,7 @@ ll1Button.addEventListener('click', () => {
                     renderLLParsingSteps(steps)
                     llStepsContainer.hidden = false
 
-                    const parseTree = steps.getParseTree()
+                    const parseTree = table.getParseTree()
                     if (parseTree) {
                         const parser = new DOMParser()
                         const treeSvgDoc = parser.parseFromString(parseTree.toSVG(), 'image/svg+xml')
