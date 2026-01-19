@@ -1,4 +1,4 @@
-import"./__vite-browser-external-BgPlA5PU.js";import{s as o}from"./choose_examples-BjAtfSqC.js";import{g as r,s as m,a as n}from"./cfg_editor-Bof7UeYh.js";import{u as l,s as c}from"./cfg_result-CcZunNg_.js";import{C as p,s as i,a as E,g as u}from"./location_hash-DCeX6uqc.js";const x={example1:"Example 1: S -> A B  A -> a | ε  B -> b | ε",example2:"Example 2: S -> a S b | a b",example3:"Example 3: E -> E + T | T  T -> T * F | F  F -> ( E ) | id",example4:"Example 4: S -> A  A -> B  B -> a"},d={example1:`S -> A B
+import"./__vite-browser-external-BgPlA5PU.js";import{s as o}from"./choose_examples-BjAtfSqC.js";import{g as r,s as m,a as n}from"./cfg_editor-Bof7UeYh.js";import{u as l,s as c}from"./cfg_result-CcZunNg_.js";import{C as p,s as i,a as E,g as u}from"./location_hash-BZG2E5jj.js";const x={example1:"Example 1: S -> A B  A -> a | ε  B -> b | ε",example2:"Example 2: S -> a S b | a b",example3:"Example 3: E -> E + T | T  T -> T * F | F  F -> ( E ) | id",example4:"Example 4: S -> A  A -> B  B -> a"},d={example1:`S -> A B
 A -> a | ε
 B -> b | ε`,example2:"S -> a S b | a b",example3:`E -> E + T | T
 T -> T * F | F
