@@ -27,7 +27,7 @@ F -> ( E ) | id
 )");
     grammar.leftRecursionElimination();
     grammar.leftFactoring();
-    const auto table = grammar.computeLL1Table();
+    auto table = grammar.computeLL1Table();
     const auto expectedTable = R"(| | ( | ) | * | + | id | ε | ¥ |
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 | E | E -> T E' |  |  |  | E -> T E' |  |  |
@@ -62,9 +62,169 @@ F -> ( E ) | id
     EXPECT_EQ(expectedSteps, steps.toString());
 
     const ::testing::TestInfo* info = ::testing::UnitTest::GetInstance()->current_test_info();
-    auto svg = steps.parseTree->toSVG();
+    auto svg = table.parseTree->toSVG();
     auto filePath = format("{}_{}.svg", info->test_suite_name(), info->name());
     ofstream file(filePath);
     file << svg;
     file.close();
+}
+
+TEST(TestContextFreeGrammarLL1Automaton, SpecialCase2) {
+    ContextFreeGrammar grammar;
+    grammar.parse(R"(
+S -> i E t S
+   | i E t S e S
+   | a
+E -> b
+)");
+    grammar.leftRecursionElimination();
+    grammar.leftFactoring();
+    auto table = grammar.computeLL1Table();
+    const auto expectedTable = R"(| | a | b | e | i | t | ε | ¥ |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| S | S -> a |  |  | S -> i E t S S' |  |  |  |
+| S' |  |  | S' -> e S / S' -> ε |  |  |  | S' -> ε |
+| E |  | E -> b |  |  |  |  |  |
+)";
+    EXPECT_EQ(expectedTable, table.toString());
+
+    const auto steps = table.parse("i b t a e a");
+    const auto expectedSteps = R"(| Stack | Input | Action |
+|:-:|:-:|:-:|
+| ¥ S | i b t a e a ¥ | S -> i E t S S' |
+| ¥ S' S t E i | i b t a e a ¥ | match i |
+| ¥ S' S t E | b t a e a ¥ | E -> b |
+| ¥ S' S t b | b t a e a ¥ | match b |
+| ¥ S' S t | t a e a ¥ | match t |
+| ¥ S' S | a e a ¥ | S -> a |
+| ¥ S' a | a e a ¥ | match a |
+| ¥ S' | e a ¥ | conflict: S' -> e S / S' -> ε |
+)";
+    EXPECT_EQ(expectedSteps, steps.toString());
+}
+
+TEST(TestContextFreeGrammarLL1Automaton, SpecialCase3) {
+    ContextFreeGrammar grammar;
+    grammar.parse(R"(
+S → A a | b
+A → ε | b
+)");
+    grammar.leftRecursionElimination();
+    grammar.leftFactoring();
+    const auto table = grammar.computeLL1Table();
+    const auto expectedTable = R"(| | a | b | ε | ¥ |
+|:-:|:-:|:-:|:-:|:-:|
+| S |  | S -> b S' |  |  |
+| S' | S' -> a |  |  | S' -> ε |
+| A |  | A -> b |  |  |
+)";
+    EXPECT_EQ(expectedTable, table.toString());
+}
+
+TEST(TestContextFreeGrammarLL1Automaton, SpecialCase4) {
+    ContextFreeGrammar grammar;
+    grammar.parse(R"(
+S → A c | B d
+A → a | ε
+B → a
+)");
+    grammar.leftRecursionElimination();
+    grammar.leftFactoring();
+    const auto table = grammar.computeLL1Table();
+    const auto expectedTable = R"(| | a | c | d | ¥ |
+|:-:|:-:|:-:|:-:|:-:|
+| S | S -> a S' |  |  |  |
+| S' |  | S' -> c | S' -> d |  |
+| A | A -> a |  |  |  |
+| B | B -> a |  |  |  |
+)";
+    EXPECT_EQ(expectedTable, table.toString());
+}
+
+TEST(TestContextFreeGrammarLL1Automaton, SpecialCase5) {
+    ContextFreeGrammar grammar;
+    grammar.parse(R"(
+S → A B
+A → ε | a
+B → b | ε
+)");
+    grammar.leftRecursionElimination();
+    grammar.leftFactoring();
+    const auto table = grammar.computeLL1Table();
+    const auto expectedTable = R"(| | a | b | ¥ |
+|:-:|:-:|:-:|:-:|
+| S | S -> A B | S -> A B | S -> A B |
+| A | A -> a | A -> ε | A -> ε |
+| B |  | B -> b | B -> ε |
+)";
+    EXPECT_EQ(expectedTable, table.toString());
+}
+
+TEST(TestContextFreeGrammarLL1Automaton, SpecialCase6) {
+    ContextFreeGrammar grammar;
+    grammar.parse(R"(
+S → a S b | a b
+)");
+    grammar.leftRecursionElimination();
+    grammar.leftFactoring();
+    const auto table = grammar.computeLL1Table();
+    const auto expectedTable = R"(| | a | b | ¥ |
+|:-:|:-:|:-:|:-:|
+| S | S -> a S' |  |  |
+| S' | S' -> S b | S' -> b |  |
+)";
+    EXPECT_EQ(expectedTable, table.toString());
+}
+
+TEST(TestContextFreeGrammarLL1Automaton, SpecialCase7) {
+    ContextFreeGrammar grammar;
+    grammar.parse(R"(
+S → if E then S
+  | if E then S else S
+  | other
+)");
+    grammar.leftRecursionElimination();
+    grammar.leftFactoring();
+    const auto table = grammar.computeLL1Table();
+    const auto expectedTable = R"(| | E | else | if | other | then | ε | ¥ |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| S |  |  | S -> if E then S S' | S -> other |  |  |  |
+| S' |  | S' -> else S / S' -> ε |  |  |  |  | S' -> ε |
+)";
+    EXPECT_EQ(expectedTable, table.toString());
+}
+
+TEST(TestContextFreeGrammarLL1Automaton, SpecialCase8) {
+    ContextFreeGrammar grammar;
+    grammar.parse(R"(
+E → T | T + E
+T → id
+)");
+    grammar.leftRecursionElimination();
+    grammar.leftFactoring();
+    const auto table = grammar.computeLL1Table();
+    const auto expectedTable = R"(| | + | id | ε | ¥ |
+|:-:|:-:|:-:|:-:|:-:|
+| E |  | E -> T E' |  |  |
+| E' | E' -> + E |  |  | E' -> ε |
+| T |  | T -> id |  |  |
+)";
+    EXPECT_EQ(expectedTable, table.toString());
+}
+
+TEST(TestContextFreeGrammarLL1Automaton, SpecialCase9) {
+    ContextFreeGrammar grammar;
+    grammar.parse(R"(
+S → A | b
+A → ε | b
+)");
+    grammar.leftRecursionElimination();
+    grammar.leftFactoring();
+    const auto table = grammar.computeLL1Table();
+    const auto expectedTable = R"(| | b | ¥ |
+|:-:|:-:|:-:|
+| S | S -> b |  |
+| A | A -> b |  |
+)";
+    EXPECT_EQ(expectedTable, table.toString());
 }

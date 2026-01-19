@@ -75,7 +75,6 @@ EMSCRIPTEN_BINDINGS(ParsingToysWASM) {
         .function("_getStack", optional_override([](const LLParsingSteps& self, size_t i) { return self.stack[i]; }))
         .function("_getRemainingInputs", optional_override([](const LLParsingSteps& self, size_t i) { return self.remainingInputs[i]; }))
         .function("getAction", optional_override([](const LLParsingSteps& self, size_t i) { return self.actions[i]; }))
-        .function("getParseTree", optional_override([](const LLParsingSteps& self) { return self.parseTree; }))
     ;
     class_<MTable>("MTable")
         .constructor<>()
@@ -87,6 +86,7 @@ EMSCRIPTEN_BINDINGS(ParsingToysWASM) {
         .function("hasConflictAt", optional_override([](const MTable& self, const string& nt, const string& t) { return self.hasConflict(nt, t); }))
         .function("getCell", optional_override([](const MTable& self, const string& nt, const string& t, const string& sep) { return self.getCell(nt, t, sep); }))
         .function("parse", &MTable::parse)
+        .function("getParseTree", optional_override([](const MTable& self) { return self.parseTree; }))
     ;
     class_<CYKTable>("CYKTable")
         .constructor<size_t>()

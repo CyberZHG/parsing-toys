@@ -66,7 +66,6 @@ export class LLParsingSteps {
     _getRemainingInputs(index: number): VectorString
     getRemainingInputs(index: number): string[]
     getAction(index: number): string
-    getParseTree(): ParseTreeNode | null
 }
 
 export class MTable {
@@ -79,6 +78,7 @@ export class MTable {
     hasConflictAt(nonTerminal: string, terminal: string): boolean
     getCell(nonTerminal: string, terminal: string, separator: string): string
     parse(input: string): LLParsingSteps
+    getParseTree(): ParseTreeNode | null
 }
 
 export class CYKTable {
