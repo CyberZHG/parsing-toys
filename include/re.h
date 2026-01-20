@@ -56,7 +56,7 @@ struct NFAGraph {
     std::vector<std::tuple<std::size_t, std::size_t, std::string>> edges;
 
     [[nodiscard]] std::size_t size() const;
-    [[nodiscard]] std::string toSVG() const;
+    [[nodiscard]] std::string toSVG(bool darkMode = false) const;
     [[nodiscard]] std::string stateAt(std::size_t index) const;
     [[nodiscard]] std::size_t numEdges() const;
     [[nodiscard]] std::size_t edgeFrom(std::size_t index) const;
@@ -69,7 +69,7 @@ struct DFAGraph {
     std::vector<std::tuple<std::size_t, std::size_t, std::string>> edges;
 
     [[nodiscard]] std::size_t size() const;
-    [[nodiscard]] std::string toSVG() const;
+    [[nodiscard]] std::string toSVG(bool darkMode = false) const;
     [[nodiscard]] std::string stateIdAt(std::size_t index) const;
     [[nodiscard]] std::string stateKeyAt(std::size_t index) const;
     [[nodiscard]] std::string stateTypeAt(std::size_t index) const;

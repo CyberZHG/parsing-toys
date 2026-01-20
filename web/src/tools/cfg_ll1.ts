@@ -4,6 +4,7 @@ import { setupCFGResult, updateCFGResult } from '../cfg_result.ts'
 import { ContextFreeGrammar, MTable, LLParsingSteps } from '../wasm/index.js'
 import { setupLocationHash, getLocationHashValue, setLocationHashValue } from '../location_hash.ts'
 import { setupSVGPanZoom, setupSVGDownloadButtons } from '../display_svg.ts'
+import { isDarkMode } from '../dark_mode.ts'
 
 interface LL1HashData {
     grammar: string
@@ -60,7 +61,7 @@ function renderMTable(table: MTable): void {
     const numNT = table.numNonTerminals()
     const numT = table.numTerminals()
 
-    let headerHtml = '<thead><tr class="bg-gray-100">'
+    let headerHtml = '<thead><tr class="bg-gray-100 dark:bg-gray-700 font-mono">'
     headerHtml += '<th class="border border-gray-300 px-2 py-1"></th>'
     for (let j = 0; j < numT; j++) {
         headerHtml += `<th class="border border-gray-300 px-2 py-1">${table.getTerminal(j)}</th>`
@@ -70,14 +71,14 @@ function renderMTable(table: MTable): void {
     let bodyHtml = '<tbody>'
     for (let i = 0; i < numNT; i++) {
         const nt = table.getNonTerminal(i)
-        bodyHtml += `<tr><td class="border border-gray-300 px-2 py-1 font-semibold bg-gray-50">${nt}</td>`
+        bodyHtml += `<tr class="dark:bg-gray-600 font-mono"><td class="border border-gray-300 px-2 py-1 font-semibold text-center bg-gray-50 dark:bg-gray-700">${nt}</td>`
         for (let j = 0; j < numT; j++) {
             const t = table.getTerminal(j)
             const cellContent = table.getCell(nt, t, '<br>')
             const hasConflict = table.hasConflictAt(nt, t)
             let cellClass = 'border border-gray-300 px-2 py-1 text-center'
             if (hasConflict) {
-                cellClass += ' bg-red-100 text-red-800'
+                cellClass += ' bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-200'
             }
             bodyHtml += `<td class="${cellClass}">${cellContent}</td>`
         }
@@ -93,7 +94,7 @@ function renderLLParsingSteps(steps: LLParsingSteps): void {
     llStepsTbody.innerHTML = ''
     for (let i = 0; i < steps.size(); i++) {
         const row = document.createElement('tr')
-        row.className = i % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+        row.className = i % 2 === 0 ? 'bg-white dark:bg-gray-600' : 'bg-gray-50 dark:bg-gray-700'
 
         const stepCell = document.createElement('td')
         stepCell.className = 'border border-gray-300 px-3 py-2 text-center'
@@ -112,9 +113,9 @@ function renderLLParsingSteps(steps: LLParsingSteps): void {
         const action = steps.getAction(i)
         actionCell.textContent = action
         if (action.startsWith('conflict') || action.startsWith('error')) {
-            actionCell.classList.add('text-red-600')
+            actionCell.classList.add('text-red-600', 'dark:text-green-400')
         } else if (action === 'accept') {
-            actionCell.classList.add('text-green-600', 'font-semibold')
+            actionCell.classList.add('text-green-600', 'dark:text-green-400', 'font-semibold')
         }
 
         row.appendChild(stepCell)
@@ -153,8 +154,9 @@ ll1Button.addEventListener('click', () => {
 
                     const parseTree = table.getParseTree()
                     if (parseTree) {
+                        const darkMode = isDarkMode()
                         const parser = new DOMParser()
-                        const treeSvgDoc = parser.parseFromString(parseTree.toSVG(), 'image/svg+xml')
+                        const treeSvgDoc = parser.parseFromString(parseTree.toSVG(darkMode), 'image/svg+xml')
                         parseTree.delete()
                         parseTreeSVG.innerHTML = treeSvgDoc.documentElement.innerHTML
                         parseTreeSVG.setAttribute("viewBox", treeSvgDoc.documentElement.getAttribute("viewBox")!)

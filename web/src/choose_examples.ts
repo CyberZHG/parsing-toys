@@ -4,7 +4,7 @@ export function setupExamplesMenu(options: Record<string, string>, onValueChange
 
     let optionsHTML = ""
     Object.keys(options).forEach(key => {
-        optionsHTML += `<li class="px-3 py-2 hover:bg-gray-100 cursor-pointer" data-value="${key}">${options[key]}</li>`
+        optionsHTML += `<li class="px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100 cursor-pointer" data-value="${key}">${options[key]}</li>`
     })
     examplesMenu.innerHTML = optionsHTML
 

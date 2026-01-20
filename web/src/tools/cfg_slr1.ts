@@ -5,6 +5,7 @@ import { setupLocationHash, getLocationHashValue, setLocationHashValue } from '.
 import { setupSVGPanZoom, setupSVGDownloadButtons } from '../display_svg.ts'
 import { renderParsingSteps } from '../lr_steps.ts'
 import { renderActionGotoTable } from '../action_goto_table.ts'
+import { isDarkMode } from '../dark_mode.ts'
 
 interface SLR1HashData {
     grammar: string
@@ -64,9 +65,10 @@ slr1Button.addEventListener('click', () => {
             parseTreeContainer.hidden = true
         } else {
             if (cfg.nonTerminals().length > 0) {
+                const darkMode = isDarkMode()
                 const automaton = cfg.computeSLR1Automaton();
                 const parser = new DOMParser()
-                const svgDoc = parser.parseFromString(automaton.toSVG(), 'image/svg+xml')
+                const svgDoc = parser.parseFromString(automaton.toSVG(darkMode), 'image/svg+xml')
                 automatonSVG.innerHTML = svgDoc.documentElement.innerHTML
                 automatonSVG.setAttribute("viewBox", svgDoc.documentElement.getAttribute("viewBox")!)
 
@@ -81,7 +83,7 @@ slr1Button.addEventListener('click', () => {
 
                     const parseTree = table.getParseTree()
                     if (parseTree) {
-                        const treeSvgDoc = parser.parseFromString(parseTree.toSVG(), 'image/svg+xml')
+                        const treeSvgDoc = parser.parseFromString(parseTree.toSVG(darkMode), 'image/svg+xml')
                         parseTree.delete()
                         parseTreeSVG.innerHTML = treeSvgDoc.documentElement.innerHTML
                         parseTreeSVG.setAttribute("viewBox", treeSvgDoc.documentElement.getAttribute("viewBox")!)

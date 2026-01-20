@@ -35,7 +35,7 @@ public:
     std::size_t addEdge(const FiniteAutomatonEdge& edge);
     std::size_t addEdge(std::size_t u, std::size_t v, const std::string& label);
 
-    [[nodiscard]] std::string toSVG() const;
+    [[nodiscard]] std::string toSVG(bool darkMode = false) const;
 
     /**
      * For unit tests only.

@@ -46,13 +46,19 @@ size_t ParseTreeNode::size() const {
     return result;
 }
 
-string ParseTreeNode::toSVG() const {
+string ParseTreeNode::toSVG(const bool darkMode) const {
     DirectedGraphHierarchicalLayout layout;
     layout.attributes().setVertexDefaultMonospace();
     layout.attributes().setVertexDefaultShape(AttributeShape::ELLIPSE);
     layout.attributes().setEdgeDefaultArrowTail(AttributeArrowShape::NORMAL);
     layout.attributes().setEdgeDefaultArrowHead(AttributeArrowShape::NONE);
     layout.attributes().setRankDir(AttributeRankDir::TOP_TO_BOTTOM);
+    if (darkMode) {
+        layout.attributes().setVertexDefaultColor("white");
+        layout.attributes().setVertexDefaultFontColor("white");
+        layout.attributes().setEdgeDefaultColor("white");
+        layout.attributes().setEdgeDefaultFontColor("white");
+    }
     const auto n = size();
     const auto& graph = layout.createGraph(n);
     int globalIndex = 0;

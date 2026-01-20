@@ -30,7 +30,7 @@ string NFAGraph::stateAt(const size_t index) const {
     return to_string(state->id) + " (" + state->type + ")";
 }
 
-string NFAGraph::toSVG() const {
+string NFAGraph::toSVG(const bool darkMode) const {
     DirectedGraphHierarchicalLayout layout;
     layout.setFeedbackArcsMethod(FeedbackArcsMethod::MIN_ID);
     layout.attributes().setVertexDefaultMonospace();
@@ -38,6 +38,12 @@ string NFAGraph::toSVG() const {
     layout.attributes().setVertexDefaultShape(AttributeShape::CIRCLE);
     layout.attributes().setEdgeDefaultSplines(AttributeSplines::LINE);
     layout.attributes().setRankDir(AttributeRankDir::LEFT_TO_RIGHT);
+    if (darkMode) {
+        layout.attributes().setVertexDefaultColor("white");
+        layout.attributes().setVertexDefaultFontColor("white");
+        layout.attributes().setEdgeDefaultColor("white");
+        layout.attributes().setEdgeDefaultFontColor("white");
+    }
 
     const auto n = states.size();
     const auto& graph = layout.createGraph(static_cast<int>(n));
@@ -92,7 +98,7 @@ string DFAGraph::stateTypeAt(const size_t index) const {
     return states[index]->type;
 }
 
-string DFAGraph::toSVG() const {
+string DFAGraph::toSVG(const bool darkMode) const {
     DirectedGraphHierarchicalLayout layout;
     layout.setFeedbackArcsMethod(FeedbackArcsMethod::MIN_ID);
     layout.attributes().setVertexDefaultMonospace();
@@ -100,6 +106,12 @@ string DFAGraph::toSVG() const {
     layout.attributes().setVertexDefaultShape(AttributeShape::CIRCLE);
     layout.attributes().setEdgeDefaultSplines(AttributeSplines::LINE);
     layout.attributes().setRankDir(AttributeRankDir::LEFT_TO_RIGHT);
+    if (darkMode) {
+        layout.attributes().setVertexDefaultColor("white");
+        layout.attributes().setVertexDefaultFontColor("white");
+        layout.attributes().setEdgeDefaultColor("white");
+        layout.attributes().setEdgeDefaultFontColor("white");
+    }
 
     const auto n = states.size();
     const auto& graph = layout.createGraph(static_cast<int>(n));
