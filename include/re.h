@@ -23,9 +23,6 @@ struct RegexNode {
     std::string text;
     std::shared_ptr<RegexNode> sub;
     std::vector<std::shared_ptr<RegexNode>> parts;
-
-    bool operator==(const RegexNode& other) const;
-    [[nodiscard]] std::string toString() const;
 };
 
 struct NFAState {
@@ -33,9 +30,6 @@ struct NFAState {
     std::size_t id = UNASSIGNED_ID;
     std::string type;
     std::vector<std::pair<std::string, std::shared_ptr<NFAState>>> edges;
-
-    bool operator==(const NFAState& other) const;
-    [[nodiscard]] std::string toString() const;
 };
 
 struct DFAState {
@@ -46,9 +40,6 @@ struct DFAState {
     std::vector<std::string> symbols;
     std::vector<std::pair<std::string, std::shared_ptr<DFAState>>> edges;
     std::unordered_map<std::string, std::shared_ptr<DFAState>> trans;
-
-    bool operator==(const DFAState& other) const;
-    [[nodiscard]] std::string toString() const;
 };
 
 struct NFAGraph {

@@ -5,18 +5,6 @@
 
 using namespace std;
 
-bool DFAState::operator==(const DFAState& other) const {
-    return key == other.key;
-}
-
-string DFAState::toString() const {
-    string result = "State " + id + " (key=" + key + ", type=" + type + ")";
-    for (const auto& [symbol, target] : edges) {
-        result += " --" + symbol + "--> " + target->id;
-    }
-    return result;
-}
-
 static string toAlphaCount(size_t n) {
     string s;
     while (true) {

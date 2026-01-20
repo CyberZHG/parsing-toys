@@ -191,3 +191,11 @@ S' -> c
 )";
     EXPECT_EQ(expected, grammar.toString());
 }
+
+TEST(TestContextFreeGrammarLeftFactoring, SingleSuffixAfterFactoring) {
+    ContextFreeGrammar grammar;
+    EXPECT_TRUE(grammar.parse(R"(S -> a b c | a b c)"));
+    grammar.leftFactoring(true);
+    const auto result = grammar.toString();
+    EXPECT_TRUE(result.find("a b c") != string::npos);
+}
