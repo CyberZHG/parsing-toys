@@ -2,6 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <script>
+  (function() {
+    var stored = localStorage.getItem('parsing-toys-dark-mode');
+    var dark = stored !== null ? stored === 'true' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (dark) document.documentElement.classList.add('dark');
+  })();
+  </script>
   <link rel="icon" type="image/svg+xml" href="/parsing-toys/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Online SLR(1) Parsing</title>
