@@ -5,103 +5,119 @@
   <link rel="icon" type="image/svg+xml" href="/parsing-toys/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Online First & Follow Sets</title>
-  <script type="module" crossorigin src="/parsing-toys/assets/first_and_follow-C95ZYWhe.js"></script>
-  <link rel="modulepreload" crossorigin href="/parsing-toys/assets/__vite-browser-external-BgPlA5PU.js">
-  <link rel="modulepreload" crossorigin href="/parsing-toys/assets/choose_examples-BjAtfSqC.js">
+  <script type="module" crossorigin src="/parsing-toys/assets/first_and_follow-BaRdnGyr.js"></script>
+  <link rel="modulepreload" crossorigin href="/parsing-toys/assets/navbar-DwXUvKtM.js">
+  <link rel="modulepreload" crossorigin href="/parsing-toys/assets/choose_examples-vr6Go3Mf.js">
   <link rel="modulepreload" crossorigin href="/parsing-toys/assets/cfg_editor-Bof7UeYh.js">
-  <link rel="modulepreload" crossorigin href="/parsing-toys/assets/location_hash-BZG2E5jj.js">
-  <link rel="stylesheet" crossorigin href="/parsing-toys/assets/__vite-browser-external-7K-0nqN3.css">
+  <link rel="modulepreload" crossorigin href="/parsing-toys/assets/__vite-browser-external-BVNNUIbt.js">
+  <link rel="stylesheet" crossorigin href="/parsing-toys/assets/navbar-zF1bLAE_.css">
 </head>
-<body>
-<nav class="bg-gray-50 border-b border-gray-200">
+<body class="bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
+<nav class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700">
   <div class="max-w-7xl mx-auto px-4">
     <div class="flex h-16 items-center justify-between">
       <div class="flex items-center">
-        <span class="text-xl font-bold text-gray-700"><a href="/parsing-toys">ParsingToys</a></span>
+        <span class="text-xl font-bold text-gray-700 dark:text-gray-200"><a href="/parsing-toys">ParsingToys</a></span>
       </div>
       <div class="hidden md:flex space-x-6">
-        <a href="/parsing-toys" class="flex items-center gap-2 text-gray-700 hover:text-blue-600">
+        <a href="/parsing-toys" class="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
             <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
           </svg>
           Home
         </a>
-        <a href="https://github.com/CyberZHG/parsing-toys" class="flex items-center gap-2 text-gray-700 hover:text-blue-600">
+        <a href="https://github.com/CyberZHG/parsing-toys" class="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
             <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
           </svg>
           GitHub
         </a>
-        <a href="https://github.com/CyberZHG/parsing-toys/issues" class="flex items-center gap-2 text-gray-700 hover:text-blue-600">
+        <a href="https://github.com/CyberZHG/parsing-toys/issues" class="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
             <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
           </svg>
           Issues
         </a>
+        <button id="dark-mode-toggle" class="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400">
+          <svg id="dark-mode-icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hidden dark:block">
+            <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+          </svg>
+          <svg id="dark-mode-icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 block dark:hidden">
+            <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+          </svg>
+        </button>
       </div>
-      <div class="hidden md:block"></div>
-      <div class="hidden md:block"></div>
-      <button id="menu-btn" class="md:hidden text-gray-700 focus:outline-none">☰</button>
+      <button id="menu-btn" class="md:hidden text-gray-700 dark:text-gray-300 focus:outline-none">☰</button>
     </div>
   </div>
   <div id="mobile-menu" class="hidden md:hidden px-4 pb-4 space-y-4">
-    <a href="/parsing-toys" class="flex items-center gap-2 text-gray-700">
+    <a href="/parsing-toys" class="flex items-center gap-2 text-gray-700 dark:text-gray-300">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
         <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
       </svg>
       Home
     </a>
-    <a href="https://github.com/CyberZHG/parsing-toys" class="flex items-center gap-2 text-gray-700">
+    <a href="https://github.com/CyberZHG/parsing-toys" class="flex items-center gap-2 text-gray-700 dark:text-gray-300">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
         <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
       </svg>
       GitHub
     </a>
-    <a href="https://github.com/CyberZHG/parsing-toys/issues" class="flex items-center gap-2 text-gray-700">
+    <a href="https://github.com/CyberZHG/parsing-toys/issues" class="flex items-center gap-2 text-gray-700 dark:text-gray-300">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
         <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
       </svg>
       Issues
     </a>
+    <button id="dark-mode-toggle-mobile" class="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+      <svg id="dark-mode-icon-sun-mobile" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hidden dark:block">
+        <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+      </svg>
+      <svg id="dark-mode-icon-moon-mobile" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 block dark:hidden">
+        <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+      </svg>
+      <span class="dark:hidden">Dark Mode</span>
+      <span class="hidden dark:inline">Light Mode</span>
+    </button>
   </div>
 </nav>
 <main class="max-w-7xl mx-auto px-4 py-10 min-h-screen flex flex-col">
   <div class="relative flex flex-col py-4 w-full max-w-6xl mx-auto">
-    <button id="examples-menu-button-show" class="w-full border px-3 py-2 rounded flex justify-between items-center">
+    <button id="examples-menu-button-show" class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2 rounded flex justify-between items-center">
       Examples
       <span>▾</span>
     </button>
-    <ul id="examples-menu" class="absolute top-full w-full bg-white border rounded shadow hidden z-10">
+    <ul id="examples-menu" class="absolute top-full w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded shadow dark:shadow-gray-900 hidden z-10">
       <!-- <li class="px-3 py-2 hover:bg-gray-100 cursor-pointer" data-value="option">Option</li> -->
     </ul>
   </div>
   <div class="flex flex-col w-full gap-2 max-w-6xl mx-auto">
-    <div id="cfg-editor-intro" class="relative w-full text-gray-950 font-semibold ">
+    <div id="cfg-editor-intro" class="relative w-full text-gray-950 dark:text-gray-100 font-semibold ">
       Context free grammar input:
     </div>
-    <div class="flex border border-gray-700 rounded h-64">
-      <div id="cfg-editor-line-numbers" class="bg-gray-700 text-gray-500 text-right p-2 w-10 select-none font-mono text-sm overflow-hidden">1</div>
-      <div class="relative flex-1 h-full">
+    <div class="flex border border-gray-700 dark:border-gray-600 rounded h-64">
+      <div id="cfg-editor-line-numbers" class="bg-gray-700 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-right p-2 w-10 select-none font-mono text-sm overflow-hidden">1</div>
+      <div class="relative flex-1 h-full bg-white dark:bg-gray-900">
         <div class="relative w-full max-w-6xl mx-auto">
-          <pre class="absolute inset-0 p-2 pr-4 overflow-hidden pointer-events-none text-sm font-mono whitespace-pre break-words text-gray-900"><code id="cfg-editor-highlighted"></code></pre>
+          <pre class="absolute inset-0 p-2 pr-4 overflow-hidden pointer-events-none text-sm font-mono whitespace-pre break-words text-gray-900 dark:text-gray-100"><code id="cfg-editor-highlighted"></code></pre>
           <label for="cfg-editor">
-            <textarea id="cfg-editor" spellcheck="false" class="relative w-full h-62 p-2 pr-4 bg-transparent text-transparent caret-gray-950 resize-none outline-none overflow-auto whitespace-pre text-sm font-mono "></textarea>
+            <textarea id="cfg-editor" spellcheck="false" class="relative w-full h-62 p-2 pr-4 bg-transparent text-transparent caret-gray-950 dark:caret-gray-100 resize-none outline-none overflow-auto whitespace-pre text-sm font-mono "></textarea>
           </label>
         </div>
       </div>
     </div>
     <div class="flex gap-2 mt-2">
-      <button id="cfg-editor-button-insert-eps" class="px-5 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white text-sm font-semibold min-w-[20%]">Insert ε</button>
-      <button id="cfg-editor-button-copy-code" class="px-5 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white text-sm font-semibold min-w-[20%]">Copy Code</button>
+      <button id="cfg-editor-button-insert-eps" class="px-5 py-2 bg-gray-700 hover:bg-gray-800 dark:bg-gray-600 dark:hover:bg-gray-700 rounded text-white text-sm font-semibold min-w-[20%]">Insert ε</button>
+      <button id="cfg-editor-button-copy-code" class="px-5 py-2 bg-gray-700 hover:bg-gray-800 dark:bg-gray-600 dark:hover:bg-gray-700 rounded text-white text-sm font-semibold min-w-[20%]">Copy Code</button>
     </div>
   </div>
   <div class="flex flex-col py-4 w-full gap-2 max-w-6xl mx-auto">
     <div class="flex mt-2">
-      <button id="button-cfg-first-and-follow" class="w-full py-2 bg-blue-700 hover:bg-blue-800 rounded font-semibold text-white text-sm">Compute First & Follow Sets</button>
+      <button id="button-cfg-first-and-follow" class="w-full py-2 bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 rounded font-semibold text-white text-sm">Compute First & Follow Sets</button>
     </div>
   </div>
   <div class="flex flex-col pb-4 pt-0 w-full gap-2 max-w-6xl mx-auto">
-    <div class="flex items-center max-w-6xl gap-2 mt-2 text-red-500 text-sm" hidden>
+    <div class="flex items-center max-w-6xl gap-2 mt-2 text-red-500 dark:text-red-400 text-sm" hidden>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
         <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
       </svg>
@@ -110,7 +126,7 @@
   </div>
   <div class="max-w-6xl mx-auto w-full">
     <table class="min-w-full border border-gray-300">
-      <thead class="sticky top-0 bg-gray-100">
+      <thead class="sticky top-0 bg-gray-100 dark:bg-gray-700">
         <tr>
           <th class="px-4 py-2 text-center">Symbol</th>
           <th class="px-4 py-2 text-center">Nullable</th>
@@ -136,11 +152,11 @@
     </div>
   </div>
 </main>
-<footer class="border-t border-gray-200 bg-white">
-  <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between text-sm text-gray-500">
+<footer class="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+  <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between text-sm text-gray-500 dark:text-gray-400">
     <p>
       © Whenever
-      <span class="font-medium text-gray-700">ParsingToys</span>.
+      <span class="font-medium text-gray-700 dark:text-gray-300">ParsingToys</span>.
       No rights reserved.
     </p>
     <div class="mt-2 sm:mt-0 flex gap-4">

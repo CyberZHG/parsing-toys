@@ -1,0 +1,14 @@
+import{i as y}from"./navbar-DwXUvKtM.js";import{s as b}from"./choose_examples-vr6Go3Mf.js";import{g as M,s as G,a as x}from"./cfg_editor-Bof7UeYh.js";import{C as F,a as A,s as H,g as f}from"./__vite-browser-external-BVNNUIbt.js";import{s as T,a as v}from"./display_svg-Danp339a.js";import{r as V,a as q}from"./action_goto_table-Blb56aa7.js";function w(){try{const e=f();if(!e)return{grammar:""};const t=JSON.parse(e);return{grammar:t.grammar||"",input:t.input||""}}catch{return{grammar:f(),input:""}}}function P(e){H(JSON.stringify(e))}const D={example1:"Example 1: S -> S S + | S S * | a",example2:"Example 2: E -> E + T | T  T -> T * F | F  F -> ( E ) | id",example3:"Example 3: S -> C C  C -> c C | d"},B={example1:`S -> S S + 
+   | S S * 
+   | a`,example2:`E -> E + T | T
+T -> T * F | F
+F -> ( E ) | id`,example3:`S -> C C
+C -> c C | d`},O={example1:"a a + a a + *",example2:"id * ( id + id )",example3:"c d c c c d"},c=document.querySelector("#button-cfg-lr1"),a=document.querySelector("#automaton-svg"),E=document.querySelector("#action-goto-table-container"),o=document.querySelector("#input-string"),n=document.querySelector("#lr-steps-container"),r=document.querySelector("#parse-tree-container"),s=document.querySelector("#parse-tree-svg");c.addEventListener("click",()=>{const e=document.querySelector("#cfg-lr1-error-message"),t=new F,d=M();if(t.parse(d))if(t.terminals().includes("¥")||t.terminals().includes("﹐"))e.textContent="The ¥ and ﹐ symbols are reserved; please do not use them in the grammar.",e.parentElement.hidden=!1,E.hidden=!0,n.hidden=!0,r.hidden=!0;else{if(t.nonTerminals().length>0){const l=y(),u=t.computeLR1Automaton(),p=new DOMParser,g=p.parseFromString(u.toSVG(l),"image/svg+xml");a.innerHTML=g.documentElement.innerHTML,a.setAttribute("viewBox",g.documentElement.getAttribute("viewBox"));const i=t.computeLR1ActionGotoTable(u);V(t,i);const S=o.value.trim();if(S){const L=i.parse(S);q(L),n.hidden=!1;const m=i.getParseTree();if(m){const h=p.parseFromString(m.toSVG(l),"image/svg+xml");m.delete(),s.innerHTML=h.documentElement.innerHTML,s.setAttribute("viewBox",h.documentElement.getAttribute("viewBox")),r.hidden=!1}else r.hidden=!0}else n.hidden=!0,r.hidden=!0}e.parentElement.hidden=!0}else e.textContent=t.errorMessage(),e.parentElement.hidden=!1,E.hidden=!0,n.hidden=!0,r.hidden=!0;P({grammar:d,input:o.value.trim()})});function k(e){x(B[e]),o.value=O[e],c.click()}document.querySelector("#cfg-editor-intro").innerHTML=`
+  Context free grammar input:
+  <div class="text-gray-500 font-light text-sm">
+    <ul>
+      <li>The first symbol encountered in the grammar definition is treated as the start symbol</li>
+      <li>The <code>¥</code> and <code>﹐</code> symbols are reserved; please do not use them in the grammar.</li>
+    </ul>
+  </div>
+`;b(D,k);G();A();T(a);v(a);T(s);v(s,"#parse-tree-download-svg","#parse-tree-download-png","parse-tree");const C=w();x(C.grammar);o.value=C.input||"";c.click();
