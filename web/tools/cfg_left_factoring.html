@@ -12,6 +12,12 @@
 <main class="max-w-7xl mx-auto px-4 py-10 min-h-screen flex flex-col">
   {{> choose_examples }}
   {{> cfg_editor }}
+  <div class="w-full max-w-6xl mx-auto">
+    <label class="inline-flex items-center gap-2 pt-8 cursor-pointer">
+      <input type="checkbox" id="checkbox-expand" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800"/>
+      <span class="text-sm text-gray-700 dark:text-gray-200">Expand Productions</span>
+    </label>
+  </div>
   <div class="flex flex-col py-4 w-full gap-2 max-w-6xl mx-auto">
     <div class="flex mt-2">
       <button id="button-cfg-left-factoring" class="w-full py-2 bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 rounded font-semibold text-white text-sm">Left Factoring</button>

@@ -19,12 +19,14 @@ const EXAMPLES: Record<string, string> = {
 }
 
 const leftFactoringButton = document.querySelector<HTMLElement>('#button-cfg-left-factoring')!
+const expandCheckbox = document.querySelector<HTMLInputElement>('#checkbox-expand')!
+
 leftFactoringButton.addEventListener('click', () => {
     const errorMessage = document.querySelector<HTMLTextAreaElement>('#cfg-left-factoring-error-message')!
     const cfg = new ContextFreeGrammar()
     const code = getCFGEditorValue()
     if (cfg.parse(code)) {
-        cfg.leftFactoring()
+        cfg.leftFactoring(expandCheckbox.checked)
         updateCFGResult(cfg.toString(), cfg.terminals(), cfg.nonTerminals())
         errorMessage.parentElement!.hidden = true
     } else {
@@ -32,6 +34,10 @@ leftFactoringButton.addEventListener('click', () => {
         errorMessage.parentElement!.hidden = false
     }
     setLocationHashValue(code)
+})
+
+expandCheckbox.addEventListener('change', () => {
+    leftFactoringButton.click()
 })
 
 function onExamplesChange(key: string) : void {

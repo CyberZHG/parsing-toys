@@ -112,11 +112,10 @@ A → ε | b
     grammar.leftRecursionElimination();
     grammar.leftFactoring();
     const auto table = grammar.computeLL1Table();
-    const auto expectedTable = R"(| | a | b | ε | ¥ |
-|:-:|:-:|:-:|:-:|:-:|
-| S |  | S -> b S' |  |  |
-| S' | S' -> a |  |  | S' -> ε |
-| A |  | A -> b |  |  |
+    const auto expectedTable = R"(| | a | b | ¥ |
+|:-:|:-:|:-:|:-:|
+| S | S -> A a | S -> A a / S -> b |  |
+| A | A -> ε | A -> b |  |
 )";
     EXPECT_EQ(expectedTable, table.toString());
 }
@@ -133,9 +132,8 @@ B → a
     const auto table = grammar.computeLL1Table();
     const auto expectedTable = R"(| | a | c | d | ¥ |
 |:-:|:-:|:-:|:-:|:-:|
-| S | S -> a S' |  |  |  |
-| S' |  | S' -> c | S' -> d |  |
-| A | A -> a |  |  |  |
+| S | S -> A c / S -> B d | S -> A c |  |  |
+| A | A -> a | A -> ε |  |  |
 | B | B -> a |  |  |  |
 )";
     EXPECT_EQ(expectedTable, table.toString());
@@ -223,8 +221,8 @@ A → ε | b
     const auto table = grammar.computeLL1Table();
     const auto expectedTable = R"(| | b | ¥ |
 |:-:|:-:|:-:|
-| S | S -> b |  |
-| A | A -> b |  |
+| S | S -> A / S -> b | S -> A |
+| A | A -> b | A -> ε |
 )";
     EXPECT_EQ(expectedTable, table.toString());
 }

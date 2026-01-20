@@ -19,7 +19,7 @@ EMSCRIPTEN_BINDINGS(ParsingToysWASM) {
         .function("_terminals", &ContextFreeGrammar::terminals)
         .function("_nonTerminals", &ContextFreeGrammar::nonTerminals)
         .function("_orderedNonTerminals", &ContextFreeGrammar::orderedNonTerminals)
-        .function("leftFactoring", &ContextFreeGrammar::leftFactoring)
+        .function("leftFactoring", select_overload<void(bool)>(&ContextFreeGrammar::leftFactoring))
         .function("leftRecursionElimination", &ContextFreeGrammar::leftRecursionElimination)
         .function("computeFirstAndFollowSet", &ContextFreeGrammar::computeFirstAndFollowSet)
         .function("computeLR0Automaton", &ContextFreeGrammar::computeLR0Automaton)

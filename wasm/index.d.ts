@@ -102,7 +102,7 @@ export class ContextFreeGrammar {
     nonTerminals(): string[]
     _orderedNonTerminals(): VectorString
     orderedNonTerminals(): string[]
-    leftFactoring(): void
+    leftFactoring(expand: boolean): void
     leftRecursionElimination(): boolean
     computeFirstAndFollowSet(): FirstAndFollowSet
     computeLR0Automaton(): FiniteAutomaton
