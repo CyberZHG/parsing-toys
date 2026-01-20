@@ -24,7 +24,7 @@ leftFactoringButton.addEventListener('click', () => {
     const cfg = new ContextFreeGrammar()
     const code = getCFGEditorValue()
     if (cfg.parse(code)) {
-        cfg.leftFactoring()
+        cfg.leftFactoring(true)
         updateCFGResult(cfg.toString(), cfg.terminals(), cfg.nonTerminals())
         errorMessage.parentElement!.hidden = true
     } else {

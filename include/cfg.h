@@ -229,8 +229,10 @@ public:
 
     /**
      * Find and group the longest common prefixes.
+     *
+     * @param expand Whether to expand expressions when checking for common prefixes.
      */
-    void leftFactoring();
+    void leftFactoring(bool expand = false);
 
     /**
      * Try to eliminate left recursions based on the current ordering.

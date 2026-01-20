@@ -8,21 +8,21 @@ using namespace std;
 TEST(TestContextFreeGrammarLeftFactoring, Empty) {
     ContextFreeGrammar grammar;
     EXPECT_TRUE(grammar.parse(""));
-    grammar.leftFactoring();
+    grammar.leftFactoring(true);
     EXPECT_EQ("", grammar.toString());
 }
 
 TEST(TestContextFreeGrammarLeftFactoring, SingleProductionSingleSymbol) {
     ContextFreeGrammar grammar;
     EXPECT_TRUE(grammar.parse("S->a"));
-    grammar.leftFactoring();
+    grammar.leftFactoring(true);
     EXPECT_EQ("S -> a\n", grammar.toString());
 }
 
 TEST(TestContextFreeGrammarLeftFactoring, SpecialCase1) {
     ContextFreeGrammar grammar;
     EXPECT_TRUE(grammar.parse("S -> i E t S | i E t S e S | a  E -> b"));
-    grammar.leftFactoring();
+    grammar.leftFactoring(true);
     const auto expected = R"( S -> a
     | i E t S S'
 S' -> e S
@@ -35,7 +35,7 @@ S' -> e S
 TEST(TestContextFreeGrammarLeftFactoring, SpecialCase2) {
     ContextFreeGrammar grammar;
     EXPECT_TRUE(grammar.parse("S -> S S + | S S * | a"));
-    grammar.leftFactoring();
+    grammar.leftFactoring(true);
     const auto expected = R"( S -> a
     | S S S'
 S' -> *
@@ -47,7 +47,7 @@ S' -> *
 TEST(TestContextFreeGrammarLeftFactoring, SpecialCase3) {
     ContextFreeGrammar grammar;
     EXPECT_TRUE(grammar.parse("S -> 0 S 1 | 0 1"));
-    grammar.leftFactoring();
+    grammar.leftFactoring(true);
     const auto expected = R"( S -> 0 S'
 S' -> 1
     | S 1
@@ -58,7 +58,7 @@ S' -> 1
 TEST(TestContextFreeGrammarLeftFactoring, SpecialCase4) {
     ContextFreeGrammar grammar;
     EXPECT_TRUE(grammar.parse("S -> + S S | * S S | a"));
-    grammar.leftFactoring();
+    grammar.leftFactoring(true);
     const auto expected = R"(S -> + S S
    | * S S
    | a
@@ -69,7 +69,7 @@ TEST(TestContextFreeGrammarLeftFactoring, SpecialCase4) {
 TEST(TestContextFreeGrammarLeftFactoring, SpecialCase5) {
     ContextFreeGrammar grammar;
     EXPECT_TRUE(grammar.parse("S -> S ( S ) S | ϵ"));
-    grammar.leftFactoring();
+    grammar.leftFactoring(true);
     const auto expected = R"(S -> S ( S ) S
    | ε
 )";
@@ -79,7 +79,7 @@ TEST(TestContextFreeGrammarLeftFactoring, SpecialCase5) {
 TEST(TestContextFreeGrammarLeftFactoring, SpecialCase6) {
     ContextFreeGrammar grammar;
     EXPECT_TRUE(grammar.parse("S -> S + S | S S | ( S ) | S * | a"));
-    grammar.leftFactoring();
+    grammar.leftFactoring(true);
     const auto expected = R"( S -> ( S )
     | a
     | S S'
@@ -93,7 +93,7 @@ S' -> *
 TEST(TestContextFreeGrammarLeftFactoring, SpecialCase7) {
     ContextFreeGrammar grammar;
     EXPECT_TRUE(grammar.parse("S -> ( L ) | a L -> L , S | S"));
-    grammar.leftFactoring();
+    grammar.leftFactoring(true);
     const auto expected = R"(S -> ( L )
    | a
 L -> L , S
@@ -105,7 +105,7 @@ L -> L , S
 TEST(TestContextFreeGrammarLeftFactoring, SpecialCase8) {
     ContextFreeGrammar grammar;
     EXPECT_TRUE(grammar.parse("S -> a S b S | b S a S | ϵ"));
-    grammar.leftFactoring();
+    grammar.leftFactoring(true);
     const auto expected = R"(S -> a S b S
    | b S a S
    | ε
@@ -118,7 +118,7 @@ TEST(TestContextFreeGrammarLeftFactoring, SpecialCase9) {
     EXPECT_TRUE(grammar.parse(R"(bexpr -> bexpr or bterm | bterm
 bterm -> bterm and bfactor | bfactor
 bfactor -> not bfactor | ( bexpr ) | true | false)"));
-    grammar.leftFactoring();
+    grammar.leftFactoring(true);
     const auto expected = R"(  bexpr -> bexpr or bterm
          | bterm
   bterm -> bterm and bfactor
@@ -134,7 +134,7 @@ bfactor -> not bfactor
 TEST(TestContextFreeGrammarLeftFactoring, SpecialCase10) {
     ContextFreeGrammar grammar;
     EXPECT_TRUE(grammar.parse("A -> id | B | a B -> id b"));
-    grammar.leftFactoring();
+    grammar.leftFactoring(true);
     const auto expected = R"( A -> a
     | id A'
 A' -> b
@@ -147,7 +147,7 @@ A' -> b
 TEST(TestContextFreeGrammarLeftFactoring, SpecialCase11) {
     ContextFreeGrammar grammar;
     EXPECT_TRUE(grammar.parse("S -> a b | A A -> a b"));
-    grammar.leftFactoring();
+    grammar.leftFactoring(true);
     const auto expected = R"(S -> a b
 A -> a b
 )";
@@ -157,7 +157,7 @@ A -> a b
 TEST(TestContextFreeGrammarLeftFactoring, SpecialCase12) {
     ContextFreeGrammar grammar;
     EXPECT_TRUE(grammar.parse("S -> a b c | A c A -> a b"));
-    grammar.leftFactoring();
+    grammar.leftFactoring(true);
     const auto expected = R"(S -> a b c
 A -> a b
 )";
@@ -167,7 +167,7 @@ A -> a b
 TEST(TestContextFreeGrammarLeftFactoring, SpecialCase13) {
     ContextFreeGrammar grammar;
     EXPECT_TRUE(grammar.parse("A->id|B|a B->C C->D D->id b"));
-    grammar.leftFactoring();
+    grammar.leftFactoring(true);
     const auto expected = R"( A -> a
     | id A'
 A' -> b
@@ -183,7 +183,7 @@ TEST(TestContextFreeGrammarLeftFactoring, SpecialCase14) {
     ContextFreeGrammar grammar;
     EXPECT_TRUE(grammar.parse(R"(S -> A c | A d
 A -> a b)"));
-    grammar.leftFactoring();
+    grammar.leftFactoring(true);
     const auto expected = R"( S -> A S'
 S' -> c
     | d

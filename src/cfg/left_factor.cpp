@@ -4,10 +4,10 @@
 
 using namespace std;
 
-void ContextFreeGrammar::leftFactoring() {
+void ContextFreeGrammar::leftFactoring(const bool expand) {
     unordered_set<Symbol> primedSymbols;
     const vector<Symbol> originalNonTerminals = _ordering;
-    for (int step = 0; step <= 1; ++step) {
+    for (int step = 0; step <= static_cast<int>(expand); ++step) {
         bool expandProductions = step > 0;
         bool hasUpdate = true;
         while (hasUpdate) {
@@ -18,22 +18,22 @@ void ContextFreeGrammar::leftFactoring() {
                 auto& productions = _productions[head];
                 unordered_set expanded = {head};
                 unordered_map<int, int> parents;
-                const function<int(const Production&, size_t, int)> expand = [&](const Production& production, size_t index, const int originalProductionIndex) -> int {
+                const function<int(const Production&, size_t, int)> expandProduction = [&](const Production& production, size_t index, const int originalProductionIndex) -> int {
                     const int currentExpansionIndex = expansionIndex++;
                     while (index < production.size() &&
                         (primedSymbols.contains(production[index]) || !_productions.contains(production[index]) || expanded.contains(production[index]))) {
                         ++index;
                     }
                     if (index < production.size()) {
-                        auto childIndex = expand(production, index + 1, originalProductionIndex);
+                        auto childIndex = expandProduction(production, index + 1, originalProductionIndex);
                         parents[childIndex] = currentExpansionIndex;
                         expanded.insert(production[index]);
-                        for (const auto& expandProduction : _productions[production[index]]) {
+                        for (const auto& expandedProduction : _productions[production[index]]) {
                             Production newProduction;
                             newProduction.insert(newProduction.begin(), production.begin(), production.begin() + static_cast<int>(index));
-                            newProduction.insert(newProduction.end(), expandProduction.begin(), expandProduction.end());
+                            newProduction.insert(newProduction.end(), expandedProduction.begin(), expandedProduction.end());
                             newProduction.insert(newProduction.end(), production.begin() + static_cast<int>(index) + 1, production.end());
-                            childIndex = expand(newProduction, index, originalProductionIndex);
+                            childIndex = expandProduction(newProduction, index, originalProductionIndex);
                             parents[childIndex] = currentExpansionIndex;
                         }
                         expanded.erase(production[index]);
@@ -44,7 +44,7 @@ void ContextFreeGrammar::leftFactoring() {
                 };
                 for (size_t i = 0; i < productions.size(); ++i) {
                     if (expandProductions) {
-                        expand(productions[i], 0, static_cast<int>(i));
+                        expandProduction(productions[i], 0, static_cast<int>(i));
                     } else {
                         trie.insert(productions[i], static_cast<int>(i));
                     }

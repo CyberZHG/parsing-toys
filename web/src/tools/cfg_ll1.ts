@@ -139,7 +139,7 @@ ll1Button.addEventListener('click', () => {
             parseTreeContainer.hidden = true
         } else {
             cfg.leftRecursionElimination()
-            cfg.leftFactoring()
+            cfg.leftFactoring(false)
             updateCFGResult(cfg.toString(), cfg.terminals(), cfg.nonTerminals())
 
             if (cfg.nonTerminals().length > 0) {
