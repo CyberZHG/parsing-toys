@@ -55,14 +55,14 @@ export function updateCFGResult(code: string, terminals: string[], nonTerminals:
     let highlightedCode = htmlEscape(code)
         .replace(/-&gt;/g, '<span class="text-blue-500">-&gt;</span>')
         .replace(/\|/g, '<span class="text-yellow-600">|</span>')
-        .replace(/ε/g, '<span class="text-green-700">ε</span>')
+        .replace(/ε/g, '<span class="text-green-700 dark:text-green-500">ε</span>')
     if (terminals.length > 0) {
         for (let i = 0; i < terminals.length; ++i) {
             terminals[i] = regexEscape(htmlEscape(terminals[i]))
         }
         const terminalsRegex = new RegExp(`(?<=^|\\s)(${terminals.join("|")})(?=$|\\s)`, "g");
         highlightedCode = highlightedCode.replace(terminalsRegex, (match) => {
-            return `<span class="text-green-700">${match}</span>`
+            return `<span class="text-green-700 dark:text-green-500">${match}</span>`
         })
     }
     if (nonTerminals.length > 0) {
@@ -71,7 +71,7 @@ export function updateCFGResult(code: string, terminals: string[], nonTerminals:
         }
         const nonTerminalsRegex = new RegExp(`(?<=^|\\s)(${nonTerminals.join("|")})(?=$|\\s)`, "g");
         highlightedCode = highlightedCode.replace(nonTerminalsRegex, (match) => {
-            return `<span class="text-blue-800">${match}</span>`
+            return `<span class="text-blue-800 dark:text-blue-100">${match}</span>`
         })
     }
     highlighted.innerHTML = highlightedCode

@@ -120,7 +120,7 @@ cykButton.addEventListener('click', () => {
             }
         } else {
             cykResultText.textContent = "Rejected (empty string not accepted)"
-            cykResultText.className = "text-red-600"
+            cykResultText.className = "text-red-600 dark:text-red-400"
             parseTreeContainer.hidden = true
         }
 
@@ -133,31 +133,31 @@ cykButton.addEventListener('click', () => {
     const accepted = cykResult.isAccepted()
 
     let headerHtml = '<thead><tr class="bg-gray-100">'
-    headerHtml += '<th class="border border-gray-300 px-2 py-1"></th>'
+    headerHtml += '<th class="border border-gray-300 dark:bg-gray-700 px-2 py-1"></th>'
     for (let j = 0; j < n; ++j) {
-        headerHtml += `<th class="border border-gray-300 px-2 py-1">${tokens[j]}</th>`
+        headerHtml += `<th class="border border-gray-300 dark:bg-gray-700 px-2 py-1">${tokens[j]}</th>`
     }
     headerHtml += '</tr></thead>'
 
     let bodyHtml = '<tbody>'
     for (let len = n; len >= 1; --len) {
         bodyHtml += '<tr>'
-        bodyHtml += `<td class="border border-gray-300 px-2 py-1 text-center bg-gray-50 font-semibold">${len}</td>`
+        bodyHtml += `<td class="border border-gray-300 dark:bg-gray-700 px-2 py-1 text-center bg-gray-50 font-semibold">${len}</td>`
         for (let j = 0; j < n; ++j) {
             const i = j
             const endJ = i + len - 1
             if (endJ < n) {
                 const cellContent = cykResult.getCellString(i, endJ, ", ")
                 const isStartCell = i === 0 && endJ === n - 1
-                let cellClass = 'border border-gray-300 px-2 py-1 text-center'
+                let cellClass = 'border border-gray-300 dark:bg-gray-700 px-2 py-1 text-center'
                 if (isStartCell && accepted) {
-                    cellClass += ' bg-green-100 text-green-800'
+                    cellClass += ' bg-green-100 text-green-800 dark:text-green-600'
                 } else if (isStartCell && !accepted) {
-                    cellClass += ' bg-red-100 text-red-800'
+                    cellClass += ' bg-red-100 text-red-800 dark:text-red-600'
                 }
                 bodyHtml += `<td class="${cellClass}">${cellContent}</td>`
             } else {
-                bodyHtml += '<td class="border border-gray-300 px-2 py-1 bg-gray-200"></td>'
+                bodyHtml += '<td class="border border-gray-300 px-2 py-1 bg-gray-200 dark:bg-gray-800"></td>'
             }
         }
         bodyHtml += '</tr>'

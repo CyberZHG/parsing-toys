@@ -97,7 +97,7 @@ test('CYK: parse tree exists on accept', () => {
     const parseTree = result.getParseTree()
     expect(parseTree).not.toBeNull()
     if (parseTree) {
-        const svg = parseTree.toSVG()
+        const svg = parseTree.toSVG(false)
         expect(svg).toContain("svg")
         parseTree.delete()
     }

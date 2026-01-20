@@ -1,6 +1,7 @@
 import { RegularExpression, NFAGraph, DFAGraph } from '../wasm/index.js'
 import { setupLocationHash, getLocationHashValue, setLocationHashValue } from '../location_hash.ts'
 import { setupSVGPanZoom, setupSVGDownloadButtons } from '../display_svg.ts'
+import { isDarkMode } from '../dark_mode.ts'
 
 const regexInput = document.querySelector<HTMLInputElement>('#regex-input')!
 const convertButton = document.querySelector<HTMLButtonElement>('#button-convert')!
@@ -33,7 +34,7 @@ function renderNFATable(graph: NFAGraph): void {
     }
     for (const symbol of sortedSymbols) {
         const th = document.createElement('th')
-        th.className = 'border border-gray-300 px-3 py-2 text-center font-semibold'
+        th.className = 'border border-gray-300 dark:border-gray-600 px-3 py-2 text-center font-semibold text-gray-900 dark:text-gray-100'
         th.textContent = symbol
         headerRow.appendChild(th)
     }
@@ -56,20 +57,21 @@ function renderNFATable(graph: NFAGraph): void {
         const stateType = match ? match[2] : ''
 
         const tr = document.createElement('tr')
+        tr.className = i % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-900'
         const tdState = document.createElement('td')
-        tdState.className = 'border border-gray-300 px-3 py-2 text-center'
+        tdState.className = 'border border-gray-300 dark:border-gray-600 px-3 py-2 text-center'
         tdState.textContent = stateId
         tr.appendChild(tdState)
 
         const tdType = document.createElement('td')
-        tdType.className = 'border border-gray-300 px-3 py-2 text-center'
+        tdType.className = 'border border-gray-300 dark:border-gray-600 px-3 py-2 text-center'
         tdType.textContent = stateType
         tr.appendChild(tdType)
 
         const fromMap = transitions.get(i) || new Map()
         for (const symbol of sortedSymbols) {
             const td = document.createElement('td')
-            td.className = 'border border-gray-300 px-3 py-2 text-center'
+            td.className = 'border border-gray-300 dark:border-gray-600 px-3 py-2 text-center'
             const targets = fromMap.get(symbol) || []
             td.textContent = targets.length > 0 ? `{${targets.join(', ')}}` : ''
             tr.appendChild(td)
@@ -93,7 +95,7 @@ function renderDFATable(graph: DFAGraph): void {
     }
     for (const symbol of sortedSymbols) {
         const th = document.createElement('th')
-        th.className = 'border border-gray-300 px-3 py-2 text-center font-semibold'
+        th.className = 'border border-gray-300 dark:border-gray-600 px-3 py-2 text-center font-semibold text-gray-900 dark:text-gray-100'
         th.textContent = symbol
         headerRow.appendChild(th)
     }
@@ -109,26 +111,27 @@ function renderDFATable(graph: DFAGraph): void {
 
     for (let i = 0; i < graph.size(); i++) {
         const tr = document.createElement('tr')
+        tr.className = i % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-900'
 
         const tdState = document.createElement('td')
-        tdState.className = 'border border-gray-300 px-3 py-2 text-center'
+        tdState.className = 'border border-gray-300 dark:border-gray-600 px-3 py-2 text-center'
         tdState.textContent = graph.stateIdAt(i)
         tr.appendChild(tdState)
 
         const tdKey = document.createElement('td')
-        tdKey.className = 'border border-gray-300 px-3 py-2 text-center'
+        tdKey.className = 'border border-gray-300 dark:border-gray-600 px-3 py-2 text-center'
         tdKey.textContent = `{${graph.stateKeyAt(i)}}`
         tr.appendChild(tdKey)
 
         const tdType = document.createElement('td')
-        tdType.className = 'border border-gray-300 px-3 py-2 text-center'
+        tdType.className = 'border border-gray-300 dark:border-gray-600 px-3 py-2 text-center'
         tdType.textContent = graph.stateTypeAt(i)
         tr.appendChild(tdType)
 
         const fromMap = transitions.get(i) || new Map()
         for (const symbol of sortedSymbols) {
             const td = document.createElement('td')
-            td.className = 'border border-gray-300 px-3 py-2 text-center'
+            td.className = 'border border-gray-300 dark:border-gray-600 px-3 py-2 text-center'
             const target = fromMap.get(symbol)
             td.textContent = target !== undefined ? String(target) : ''
             tr.appendChild(td)
@@ -161,22 +164,23 @@ convertButton.addEventListener('click', () => {
 
     errorContainer.hidden = true
 
+    const darkMode = isDarkMode()
     const nfa = re.toNFA()
     const nfaGraph = RegularExpression.toNFAGraph(nfa)
     renderNFATable(nfaGraph)
-    renderSVG(nfaSvg, nfaGraph.toSVG())
+    renderSVG(nfaSvg, nfaGraph.toSVG(darkMode))
     nfaContainer.hidden = false
 
     const dfa = RegularExpression.toDFA(nfa)
     const dfaGraph = RegularExpression.toDFAGraph(dfa)
     renderDFATable(dfaGraph)
-    renderSVG(dfaSvg, dfaGraph.toSVG())
+    renderSVG(dfaSvg, dfaGraph.toSVG(darkMode))
     dfaContainer.hidden = false
 
     const minDfa = RegularExpression.toMinDFA(dfa)
     const minDfaGraph = RegularExpression.toDFAGraph(minDfa)
     renderMinDFATable(minDfaGraph)
-    renderSVG(minDfaSvg, minDfaGraph.toSVG())
+    renderSVG(minDfaSvg, minDfaGraph.toSVG(darkMode))
     minDfaContainer.hidden = false
 
     nfa.delete()
@@ -200,7 +204,7 @@ function renderMinDFATable(graph: DFAGraph): void {
     }
     for (const symbol of sortedSymbols) {
         const th = document.createElement('th')
-        th.className = 'border border-gray-300 px-3 py-2 text-center font-semibold'
+        th.className = 'border border-gray-300 dark:border-gray-600 px-3 py-2 text-center font-semibold text-gray-900 dark:text-gray-100'
         th.textContent = symbol
         headerRow.appendChild(th)
     }
@@ -216,26 +220,27 @@ function renderMinDFATable(graph: DFAGraph): void {
 
     for (let i = 0; i < graph.size(); i++) {
         const tr = document.createElement('tr')
+        tr.className = i % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-900'
 
         const tdState = document.createElement('td')
-        tdState.className = 'border border-gray-300 px-3 py-2 text-center'
+        tdState.className = 'border border-gray-300 dark:border-gray-600 px-3 py-2 text-center'
         tdState.textContent = graph.stateIdAt(i)
         tr.appendChild(tdState)
 
         const tdKey = document.createElement('td')
-        tdKey.className = 'border border-gray-300 px-3 py-2 text-center'
+        tdKey.className = 'border border-gray-300 dark:border-gray-600 px-3 py-2 text-center'
         tdKey.textContent = `{${graph.stateKeyAt(i)}}`
         tr.appendChild(tdKey)
 
         const tdType = document.createElement('td')
-        tdType.className = 'border border-gray-300 px-3 py-2 text-center'
+        tdType.className = 'border border-gray-300 dark:border-gray-600 px-3 py-2 text-center'
         tdType.textContent = graph.stateTypeAt(i)
         tr.appendChild(tdType)
 
         const fromMap = transitions.get(i) || new Map()
         for (const symbol of sortedSymbols) {
             const td = document.createElement('td')
-            td.className = 'border border-gray-300 px-3 py-2 text-center'
+            td.className = 'border border-gray-300 dark:border-gray-600 px-3 py-2 text-center'
             const target = fromMap.get(symbol)
             td.textContent = target !== undefined ? String(target) : ''
             tr.appendChild(td)

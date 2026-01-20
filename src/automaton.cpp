@@ -53,7 +53,7 @@ size_t FiniteAutomaton::addEdge(const size_t u, const size_t v, const string& la
     return addEdge(edge);
 }
 
-std::string FiniteAutomaton::toSVG() const {
+std::string FiniteAutomaton::toSVG(const bool darkMode) const {
     DirectedGraphHierarchicalLayout layout;
     layout.setFeedbackArcsMethod(FeedbackArcsMethod::MIN_ID);
     layout.attributes().setVertexDefaultMonospace();
@@ -61,6 +61,12 @@ std::string FiniteAutomaton::toSVG() const {
     layout.attributes().setVertexDefaultShape(AttributeShape::RECORD);
     layout.attributes().setEdgeDefaultSplines(AttributeSplines::SPLINE);
     layout.attributes().setRankDir(AttributeRankDir::LEFT_TO_RIGHT);
+    if (darkMode) {
+        layout.attributes().setVertexDefaultColor("white");
+        layout.attributes().setVertexDefaultFontColor("white");
+        layout.attributes().setEdgeDefaultColor("white");
+        layout.attributes().setEdgeDefaultFontColor("white");
+    }
     const auto n = _nodes.size();
     const auto& graph = layout.createGraph(n + 1);
     vector<string> nodeLabels(n + 1);

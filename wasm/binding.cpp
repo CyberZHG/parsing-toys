@@ -46,7 +46,7 @@ EMSCRIPTEN_BINDINGS(ParsingToysWASM) {
     class_<FiniteAutomaton>("FiniteAutomaton")
         .constructor<>()
         .function("size", &FiniteAutomaton::size)
-        .function("toSVG", &FiniteAutomaton::toSVG)
+        .function("toSVG", &FiniteAutomaton::toSVG, allow_raw_pointers())
     ;
     class_<LRParsingSteps>("LRParsingSteps")
         .constructor<>()
@@ -67,7 +67,7 @@ EMSCRIPTEN_BINDINGS(ParsingToysWASM) {
     ;
     class_<ParseTreeNode>("ParseTreeNode")
         .smart_ptr<shared_ptr<ParseTreeNode>>("ParseTreeNode")
-        .function("toSVG", &ParseTreeNode::toSVG)
+        .function("toSVG", &ParseTreeNode::toSVG, allow_raw_pointers())
     ;
     class_<LLParsingSteps>("LLParsingSteps")
         .constructor<>()
@@ -114,7 +114,7 @@ EMSCRIPTEN_BINDINGS(ParsingToysWASM) {
     ;
     class_<NFAGraph>("NFAGraph")
         .function("size", &NFAGraph::size)
-        .function("toSVG", &NFAGraph::toSVG)
+        .function("toSVG", &NFAGraph::toSVG, allow_raw_pointers())
         .function("stateAt", &NFAGraph::stateAt)
         .function("numEdges", &NFAGraph::numEdges)
         .function("edgeFrom", &NFAGraph::edgeFrom)
@@ -123,7 +123,7 @@ EMSCRIPTEN_BINDINGS(ParsingToysWASM) {
     ;
     class_<DFAGraph>("DFAGraph")
         .function("size", &DFAGraph::size)
-        .function("toSVG", &DFAGraph::toSVG)
+        .function("toSVG", &DFAGraph::toSVG, allow_raw_pointers())
         .function("stateIdAt", &DFAGraph::stateIdAt)
         .function("stateKeyAt", &DFAGraph::stateKeyAt)
         .function("stateTypeAt", &DFAGraph::stateTypeAt)

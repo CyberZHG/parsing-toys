@@ -27,7 +27,7 @@ export class FirstAndFollowSet {
 export class FiniteAutomaton {
     constructor()
     size(): number
-    toSVG(): string
+    toSVG(darkMode?: boolean): string
 }
 
 export class LRParsingSteps {
@@ -44,7 +44,7 @@ export class LRParsingSteps {
 
 export class ParseTreeNode {
     constructor()
-    toSVG(): string
+    toSVG(darkMode?: boolean): string
     delete(): void
 }
 
@@ -131,7 +131,7 @@ export class DFAState {
 
 export class NFAGraph {
     size(): number
-    toSVG(): string
+    toSVG(darkMode?: boolean): string
     stateAt(index: number): string
     numEdges(): number
     edgeFrom(index: number): number
@@ -141,7 +141,7 @@ export class NFAGraph {
 
 export class DFAGraph {
     size(): number
-    toSVG(): string
+    toSVG(darkMode?: boolean): string
     stateIdAt(index: number): string
     stateKeyAt(index: number): string
     stateTypeAt(index: number): string

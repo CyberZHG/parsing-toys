@@ -37,10 +37,10 @@ firstAndFollowButton.addEventListener('click', () => {
         for (let i = 0; i < result.size(); ++i) {
             const symbol = result.symbolAt(i)
             const firstSet = result.getFirstSet(symbol).join(" ")
-                .replace(/(^|\s)ε(?=\s|$)/g, '$1<span class="text-green-700">ε</span>')
+                .replace(/(^|\s)ε(?=\s|$)/g, '$1<span class="text-green-700 dark:text-green-600">ε</span>')
             const followSet = result.getFollowSet(symbol).join(" ")
-                .replace(/(^|\s)\$(?=\s|$)/g, '$1<span class="text-green-700">$</span>')
-            resultHTML += '<tr class="odd:bg-white even:bg-gray-50 border-none">'
+                .replace(/(^|\s)\$(?=\s|$)/g, '$1<span class="text-green-700 dark:text-green-600">$</span>')
+            resultHTML += '<tr class="odd:bg-white even:bg-gray-50 odd:dark:bg-gray-600 even:dark:bg-gray-700 border-none">'
             resultHTML += `  <td class="px-4 py-2 text-center font-mono">${symbol}</td>`
             if (result.getNullable(symbol)) {
                 resultHTML += `  <td class="px-4 py-2 text-center">✓</td>`

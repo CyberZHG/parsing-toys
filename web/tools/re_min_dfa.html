@@ -7,25 +7,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Online Regex to NFA/DFA/Min-DFA</title>
 </head>
-<body>
+<body class="bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
 {{> navbar }}
 <main class="max-w-7xl mx-auto px-4 py-10 min-h-screen flex flex-col">
   <div class="flex flex-col py-4 w-full gap-2 max-w-6xl mx-auto">
-    <div class="relative w-full text-gray-950 font-semibold">
+    <div class="relative w-full text-gray-950 dark:text-gray-100 font-semibold">
       Regular Expression:
-      <div class="text-gray-500 font-light text-sm">
+      <div class="text-gray-500 dark:text-gray-400 font-light text-sm">
         Supported operators: concatenation, alternation (<code>|</code>), Kleene star (<code>*</code>), plus (<code>+</code>), optional (<code>?</code>), parentheses. Use <code>ε</code> for empty string.
       </div>
     </div>
-    <input id="regex-input" type="text" class="w-full border border-gray-300 rounded px-3 py-2 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="(a|b)*abb" value="(a|b)*abb">
+    <input id="regex-input" type="text" class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded px-3 py-2 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="(a|b)*abb" value="(a|b)*abb">
   </div>
   <div class="flex flex-col py-4 w-full gap-2 max-w-6xl mx-auto">
     <div class="flex mt-2">
-      <button id="button-convert" class="w-full py-2 bg-blue-700 hover:bg-blue-800 rounded font-semibold text-white text-sm">Convert to NFA/DFA/Min-DFA</button>
+      <button id="button-convert" class="w-full py-2 bg-blue-700 hover:bg-blue-800 dark:bg-blue-600 dark:hover:bg-blue-700 rounded font-semibold text-white text-sm">Convert to NFA/DFA/Min-DFA</button>
     </div>
   </div>
   <div class="flex flex-col pb-4 pt-0 w-full gap-2 max-w-6xl mx-auto">
-    <div id="error-container" class="flex items-center max-w-6xl gap-2 mt-2 text-red-500 text-sm" hidden>
+    <div id="error-container" class="flex items-center max-w-6xl gap-2 mt-2 text-red-500 dark:text-red-400 text-sm" hidden>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
         <path fill="none" stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
       </svg>
@@ -34,76 +34,76 @@
   </div>
 
   <div id="nfa-container" class="flex flex-col w-full gap-2 max-w-6xl mx-auto mt-4" hidden>
-    <div class="relative w-full text-gray-950 font-semibold">
+    <div class="relative w-full text-gray-950 dark:text-gray-100 font-semibold">
       NFA (Thompson's Construction):
     </div>
     <div class="overflow-x-auto">
       <table id="nfa-table" class="w-full text-sm border-collapse">
         <thead>
-          <tr class="bg-gray-100">
-            <th class="border border-gray-300 px-3 py-2 text-center font-semibold">State</th>
-            <th class="border border-gray-300 px-3 py-2 text-center font-semibold">Type</th>
+          <tr class="bg-gray-100 dark:bg-gray-700">
+            <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center font-semibold text-gray-900 dark:text-gray-100">State</th>
+            <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center font-semibold text-gray-900 dark:text-gray-100">Type</th>
           </tr>
         </thead>
-        <tbody id="nfa-tbody" class="font-mono"></tbody>
+        <tbody id="nfa-tbody" class="font-mono text-gray-900 dark:text-gray-100"></tbody>
       </table>
     </div>
-    <div class="relative w-full aspect-[2/1] border border-gray-300 overflow-hidden mt-2">
+    <div class="relative w-full aspect-[2/1] border border-gray-300 dark:border-gray-600 overflow-hidden mt-2 bg-white dark:bg-gray-800">
       <svg id="nfa-svg" class="w-full h-full cursor-grab active:cursor-grabbing select-none"></svg>
     </div>
     <div class="flex w-full gap-2">
-      <button id="nfa-download-svg" class="flex-1 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white text-sm font-semibold">Download NFA SVG</button>
-      <button id="nfa-download-png" class="flex-1 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white text-sm font-semibold">Download NFA PNG</button>
+      <button id="nfa-download-svg" class="flex-1 py-2 bg-gray-700 hover:bg-gray-800 dark:bg-gray-600 dark:hover:bg-gray-700 rounded text-white text-sm font-semibold">Download NFA SVG</button>
+      <button id="nfa-download-png" class="flex-1 py-2 bg-gray-700 hover:bg-gray-800 dark:bg-gray-600 dark:hover:bg-gray-700 rounded text-white text-sm font-semibold">Download NFA PNG</button>
     </div>
   </div>
 
   <div id="dfa-container" class="flex flex-col w-full gap-2 max-w-6xl mx-auto mt-4" hidden>
-    <div class="relative w-full text-gray-950 font-semibold">
+    <div class="relative w-full text-gray-950 dark:text-gray-100 font-semibold">
       DFA (Subset Construction):
     </div>
     <div class="overflow-x-auto">
       <table id="dfa-table" class="w-full text-sm border-collapse">
         <thead>
-          <tr class="bg-gray-100">
-            <th class="border border-gray-300 px-3 py-2 text-center font-semibold">State</th>
-            <th class="border border-gray-300 px-3 py-2 text-center font-semibold">NFA States</th>
-            <th class="border border-gray-300 px-3 py-2 text-center font-semibold">Type</th>
+          <tr class="bg-gray-100 dark:bg-gray-700">
+            <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center font-semibold text-gray-900 dark:text-gray-100">State</th>
+            <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center font-semibold text-gray-900 dark:text-gray-100">NFA States</th>
+            <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center font-semibold text-gray-900 dark:text-gray-100">Type</th>
           </tr>
         </thead>
-        <tbody id="dfa-tbody" class="font-mono"></tbody>
+        <tbody id="dfa-tbody" class="font-mono text-gray-900 dark:text-gray-100"></tbody>
       </table>
     </div>
-    <div class="relative w-full aspect-[2/1] border border-gray-300 overflow-hidden mt-2">
+    <div class="relative w-full aspect-[2/1] border border-gray-300 dark:border-gray-600 overflow-hidden mt-2 bg-white dark:bg-gray-800">
       <svg id="dfa-svg" class="w-full h-full cursor-grab active:cursor-grabbing select-none"></svg>
     </div>
     <div class="flex w-full gap-2">
-      <button id="dfa-download-svg" class="flex-1 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white text-sm font-semibold">Download DFA SVG</button>
-      <button id="dfa-download-png" class="flex-1 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white text-sm font-semibold">Download DFA PNG</button>
+      <button id="dfa-download-svg" class="flex-1 py-2 bg-gray-700 hover:bg-gray-800 dark:bg-gray-600 dark:hover:bg-gray-700 rounded text-white text-sm font-semibold">Download DFA SVG</button>
+      <button id="dfa-download-png" class="flex-1 py-2 bg-gray-700 hover:bg-gray-800 dark:bg-gray-600 dark:hover:bg-gray-700 rounded text-white text-sm font-semibold">Download DFA PNG</button>
     </div>
   </div>
 
   <div id="min-dfa-container" class="flex flex-col w-full gap-2 max-w-6xl mx-auto mt-4" hidden>
-    <div class="relative w-full text-gray-950 font-semibold">
+    <div class="relative w-full text-gray-950 dark:text-gray-100 font-semibold">
       Minimized DFA (Hopcroft's Algorithm):
     </div>
     <div class="overflow-x-auto">
       <table id="min-dfa-table" class="w-full text-sm border-collapse">
         <thead>
-          <tr class="bg-gray-100">
-            <th class="border border-gray-300 px-3 py-2 text-center font-semibold">State</th>
-            <th class="border border-gray-300 px-3 py-2 text-center font-semibold">DFA States</th>
-            <th class="border border-gray-300 px-3 py-2 text-center font-semibold">Type</th>
+          <tr class="bg-gray-100 dark:bg-gray-700">
+            <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center font-semibold text-gray-900 dark:text-gray-100">State</th>
+            <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center font-semibold text-gray-900 dark:text-gray-100">DFA States</th>
+            <th class="border border-gray-300 dark:border-gray-600 px-3 py-2 text-center font-semibold text-gray-900 dark:text-gray-100">Type</th>
           </tr>
         </thead>
-        <tbody id="min-dfa-tbody" class="font-mono"></tbody>
+        <tbody id="min-dfa-tbody" class="font-mono text-gray-900 dark:text-gray-100"></tbody>
       </table>
     </div>
-    <div class="relative w-full aspect-[2/1] border border-gray-300 overflow-hidden mt-2">
+    <div class="relative w-full aspect-[2/1] border border-gray-300 dark:border-gray-600 overflow-hidden mt-2 bg-white dark:bg-gray-800">
       <svg id="min-dfa-svg" class="w-full h-full cursor-grab active:cursor-grabbing select-none"></svg>
     </div>
     <div class="flex w-full gap-2">
-      <button id="min-dfa-download-svg" class="flex-1 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white text-sm font-semibold">Download Min-DFA SVG</button>
-      <button id="min-dfa-download-png" class="flex-1 py-2 bg-gray-700 hover:bg-gray-800 rounded text-white text-sm font-semibold">Download Min-DFA PNG</button>
+      <button id="min-dfa-download-svg" class="flex-1 py-2 bg-gray-700 hover:bg-gray-800 dark:bg-gray-600 dark:hover:bg-gray-700 rounded text-white text-sm font-semibold">Download Min-DFA SVG</button>
+      <button id="min-dfa-download-png" class="flex-1 py-2 bg-gray-700 hover:bg-gray-800 dark:bg-gray-600 dark:hover:bg-gray-700 rounded text-white text-sm font-semibold">Download Min-DFA PNG</button>
     </div>
   </div>
 

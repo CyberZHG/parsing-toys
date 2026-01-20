@@ -7,138 +7,138 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Parsing Toys</title>
   </head>
-  <body>
+  <body class="bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
     {{> navbar }}
     <main class="max-w-7xl mx-auto px-4 py-10 min-h-screen flex flex-col">
       <header class="mb-10">
-        <h1 class="text-3xl font-bold">Context-Free Grammar</h1>
+        <h1 class="text-3xl font-bold dark:text-white">Context-Free Grammar</h1>
         <!--p class="mt-2 text-gray-600">
           Context-Free Grammars
         </p-->
       </header>
       <section class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <a href="/parsing-toys/tools/cfg_reformat.html" class="group block rounded-xl border bg-white p-6 hover:shadow-lg transition">
+        <a href="/parsing-toys/tools/cfg_reformat.html" class="group block rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 hover:shadow-lg dark:hover:shadow-gray-900 transition">
           <div class="flex items-center gap-3">
-            <h2 class="text-lg font-semibold group-hover:text-blue-600">
+            <h2 class="text-lg font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400">
               Context-Free Grammar Reformat
             </h2>
           </div>
-          <p class="mt-2 text-sm text-gray-600">
+          <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
             Parse and reformat context-free grammars.
           </p>
         </a>
-        <a href="/parsing-toys/tools/cfg_left_factoring.html" class="group block rounded-xl border bg-white p-6 hover:shadow-lg transition">
+        <a href="/parsing-toys/tools/cfg_left_factoring.html" class="group block rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 hover:shadow-lg dark:hover:shadow-gray-900 transition">
           <div class="flex items-center gap-3">
-            <h2 class="text-lg font-semibold group-hover:text-blue-600">
+            <h2 class="text-lg font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400">
               Left Factoring
             </h2>
           </div>
-          <p class="mt-2 text-sm text-gray-600">
+          <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
             Find and group the longest common prefixes in a context-free grammar.
           </p>
         </a>
-        <a href="/parsing-toys/tools/cfg_left_recursion.html" class="group block rounded-xl border bg-white p-6 hover:shadow-lg transition">
+        <a href="/parsing-toys/tools/cfg_left_recursion.html" class="group block rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 hover:shadow-lg dark:hover:shadow-gray-900 transition">
           <div class="flex items-center gap-3">
-            <h2 class="text-lg font-semibold group-hover:text-blue-600">
+            <h2 class="text-lg font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400">
               Left Recursion Elimination
             </h2>
           </div>
-          <p class="mt-2 text-sm text-gray-600">
+          <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
             Eliminate left recursions in a context-free grammar.
           </p>
         </a>
-        <a href="/parsing-toys/tools/cfg_cnf.html" class="group block rounded-xl border bg-white p-6 hover:shadow-lg transition">
+        <a href="/parsing-toys/tools/cfg_cnf.html" class="group block rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 hover:shadow-lg dark:hover:shadow-gray-900 transition">
           <div class="flex items-center gap-3">
-            <h2 class="text-lg font-semibold group-hover:text-blue-600">
+            <h2 class="text-lg font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400">
               Chomsky Normal Form
             </h2>
           </div>
-          <p class="mt-2 text-sm text-gray-600">
+          <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
             Convert a context-free grammar to Chomsky Normal Form.
           </p>
         </a>
-        <a href="/parsing-toys/tools/cfg_cyk.html" class="group block rounded-xl border bg-white p-6 hover:shadow-lg transition">
+        <a href="/parsing-toys/tools/cfg_cyk.html" class="group block rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 hover:shadow-lg dark:hover:shadow-gray-900 transition">
           <div class="flex items-center gap-3">
-            <h2 class="text-lg font-semibold group-hover:text-blue-600">
+            <h2 class="text-lg font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400">
               CYK Parser
             </h2>
           </div>
-          <p class="mt-2 text-sm text-gray-600">
+          <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
             Parse strings using the CYK (Cocke-Younger-Kasami) algorithm.
           </p>
         </a>
-        <a href="/parsing-toys/tools/cfg_first_and_follow.html" class="group block rounded-xl border bg-white p-6 hover:shadow-lg transition">
+        <a href="/parsing-toys/tools/cfg_first_and_follow.html" class="group block rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 hover:shadow-lg dark:hover:shadow-gray-900 transition">
           <div class="flex items-center gap-3">
-            <h2 class="text-lg font-semibold group-hover:text-blue-600">
+            <h2 class="text-lg font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400">
               First & Follow Sets
             </h2>
           </div>
-          <p class="mt-2 text-sm text-gray-600">
+          <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
             Compute the first & follow sets in a context-free grammar.
           </p>
         </a>
-        <a href="/parsing-toys/tools/cfg_ll1.html" class="group block rounded-xl border bg-white p-6 hover:shadow-lg transition">
+        <a href="/parsing-toys/tools/cfg_ll1.html" class="group block rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 hover:shadow-lg dark:hover:shadow-gray-900 transition">
           <div class="flex items-center gap-3">
-            <h2 class="text-lg font-semibold group-hover:text-blue-600">
+            <h2 class="text-lg font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400">
               LL(1) Parsing
             </h2>
           </div>
-          <p class="mt-2 text-sm text-gray-600">
+          <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
             Generate LL(1) predictive parsing table and simulate parsing.
           </p>
         </a>
-        <a href="/parsing-toys/tools/cfg_lr0.html" class="group block rounded-xl border bg-white p-6 hover:shadow-lg transition">
+        <a href="/parsing-toys/tools/cfg_lr0.html" class="group block rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 hover:shadow-lg dark:hover:shadow-gray-900 transition">
           <div class="flex items-center gap-3">
-            <h2 class="text-lg font-semibold group-hover:text-blue-600">
+            <h2 class="text-lg font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400">
               LR(0) Parsing
             </h2>
           </div>
-          <p class="mt-2 text-sm text-gray-600">
+          <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
             Generate LR(0) automaton, ACTION/GOTO table, and simulate parsing.
           </p>
         </a>
-        <a href="/parsing-toys/tools/cfg_slr1.html" class="group block rounded-xl border bg-white p-6 hover:shadow-lg transition">
+        <a href="/parsing-toys/tools/cfg_slr1.html" class="group block rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 hover:shadow-lg dark:hover:shadow-gray-900 transition">
           <div class="flex items-center gap-3">
-            <h2 class="text-lg font-semibold group-hover:text-blue-600">
+            <h2 class="text-lg font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400">
               SLR(1) Parsing
             </h2>
           </div>
-          <p class="mt-2 text-sm text-gray-600">
+          <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
             Generate SLR(1) automaton, ACTION/GOTO table, and simulate parsing.
           </p>
         </a>
-        <a href="/parsing-toys/tools/cfg_lr1.html" class="group block rounded-xl border bg-white p-6 hover:shadow-lg transition">
+        <a href="/parsing-toys/tools/cfg_lr1.html" class="group block rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 hover:shadow-lg dark:hover:shadow-gray-900 transition">
           <div class="flex items-center gap-3">
-            <h2 class="text-lg font-semibold group-hover:text-blue-600">
+            <h2 class="text-lg font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400">
               LR(1) Parsing
             </h2>
           </div>
-          <p class="mt-2 text-sm text-gray-600">
+          <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
             Generate LR(1) automaton, ACTION/GOTO table, and simulate parsing.
           </p>
         </a>
-        <a href="/parsing-toys/tools/cfg_lalr1.html" class="group block rounded-xl border bg-white p-6 hover:shadow-lg transition">
+        <a href="/parsing-toys/tools/cfg_lalr1.html" class="group block rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 hover:shadow-lg dark:hover:shadow-gray-900 transition">
           <div class="flex items-center gap-3">
-            <h2 class="text-lg font-semibold group-hover:text-blue-600">
+            <h2 class="text-lg font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400">
               LALR(1) Parsing
             </h2>
           </div>
-          <p class="mt-2 text-sm text-gray-600">
+          <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
             Generate LALR(1) automaton, ACTION/GOTO table, and simulate parsing.
           </p>
         </a>
       </section>
       <header class="mb-10 mt-16">
-        <h1 class="text-3xl font-bold">Regular Expression</h1>
+        <h1 class="text-3xl font-bold dark:text-white">Regular Expression</h1>
       </header>
       <section class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        <a href="/parsing-toys/tools/re_min_dfa.html" class="group block rounded-xl border bg-white p-6 hover:shadow-lg transition">
+        <a href="/parsing-toys/tools/re_min_dfa.html" class="group block rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 hover:shadow-lg dark:hover:shadow-gray-900 transition">
           <div class="flex items-center gap-3">
-            <h2 class="text-lg font-semibold group-hover:text-blue-600">
+            <h2 class="text-lg font-semibold group-hover:text-blue-600 dark:group-hover:text-blue-400">
               Regex to NFA/DFA/Min-DFA
             </h2>
           </div>
-          <p class="mt-2 text-sm text-gray-600">
+          <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
             Convert regular expression to NFA, DFA, and minimized DFA.
           </p>
         </a>

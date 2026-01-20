@@ -61,7 +61,7 @@ struct ParseTreeNode {
     std::vector<std::shared_ptr<ParseTreeNode>> children;
 
     [[nodiscard]] size_t size() const;
-    [[nodiscard]] std::string toSVG() const;
+    [[nodiscard]] std::string toSVG(bool darkMode = false) const;
 
     /** For unit tests only. */
     [[nodiscard]] std::string toString(int indent = 0) const;
