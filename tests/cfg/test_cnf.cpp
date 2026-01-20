@@ -185,3 +185,29 @@ TEST(TestContextFreeGrammarCNF, ConvertComplexGrammar) {
     grammar.toChomskyNormalForm();
     EXPECT_TRUE(grammar.isChomskyNormalForm());
 }
+
+TEST(TestContextFreeGrammarCNF, StartOnRHSNotCNF) {
+    ContextFreeGrammar grammar;
+    EXPECT_TRUE(grammar.parse("S -> A S | ε\nA -> a"));
+    ContextFreeGrammar grammar2;
+    EXPECT_TRUE(grammar2.parse("S -> A\nA -> S | a"));
+    EXPECT_FALSE(grammar2.isChomskyNormalForm());
+}
+
+TEST(TestContextFreeGrammarCNF, TerminalCollision) {
+    ContextFreeGrammar grammar;
+    EXPECT_TRUE(grammar.parse("S -> a b\nT_a -> c"));
+    grammar.toChomskyNormalForm();
+    EXPECT_TRUE(grammar.isChomskyNormalForm());
+    const auto result = grammar.toString();
+    EXPECT_TRUE(result.find("T_a_1") != string::npos);
+}
+
+TEST(TestContextFreeGrammarCNF, TerminalCollisionMultiple) {
+    ContextFreeGrammar grammar;
+    EXPECT_TRUE(grammar.parse("S -> a b\nT_a -> c\nT_a_1 -> d"));
+    grammar.toChomskyNormalForm();
+    EXPECT_TRUE(grammar.isChomskyNormalForm());
+    const auto result = grammar.toString();
+    EXPECT_TRUE(result.find("T_a_2") != string::npos);
+}

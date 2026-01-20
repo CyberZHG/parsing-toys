@@ -148,3 +148,25 @@ TEST(TestCYK, CellStringFormat) {
     const auto cellStr = result.getCellString(0, 1, ", ");
     EXPECT_TRUE(cellStr.find('S') != string::npos);
 }
+
+TEST(TestCYK, InvalidCellIndices) {
+    ContextFreeGrammar grammar;
+    EXPECT_TRUE(grammar.parse("S -> A B\nA -> a\nB -> b"));
+    const auto result = grammar.cykParse("a b");
+    EXPECT_EQ(2, result.size());
+
+    auto cell1 = result.getCell(5, 0);
+    EXPECT_TRUE(cell1.empty());
+    auto cellStr1 = result.getCellString(5, 0, ", ");
+    EXPECT_EQ("", cellStr1);
+
+    auto cell2 = result.getCell(0, 5);
+    EXPECT_TRUE(cell2.empty());
+    auto cellStr2 = result.getCellString(0, 5, ", ");
+    EXPECT_EQ("", cellStr2);
+
+    auto cell3 = result.getCell(1, 0);
+    EXPECT_TRUE(cell3.empty());
+    auto cellStr3 = result.getCellString(1, 0, ", ");
+    EXPECT_EQ("", cellStr3);
+}

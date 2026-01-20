@@ -274,3 +274,28 @@ TEST(TestLRParsing, MissingGotoEntry) {
 )";
     EXPECT_EQ(expected, steps.toString());
 }
+
+TEST(TestLRParsing, AutomatonDarkModeSVG) {
+    ContextFreeGrammar grammar;
+    grammar.parse("S -> a");
+    const auto automaton = grammar.computeLR0Automaton();
+    const auto svgDark = automaton->toSVG(true);
+    EXPECT_FALSE(svgDark.empty());
+    EXPECT_TRUE(svgDark.find("white") != string::npos);
+}
+
+TEST(TestLRParsing, ParseTreeDarkModeSVG) {
+    ContextFreeGrammar grammar;
+    grammar.parse("S -> a");
+    const auto automaton = grammar.computeLR0Automaton();
+    auto table = grammar.computeLR0ActionGotoTable(automaton);
+    [[maybe_unused]] const auto steps = table.parse("a");
+
+    EXPECT_NE(nullptr, table.parseTree);
+    const auto svgDark = table.parseTree->toSVG(true);
+    EXPECT_FALSE(svgDark.empty());
+    EXPECT_TRUE(svgDark.find("white") != string::npos);
+
+    const auto svgNormal = table.parseTree->toSVG(false);
+    EXPECT_FALSE(svgNormal.empty());
+}

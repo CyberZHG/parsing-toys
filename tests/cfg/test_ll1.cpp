@@ -226,3 +226,106 @@ A → ε | b
 )";
     EXPECT_EQ(expectedTable, table.toString());
 }
+
+TEST(TestContextFreeGrammarLL1Table, MTableDirect) {
+    MTable table;
+    table.addEntry("S", "a", {"a"});
+    table.addEntry("S", "b", {"b"});
+    table.addEntry("A", "c", {"c"});
+    EXPECT_EQ(2, table.numNonTerminals());
+    EXPECT_EQ(3, table.numTerminals());
+    EXPECT_EQ("S", table.getNonTerminal(0));
+    EXPECT_EQ("A", table.getNonTerminal(1));
+    EXPECT_EQ("a", table.getTerminal(0));
+    EXPECT_EQ("b", table.getTerminal(1));
+    EXPECT_EQ("c", table.getTerminal(2));
+}
+
+TEST(TestContextFreeGrammarLL1Table, HasConflict) {
+    MTable table;
+    table.addEntry("S", "a", {"a"});
+    table.addEntry("S", "b", {"b"});
+    EXPECT_FALSE(table.hasConflict());
+    EXPECT_FALSE(table.hasConflict("S", "a"));
+    table.addEntry("S", "a", {"A"});
+    EXPECT_TRUE(table.hasConflict());
+    EXPECT_TRUE(table.hasConflict("S", "a"));
+    EXPECT_FALSE(table.hasConflict("X", "a"));
+    EXPECT_FALSE(table.hasConflict("S", "x"));
+    EXPECT_EQ("", table.getCell("X", "a"));
+    EXPECT_EQ("", table.getCell("S", "x"));
+}
+
+TEST(TestContextFreeGrammarLL1Table, HasConflictBound) {
+    MTable table;
+    table.addEntry("S", "a", {"a"});
+    table.addEntry("A", "z", {"z"});
+    EXPECT_FALSE(table.hasConflict("A", "a"));
+}
+
+TEST(TestContextFreeGrammarLL1Table, GetCellBoundsCheck) {
+    MTable table;
+    table.addEntry("S", "a", {"a"});
+    table.addEntry("A", "z", {"z"});
+    EXPECT_EQ("", table.getCell("A", "a"));
+}
+
+TEST(TestContextFreeGrammarLL1Parsing, TerminalMismatch) {
+    ContextFreeGrammar grammar;
+    grammar.parse("S -> a b");
+    auto table = grammar.computeLL1Table();
+    const auto steps = table.parse("a c");
+    const auto result = steps.toString();
+    EXPECT_TRUE(result.find("error: expected b") != string::npos);
+}
+
+TEST(TestContextFreeGrammarLL1Parsing, UnexpectedSymbol) {
+    MTable table;
+    table.addEntry("S", "a", {"a"});
+    table.nonTerminals = {"S"};
+    table.nonTerminalIndex["S"] = 0;
+    table.terminals = {"a", "¥"};
+    table.terminalIndex["a"] = 0;
+    table.terminalIndex["¥"] = 1;
+    table.entries.resize(1);
+    table.entries[0].resize(2);
+    table.entries[0][0] = {{"a"}};
+    const auto steps = table.parse("x");
+    const auto result = steps.toString();
+    EXPECT_TRUE(result.find("error: unexpected symbol") != string::npos);
+}
+
+TEST(TestContextFreeGrammarLL1Parsing, NoRuleError) {
+    MTable table;
+    table.nonTerminals = {"S"};
+    table.nonTerminalIndex["S"] = 0;
+    table.terminals = {"a", "b", "¥"};
+    table.terminalIndex["a"] = 0;
+    table.terminalIndex["b"] = 1;
+    table.terminalIndex["¥"] = 2;
+    table.entries.resize(1);
+    table.entries[0].resize(3);
+    table.entries[0][0] = {{"a"}};
+    const auto steps = table.parse("b");
+    const auto result = steps.toString();
+    EXPECT_TRUE(result.find("error: no rule") != string::npos);
+}
+
+TEST(TestContextFreeGrammarLL1Parsing, EmptyStackAndInput) {
+    ContextFreeGrammar grammar;
+    grammar.parse("S -> ε");
+    auto table = grammar.computeLL1Table();
+
+    const auto steps = table.parse("");
+    EXPECT_TRUE(steps.toString().find("accept") != string::npos);
+    EXPECT_NE(nullptr, table.parseTree);
+}
+
+TEST(TestContextFreeGrammarLL1Parsing, ComputeFirstOfProductionTerminal) {
+    ContextFreeGrammar grammar;
+    grammar.parse(R"(
+S -> a b
+)");
+    const auto table = grammar.computeLL1Table();
+    EXPECT_TRUE(table.getCell("S", "a").find("S -> a b") != string::npos);
+}

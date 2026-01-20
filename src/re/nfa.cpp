@@ -5,94 +5,6 @@ using namespace std;
 
 const string RegularExpression::EPSILON = "ε";
 
-bool RegexNode::operator==(const RegexNode& other) const {
-    if (type != other.type || begin != other.begin || end != other.end) {
-        return false;
-    }
-    if (type == Type::TEXT && text != other.text) {
-        return false;
-    }
-    if (type == Type::STAR) {
-        if (!sub || !other.sub) {
-            return sub == other.sub;
-        }
-        return *sub == *other.sub;
-    }
-    if (type == Type::CAT || type == Type::OR) {
-        if (parts.size() != other.parts.size()) {
-            return false;
-        }
-        for (size_t i = 0; i < parts.size(); ++i) {
-            if (!parts[i] || !other.parts[i]) {
-                if (parts[i] != other.parts[i]) {
-                    return false;
-                }
-            } else if (*parts[i] != *other.parts[i]) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
-string RegexNode::toString() const {
-    string result;
-    switch (type) {
-        case Type::EMPTY:
-            result = "ε";
-            break;
-        case Type::TEXT:
-            result = text;
-            break;
-        case Type::CAT:
-            for (const auto& part : parts) {
-                result += part->toString();
-            }
-            break;
-        case Type::OR:
-            result = "(";
-            for (size_t i = 0; i < parts.size(); ++i) {
-                if (i > 0) {
-                    result += "|";
-                }
-                result += parts[i]->toString();
-            }
-            result += ")";
-            break;
-        case Type::STAR:
-            result = "(" + sub->toString() + ")*";
-            break;
-    }
-    return result;
-}
-
-bool NFAState::operator==(const NFAState& other) const {
-    if (id != other.id || type != other.type || edges.size() != other.edges.size()) {
-        return false;
-    }
-    for (size_t i = 0; i < edges.size(); ++i) {
-        if (edges[i].first != other.edges[i].first) {
-            return false;
-        }
-        if (!edges[i].second || !other.edges[i].second) {
-            if (edges[i].second != other.edges[i].second) {
-                return false;
-            }
-        } else if (edges[i].second->id != other.edges[i].second->id) {
-            return false;
-        }
-    }
-    return true;
-}
-
-string NFAState::toString() const {
-    string result = "State " + to_string(id) + " (" + type + ")";
-    for (const auto& [label, target] : edges) {
-        result += " --" + label + "--> " + to_string(target->id);
-    }
-    return result;
-}
-
 RegularExpression::RegularExpression(const string& pattern) {
     parse(pattern);
 }
@@ -304,7 +216,9 @@ static size_t generateGraph(const shared_ptr<RegexNode>& node, const shared_ptr<
 }
 
 shared_ptr<NFAState> RegularExpression::toNFA() const {
-    if (!_ast) return nullptr;
+    if (!_ast) {
+        return nullptr;
+    }
 
     auto start = make_shared<NFAState>();
     start->type = "start";
