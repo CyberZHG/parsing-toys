@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import { resolve } from 'path'
 import handlebars from 'vite-plugin-handlebars'
 import tailwindcss from '@tailwindcss/vite'
+import Sitemap from 'vite-plugin-sitemap'
 
 export default defineConfig({
     base: "/parsing-toys",
@@ -29,6 +30,12 @@ export default defineConfig({
             partialDirectory: resolve(__dirname, 'partials'),
         }),
         tailwindcss(),
+        Sitemap({
+            hostname: 'https://cyberzhg.github.io',
+            basePath: '/parsing-toys',
+            changefreq: 'monthly',
+            readable: true,
+        }),
     ],
     server: {
         fs: {
