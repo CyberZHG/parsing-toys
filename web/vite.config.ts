@@ -30,7 +30,12 @@ export default defineConfig({
             partialDirectory: resolve(__dirname, 'partials'),
         }),
         tailwindcss(),
-        Sitemap({ hostname: 'https://cyberzhg.github.io/parsing-toys', changefreq: 'monthly' }),
+        Sitemap({
+            hostname: 'https://cyberzhg.github.io',
+            basePath: '/parsing-toys',
+            changefreq: 'monthly',
+            readable: true,
+        }),
     ],
     server: {
         fs: {
