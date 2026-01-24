@@ -1,5 +1,10 @@
 # Parsing Toys
 
+[![C++ Unit Tests](https://github.com/CyberZHG/parsing-toys/actions/workflows/cpp-unit-test.yml/badge.svg)](https://github.com/CyberZHG/parsing-toys/actions/workflows/cpp-unit-test.yml)
+[![Deploy Pages](https://github.com/CyberZHG/parsing-toys/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/CyberZHG/parsing-toys/actions/workflows/deploy-pages.yml)
+[![Coverage Status](https://coveralls.io/repos/github/CyberZHG/parsing-toys/badge.svg?branch=main)](https://coveralls.io/github/CyberZHG/parsing-toys?branch=main)
+![](https://visitor-badge.laobi.icu/badge?page_id=cyberzhg.parsing-toys)
+
 https://cyberzhg.github.io/parsing-toys/
 
 Toy tools for visualizing parsing algorithms.
