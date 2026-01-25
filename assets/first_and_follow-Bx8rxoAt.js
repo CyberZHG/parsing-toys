@@ -1,4 +1,4 @@
-import"./navbar-KfbvFhEg.js";import{s as p}from"./choose_examples-vr6Go3Mf.js";import{g,s as u,a as i}from"./cfg_editor-Bof7UeYh.js";import{C as f,s as x,a as E,g as y}from"./__vite-browser-external-BsK2uhbd.js";const T={example1:"Example 1: E -> T E'  T -> F T'  E' -> + T E' | ε  T' -> * F T' | ε  F -> ( E ) | id",example2:"Example 2: S -> A B C  A -> a | ε  B -> b | ε  C -> c"},b={example1:` E -> T E'
+import"./navbar-KfbvFhEg.js";import{s as p}from"./choose_examples-vr6Go3Mf.js";import{g,s as u,a as i}from"./cfg_editor-Bof7UeYh.js";import{C as f,s as x,a as E,g as y}from"./__vite-browser-external-BrDIS2Xa.js";const T={example1:"Example 1: E -> T E'  T -> F T'  E' -> + T E' | ε  T' -> * F T' | ε  F -> ( E ) | id",example2:"Example 2: S -> A B C  A -> a | ε  B -> b | ε  C -> c"},b={example1:` E -> T E'
  T -> F T'
 E' -> + T E'
     | ε
