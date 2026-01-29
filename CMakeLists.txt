@@ -8,6 +8,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 option(PARSING_TOYS_ENABLE_TESTS "Build tests" OFF)
 option(PARSING_TOYS_ENABLE_COVERAGE "Enable coverage reporting" OFF)
+option(PARSING_TOYS_BIND_PYTHON "Enable python binding" OFF)
 option(PARSING_TOYS_BIND_ES "Enable ECMAScript binding" OFF)
 
 if(APPLE)
@@ -127,6 +128,26 @@ if(PARSING_TOYS_ENABLE_TESTS)
 
     add_test(NAME ParsingToysTests COMMAND runTests)
 endif ()
+
+if(PARSING_TOYS_BIND_PYTHON)
+    include(FetchContent)
+    FetchContent_Declare(
+            pybind11
+            GIT_REPOSITORY https://github.com/pybind/pybind11.git
+            GIT_TAG v3.0
+    )
+    FetchContent_MakeAvailable(pybind11)
+
+    pybind11_add_module(_core
+            python/bindings.cpp
+    )
+    target_link_libraries(_core
+            PRIVATE ParsingToys
+    )
+    install(TARGETS _core
+            LIBRARY DESTINATION parsing_toys)
+    install(FILES python/wrapper/__init__.py DESTINATION parsing_toys)
+endif()
 
 if (PARSING_TOYS_BIND_ES)
 

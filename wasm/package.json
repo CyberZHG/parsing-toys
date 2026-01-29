@@ -1,6 +1,6 @@
 {
   "name": "parsing-toys",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "main": "index.js",
   "types": "index.d.ts",
@@ -19,8 +19,8 @@
   },
   "scripts": {
     "build": "bash build.sh",
-    "lint": "npx eslint index.js test/**/*.ts",
-    "test": "mocha test/**/*.ts"
+    "lint": "npx eslint index.js test/**/*.mjs",
+    "test": "mocha test/**/*.mjs"
   },
   "homepage": "https://cyberzhg.github.io/parsing-toys/",
   "repository": "github:CyberZHG/parsing-toys"
