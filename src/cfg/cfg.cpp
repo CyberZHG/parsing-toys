@@ -18,59 +18,61 @@ bool ContextFreeGrammarToken::operator==(const ContextFreeGrammarToken& other) c
 }
 
 vector<ContextFreeGrammarToken> ContextFreeGrammar::tokenize(const string& s) {
-    static constexpr string ARROW = "→";
-    static constexpr string ALTERNATION = "｜";
-    const auto n = s.size();
+    const auto graphemes = segmentGraphemes(s);
+    const auto n = graphemes.size();
     vector<ContextFreeGrammarToken> tokens;
     size_t line = 1, column = 1;
+
+    auto isWhitespace = [](const string& g) {
+        return g.size() == 1 && isspace(static_cast<unsigned char>(g[0]));
+    };
+
     for (size_t i = 0; i < n;) {
-        if (i + 1 < n && s[i] == '\r' && s[i + 1] == '\n') {
-            ++line;
-            column = 1;
-            i += 2;
-        } else if (s[i] == '\n' || s[i] == '\r') {
+        const auto& g = graphemes[i];
+        if (g == "\r\n" || g == "\n" || g == "\r") {
             ++line;
             column = 1;
             ++i;
-        } else if (isspace(s[i])) {
+        } else if (isWhitespace(g)) {
             ++column;
             ++i;
-        } else if (i + 1 < n && s[i] == '-' && s[i + 1] == '>') {
+        } else if (i + 1 < n && graphemes[i] == "-" && graphemes[i + 1] == ">") {
             tokens.emplace_back(ContextFreeGrammarToken{ContextFreeGrammarToken::Type::PRODUCTION, "->", line, column});
             i += 2;
             column += 2;
-        } else if (i + ARROW.size() <= n && s.substr(i, ARROW.size()) == ARROW) {
-            tokens.emplace_back(ContextFreeGrammarToken{ContextFreeGrammarToken::Type::PRODUCTION, ARROW, line, column});
-            i += ARROW.size();
+        } else if (g == "→") {
+            tokens.emplace_back(ContextFreeGrammarToken{ContextFreeGrammarToken::Type::PRODUCTION, "→", line, column});
+            ++i;
             ++column;
-        } else if (s[i] == '|') {
+        } else if (g == "|") {
             tokens.emplace_back(ContextFreeGrammarToken{ContextFreeGrammarToken::Type::ALTERNATION, "|", line, column});
             ++i;
             ++column;
-        } else if (i + ALTERNATION.size() <= n && s.substr(i, ALTERNATION.size()) == ALTERNATION) {
-            tokens.emplace_back(ContextFreeGrammarToken{ContextFreeGrammarToken::Type::ALTERNATION, ALTERNATION, line, column});
-            i += ALTERNATION.size();
+        } else if (g == "｜") {
+            tokens.emplace_back(ContextFreeGrammarToken{ContextFreeGrammarToken::Type::ALTERNATION, "｜", line, column});
+            ++i;
             ++column;
         } else {
+            string symbol;
             size_t numChars = 0;
-            for (size_t j = i + 1; j <= n; ++j) {
-                if ((s[j] & 0b11000000) != 0b10000000) {
-                    ++numChars;
-                }
-                if (j == n || isspace(s[j]) || s[j] == '|'
-                    || (j + 1 < n && s[j] == '-' && s[j + 1] == '>')
-                    || (j + ARROW.size() <= n && s.substr(j, ARROW.size()) == ARROW)
-                    || (j + ALTERNATION.size() <= n && s.substr(j, ALTERNATION.size()) == ALTERNATION)) {
-                    if (const auto symbol = s.substr(i, j - i); symbol == "ε" || symbol == "ϵ") {
-                        tokens.emplace_back(ContextFreeGrammarToken{ContextFreeGrammarToken::Type::SYMBOL, EMPTY_SYMBOL, line, column});
-                    } else {
-                        tokens.emplace_back(ContextFreeGrammarToken{ContextFreeGrammarToken::Type::SYMBOL, symbol, line, column});
-                    }
-                    i = j;
-                    column += numChars;
+            for (size_t j = i; j < n; ++j) {
+                const auto& gj = graphemes[j];
+                if (isWhitespace(gj)
+                    || gj == "\r\n" || gj == "\n" || gj == "\r"
+                    || gj == "|" || gj == "｜" || gj == "→"
+                    || (j + 1 < n && gj == "-" && graphemes[j + 1] == ">")) {
                     break;
                 }
+                symbol += gj;
+                ++numChars;
             }
+            if (symbol == "ε" || symbol == "ϵ") {
+                tokens.emplace_back(ContextFreeGrammarToken{ContextFreeGrammarToken::Type::SYMBOL, EMPTY_SYMBOL, line, column});
+            } else {
+                tokens.emplace_back(ContextFreeGrammarToken{ContextFreeGrammarToken::Type::SYMBOL, symbol, line, column});
+            }
+            i += numChars;
+            column += numChars;
         }
     }
     return tokens;

@@ -92,7 +92,7 @@ private:
     std::string _errorMessage;
     std::shared_ptr<RegexNode> _ast;
 
-    std::shared_ptr<RegexNode> parseSub(const std::string& text, std::size_t begin, std::size_t end, bool first);
+    std::shared_ptr<RegexNode> parseSub(const std::vector<std::string>& graphemes, std::size_t begin, std::size_t end, bool first);
 };
 
 #endif //PARSING_TOYS_RE_H

@@ -11,7 +11,8 @@ RegularExpression::RegularExpression(const string& pattern) {
 
 bool RegularExpression::parse(const string& pattern) {
     _errorMessage.clear();
-    _ast = parseSub(pattern, 0, utf8Length(pattern), true);
+    const auto graphemes = segmentGraphemes(pattern);
+    _ast = parseSub(graphemes, 0, graphemes.size(), true);
     return _ast != nullptr;
 }
 
@@ -23,30 +24,28 @@ shared_ptr<RegexNode> RegularExpression::ast() const {
     return _ast;
 }
 
-shared_ptr<RegexNode> RegularExpression::parseSub(const string& text, size_t begin, size_t end, bool first) {
+shared_ptr<RegexNode> RegularExpression::parseSub(const vector<string>& graphemes, const size_t begin, const size_t end, const bool first) {
     auto node = make_shared<RegexNode>();
     node->begin = begin;
     node->end = end;
 
-    size_t len = utf8Length(text);
-    if (len == 0) {
+    if (begin == end) {
         _errorMessage = "Error: empty input at " + to_string(begin) + ".";
         return nullptr;
     }
 
     if (first) {
-        size_t last = 0;
+        size_t last = begin;
         int stack = 0;
         vector<shared_ptr<RegexNode>> parts;
 
-        for (size_t i = 0; i <= len; ++i) {
-            const string ch = (i < len) ? utf8CharAt(text, i) : "";
-            if (i == len || (ch == "|" && stack == 0)) {
-                if (last == 0 && i == len) {
-                    return parseSub(text, begin + last, begin + i, false);
+        for (size_t i = begin; i <= end; ++i) {
+            const string& ch = (i < end) ? graphemes[i] : "";
+            if (i == end || (ch == "|" && stack == 0)) {
+                if (last == begin && i == end) {
+                    return parseSub(graphemes, last, i, false);
                 }
-                string substr = utf8Substring(text, last, i - last);
-                auto sub = parseSub(substr, begin + last, begin + i, true);
+                auto sub = parseSub(graphemes, last, i, true);
                 if (!sub) {
                     return nullptr;
                 }
@@ -65,16 +64,16 @@ shared_ptr<RegexNode> RegularExpression::parseSub(const string& text, size_t beg
         node->type = RegexNode::Type::OR;
         node->parts = parts;
     } else {
-        size_t i = 0;
+        size_t i = begin;
         vector<shared_ptr<RegexNode>> parts;
 
-        while (i < len) {
-            if (const string ch = utf8CharAt(text, i); ch == "(") {
-                size_t last = i + 1;
+        while (i < end) {
+            if (const string& ch = graphemes[i]; ch == "(") {
+                const size_t last = i + 1;
                 i++;
                 int stack = 1;
-                while (i < len && stack != 0) {
-                    if (string c = utf8CharAt(text, i); c == "(") {
+                while (i < end && stack != 0) {
+                    if (const string& c = graphemes[i]; c == "(") {
                         stack++;
                     } else if (c == ")") {
                         stack--;
@@ -82,21 +81,20 @@ shared_ptr<RegexNode> RegularExpression::parseSub(const string& text, size_t beg
                     i++;
                 }
                 if (stack != 0) {
-                    _errorMessage = "Error: missing right bracket for " + to_string(begin + last) + ".";
+                    _errorMessage = "Error: missing right bracket for " + to_string(last) + ".";
                     return nullptr;
                 }
                 i--;
-                string substr = utf8Substring(text, last, i - last);
-                auto sub = parseSub(substr, begin + last, begin + i, true);
+                auto sub = parseSub(graphemes, last, i, true);
                 if (!sub) {
                     return nullptr;
                 }
-                sub->begin = begin + last - 1;
-                sub->end = begin + i + 1;
+                sub->begin = last - 1;
+                sub->end = i + 1;
                 parts.push_back(sub);
             } else if (ch == "*") {
                 if (parts.empty()) {
-                    _errorMessage = "Error: unexpected * at " + to_string(begin + i) + ".";
+                    _errorMessage = "Error: unexpected * at " + to_string(i) + ".";
                     return nullptr;
                 }
                 auto tempNode = make_shared<RegexNode>();
@@ -107,7 +105,7 @@ shared_ptr<RegexNode> RegularExpression::parseSub(const string& text, size_t beg
                 parts.back() = tempNode;
             } else if (ch == "+") {
                 if (parts.empty()) {
-                    _errorMessage = "Error: unexpected + at " + to_string(begin + i) + ".";
+                    _errorMessage = "Error: unexpected + at " + to_string(i) + ".";
                     return nullptr;
                 }
                 auto virNode = make_shared<RegexNode>();
@@ -116,7 +114,7 @@ shared_ptr<RegexNode> RegularExpression::parseSub(const string& text, size_t beg
                 virNode->type = RegexNode::Type::STAR;
                 virNode->sub = parts.back();
 
-                auto tempNode = make_shared<RegexNode>();
+                const auto tempNode = make_shared<RegexNode>();
                 tempNode->begin = parts.back()->begin;
                 tempNode->end = parts.back()->end + 1;
                 tempNode->type = RegexNode::Type::CAT;
@@ -124,7 +122,7 @@ shared_ptr<RegexNode> RegularExpression::parseSub(const string& text, size_t beg
                 parts.back() = tempNode;
             } else if (ch == "?") {
                 if (parts.empty()) {
-                    _errorMessage = "Error: unexpected ? at " + to_string(begin + i) + ".";
+                    _errorMessage = "Error: unexpected ? at " + to_string(i) + ".";
                     return nullptr;
                 }
                 auto virNode = make_shared<RegexNode>();
@@ -132,7 +130,7 @@ shared_ptr<RegexNode> RegularExpression::parseSub(const string& text, size_t beg
                 virNode->end = parts.back()->end + 1;
                 virNode->type = RegexNode::Type::EMPTY;
 
-                auto tempNode = make_shared<RegexNode>();
+                const auto tempNode = make_shared<RegexNode>();
                 tempNode->begin = parts.back()->begin;
                 tempNode->end = parts.back()->end + 1;
                 tempNode->type = RegexNode::Type::OR;
@@ -140,14 +138,14 @@ shared_ptr<RegexNode> RegularExpression::parseSub(const string& text, size_t beg
                 parts.back() = tempNode;
             } else if (ch == EPSILON) {
                 auto tempNode = make_shared<RegexNode>();
-                tempNode->begin = begin + i;
-                tempNode->end = begin + i + 1;
+                tempNode->begin = i;
+                tempNode->end = i + 1;
                 tempNode->type = RegexNode::Type::EMPTY;
                 parts.push_back(tempNode);
             } else {
                 auto tempNode = make_shared<RegexNode>();
-                tempNode->begin = begin + i;
-                tempNode->end = begin + i + 1;
+                tempNode->begin = i;
+                tempNode->end = i + 1;
                 tempNode->type = RegexNode::Type::TEXT;
                 tempNode->text = ch;
                 parts.push_back(tempNode);

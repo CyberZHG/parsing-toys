@@ -18,11 +18,17 @@ endif()
 include(FetchContent)
 
 FetchContent_Declare(
+        GraphemeClusterBreak
+        GIT_REPOSITORY https://github.com/CyberZHG/GraphemeClusterBreak.git
+        GIT_TAG v1.1.0
+)
+FetchContent_MakeAvailable(GraphemeClusterBreak)
+
+FetchContent_Declare(
         GraphLayout
         GIT_REPOSITORY https://github.com/CyberZHG/GraphLayout.git
         GIT_TAG v1.4.0
 )
-
 FetchContent_MakeAvailable(GraphLayout)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
@@ -77,7 +83,7 @@ target_include_directories(ParsingToys
 )
 
 target_link_libraries(ParsingToys
-        PRIVATE GraphLayout
+        PRIVATE GraphemeClusterBreak GraphLayout
 )
 
 if(PARSING_TOYS_ENABLE_TESTS)
