@@ -135,3 +135,102 @@ TEST(TestRegexToNFA, Example373d) {
     ASSERT_NE(nfa, nullptr);
     EXPECT_EQ(nfa->type, "start");
 }
+
+TEST(TestRegexToNFA, NullAst) {
+    RegularExpression re;
+    const auto nfa = re.toNFA();
+    EXPECT_EQ(nfa, nullptr);
+}
+
+TEST(TestRegexToNFA, Plus) {
+    const RegularExpression re("a+");
+    const auto nfa = re.toNFA();
+    ASSERT_NE(nfa, nullptr);
+    EXPECT_EQ(nfa->type, "start");
+    EXPECT_EQ(nfa->edges.size(), 1);
+    EXPECT_EQ(nfa->edges[0].first, "a");
+}
+
+TEST(TestRegexToNFA, Question) {
+    const RegularExpression re("a?");
+    const auto nfa = re.toNFA();
+    ASSERT_NE(nfa, nullptr);
+    EXPECT_EQ(nfa->type, "start");
+    EXPECT_EQ(nfa->edges.size(), 2);
+    EXPECT_EQ(nfa->edges[0].first, RegularExpression::EPSILON);
+    EXPECT_EQ(nfa->edges[1].first, RegularExpression::EPSILON);
+}
+
+TEST(TestRegexToNFA, ComplexPlus) {
+    const RegularExpression re("(a|b)+");
+    const auto nfa = re.toNFA();
+    ASSERT_NE(nfa, nullptr);
+    EXPECT_EQ(nfa->type, "start");
+}
+
+TEST(TestRegexToNFA, ComplexQuestion) {
+    const RegularExpression re("(ab)?");
+    const auto nfa = re.toNFA();
+    ASSERT_NE(nfa, nullptr);
+    EXPECT_EQ(nfa->type, "start");
+}
+
+TEST(TestRegexToNFA, MultipleOr) {
+    const RegularExpression re("a|b|c");
+    const auto nfa = re.toNFA();
+    ASSERT_NE(nfa, nullptr);
+    EXPECT_EQ(nfa->type, "start");
+    EXPECT_EQ(nfa->edges.size(), 3);
+}
+
+TEST(TestNFAGraph, BasicOperations) {
+    const RegularExpression re("a|b");
+    const auto nfa = re.toNFA();
+    const auto graph = RegularExpression::toNFAGraph(nfa);
+
+    EXPECT_GT(graph.size(), 0u);
+    EXPECT_GT(graph.numEdges(), 0u);
+
+    for (size_t i = 0; i < graph.numEdges(); ++i) {
+        EXPECT_LT(graph.edgeFrom(i), graph.size());
+        EXPECT_LT(graph.edgeTo(i), graph.size());
+        EXPECT_FALSE(graph.edgeLabel(i).empty());
+    }
+}
+
+TEST(TestNFAGraph, NullNFA) {
+    const auto graph = RegularExpression::toNFAGraph(nullptr);
+    EXPECT_EQ(graph.size(), 0u);
+    EXPECT_EQ(graph.numEdges(), 0u);
+}
+
+TEST(TestNFAGraph, StateAt) {
+    const RegularExpression re("a");
+    const auto nfa = re.toNFA();
+    const auto graph = RegularExpression::toNFAGraph(nfa);
+
+    ASSERT_GT(graph.size(), 0u);
+    const auto stateStr = graph.stateAt(0);
+    EXPECT_FALSE(stateStr.empty());
+    EXPECT_NE(stateStr.find("start"), string::npos);
+}
+
+TEST(TestNFAGraph, ToSVG) {
+    const RegularExpression re("a*");
+    const auto nfa = re.toNFA();
+    const auto graph = RegularExpression::toNFAGraph(nfa);
+
+    const auto svg = graph.toSVG(false);
+    EXPECT_FALSE(svg.empty());
+    EXPECT_NE(svg.find("<svg"), string::npos);
+}
+
+TEST(TestNFAGraph, ToSVGDarkMode) {
+    const RegularExpression re("a*");
+    const auto nfa = re.toNFA();
+    const auto graph = RegularExpression::toNFAGraph(nfa);
+
+    const auto svg = graph.toSVG(true);
+    EXPECT_FALSE(svg.empty());
+    EXPECT_NE(svg.find("<svg"), string::npos);
+}

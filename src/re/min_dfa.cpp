@@ -137,10 +137,7 @@ static vector<vector<string>> hopcroft(const HopcroftData& data) {
                     partitions[newKey1] = g1;
                     partitions[newKey2] = g2;
 
-                    if (visited.contains(newKey1)) {
-                        workQueue.push_back(newKey1);
-                        workQueue.push_back(newKey2);
-                    } else if (g1.size() <= g2.size()) {
+                    if (g1.size() <= g2.size()) {
                         visited[newKey1] = workQueue.size();
                         workQueue.push_back(newKey1);
                     } else {
@@ -165,29 +162,25 @@ static shared_ptr<DFAState> buildMinDFA(const shared_ptr<DFAState>& start, vecto
         for (const auto& s : a) {
             if (!ka.empty()) {
                 ka += ",";
-                ka += s;
             }
+            ka += s;
         }
         for (const auto& s : b) {
             if (!kb.empty()) {
                 kb += ",";
-                kb += s;
             }
+            kb += s;
         }
         return ka < kb;
     });
 
-    for (size_t i = 0; i < partitions.size(); i++) {
-        bool containsStart = false;
+    for (size_t i = 1; i < partitions.size(); i++) {
         for (const auto& id : partitions[i]) {
             if (id == start->id) {
-                containsStart = true;
+                swap(partitions[i], partitions[0]);
+                i = partitions.size();
                 break;
             }
-        }
-        if (containsStart && i > 0) {
-            swap(partitions[i], partitions[0]);
-            break;
         }
     }
 
