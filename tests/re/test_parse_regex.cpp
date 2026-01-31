@@ -170,3 +170,138 @@ TEST(TestRegexParse, ErrorEmptyInput) {
     EXPECT_FALSE(re.parse(""));
     EXPECT_EQ(re.errorMessage(), "Error: empty input at 0.");
 }
+
+TEST(TestRegexParse, Plus) {
+    const RegularExpression re("a+");
+    const auto ast = re.ast();
+    ASSERT_NE(ast, nullptr);
+    EXPECT_EQ(ast->type, RegexNode::Type::CAT);
+    EXPECT_EQ(ast->begin, 0);
+    EXPECT_EQ(ast->end, 2);
+    ASSERT_EQ(ast->parts.size(), 2);
+
+    EXPECT_EQ(ast->parts[0]->type, RegexNode::Type::TEXT);
+    EXPECT_EQ(ast->parts[0]->text, "a");
+
+    EXPECT_EQ(ast->parts[1]->type, RegexNode::Type::STAR);
+    EXPECT_EQ(ast->parts[1]->sub->type, RegexNode::Type::TEXT);
+    EXPECT_EQ(ast->parts[1]->sub->text, "a");
+}
+
+TEST(TestRegexParse, Question) {
+    const RegularExpression re("a?");
+    const auto ast = re.ast();
+    ASSERT_NE(ast, nullptr);
+    EXPECT_EQ(ast->type, RegexNode::Type::OR);
+    EXPECT_EQ(ast->begin, 0);
+    EXPECT_EQ(ast->end, 2);
+    ASSERT_EQ(ast->parts.size(), 2);
+
+    EXPECT_EQ(ast->parts[0]->type, RegexNode::Type::TEXT);
+    EXPECT_EQ(ast->parts[0]->text, "a");
+
+    EXPECT_EQ(ast->parts[1]->type, RegexNode::Type::EMPTY);
+}
+
+TEST(TestRegexParse, ErrorUnexpectedQuestion) {
+    RegularExpression re;
+    EXPECT_FALSE(re.parse("?"));
+    EXPECT_EQ(re.errorMessage(), "Error: unexpected ? at 0.");
+}
+
+TEST(TestRegexParse, ComplexExpression) {
+    const RegularExpression re("a+b?c*");
+    const auto ast = re.ast();
+    ASSERT_NE(ast, nullptr);
+    EXPECT_EQ(ast->type, RegexNode::Type::CAT);
+}
+
+TEST(TestRegexParse, NestedBrackets) {
+    const RegularExpression re("((a))");
+    const auto ast = re.ast();
+    ASSERT_NE(ast, nullptr);
+    EXPECT_EQ(ast->type, RegexNode::Type::TEXT);
+    EXPECT_EQ(ast->text, "a");
+}
+
+TEST(TestRegexParse, EmptyOr) {
+    const RegularExpression re("a|ε|b");
+    const auto ast = re.ast();
+    ASSERT_NE(ast, nullptr);
+    EXPECT_EQ(ast->type, RegexNode::Type::OR);
+    ASSERT_EQ(ast->parts.size(), 3);
+    EXPECT_EQ(ast->parts[0]->type, RegexNode::Type::TEXT);
+    EXPECT_EQ(ast->parts[1]->type, RegexNode::Type::EMPTY);
+    EXPECT_EQ(ast->parts[2]->type, RegexNode::Type::TEXT);
+}
+
+TEST(TestRegexParse, StarStar) {
+    const RegularExpression re("a**");
+    const auto ast = re.ast();
+    ASSERT_NE(ast, nullptr);
+    EXPECT_EQ(ast->type, RegexNode::Type::STAR);
+    EXPECT_EQ(ast->sub->type, RegexNode::Type::STAR);
+    EXPECT_EQ(ast->sub->sub->type, RegexNode::Type::TEXT);
+}
+
+TEST(TestRegexParse, MultipleOr) {
+    const RegularExpression re("a|b|c|d");
+    const auto ast = re.ast();
+    ASSERT_NE(ast, nullptr);
+    EXPECT_EQ(ast->type, RegexNode::Type::OR);
+    ASSERT_EQ(ast->parts.size(), 4);
+}
+
+TEST(TestRegexParse, OrInsideBracket) {
+    const RegularExpression re("(a|b)c");
+    const auto ast = re.ast();
+    ASSERT_NE(ast, nullptr);
+    EXPECT_EQ(ast->type, RegexNode::Type::CAT);
+    ASSERT_EQ(ast->parts.size(), 2);
+    EXPECT_EQ(ast->parts[0]->type, RegexNode::Type::OR);
+    EXPECT_EQ(ast->parts[1]->type, RegexNode::Type::TEXT);
+}
+
+TEST(TestRegexParse, DefaultConstructor) {
+    RegularExpression re;
+    EXPECT_EQ(re.ast(), nullptr);
+    EXPECT_EQ(re.errorMessage(), "");
+}
+
+TEST(TestRegexParse, ParseClearsError) {
+    RegularExpression re;
+    EXPECT_FALSE(re.parse("*"));
+    EXPECT_NE(re.errorMessage(), "");
+    EXPECT_TRUE(re.parse("a"));
+    EXPECT_EQ(re.errorMessage(), "");
+}
+
+TEST(TestRegexParse, ErrorEmptyOrBranch) {
+    RegularExpression re;
+    EXPECT_FALSE(re.parse("a||b"));
+    EXPECT_EQ(re.errorMessage(), "Error: empty input at 2.");
+}
+
+TEST(TestRegexParse, ErrorOrStartsEmpty) {
+    RegularExpression re;
+    EXPECT_FALSE(re.parse("|a"));
+    EXPECT_EQ(re.errorMessage(), "Error: empty input at 0.");
+}
+
+TEST(TestRegexParse, ErrorOrEndsEmpty) {
+    RegularExpression re;
+    EXPECT_FALSE(re.parse("a|"));
+    EXPECT_EQ(re.errorMessage(), "Error: empty input at 2.");
+}
+
+TEST(TestRegexParse, ErrorInsideBrackets) {
+    RegularExpression re;
+    EXPECT_FALSE(re.parse("(*)"));
+    EXPECT_EQ(re.errorMessage(), "Error: unexpected * at 1.");
+}
+
+TEST(TestRegexParse, ErrorEmptyInsideBrackets) {
+    RegularExpression re;
+    EXPECT_FALSE(re.parse("a(|)b"));
+    EXPECT_EQ(re.errorMessage(), "Error: empty input at 2.");
+}

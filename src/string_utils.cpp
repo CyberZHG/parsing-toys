@@ -87,20 +87,3 @@ string toSubscript(size_t number) {
 size_t utf8Length(const string& s) {
     return grapheme_break::segmentGraphemeClusters(s).size();
 }
-
-string utf8CharAt(const string& s, const size_t index) {
-    const auto graphemes = grapheme_break::segmentGraphemeClusters(s);
-    if (index < graphemes.size()) {
-        return graphemes[index];
-    }
-    return "";
-}
-
-string utf8Substring(const string& s, const size_t start, const size_t length) {
-    const auto graphemes = grapheme_break::segmentGraphemeClusters(s);
-    string result;
-    for (size_t i = start; i < min(start + length, graphemes.size()); ++i) {
-        result += graphemes[i];
-    }
-    return result;
-}
